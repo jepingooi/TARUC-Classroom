@@ -1,0 +1,11 @@
+{
+  "firebaseConfig": {
+    "apiKey": "AIzaSyA7sbTCrstTgUDyn3OmGxaI494sxwat26w",
+    "authDomain": "taruc-classroom.firebaseapp.com",
+    "projectId": "taruc-classroom",
+    "storageBucket": "taruc-classroom.appspot.com",
+    "messagingSenderId": "466173915402",
+    "appId": "1:466173915402:web:d29f6ea77d0018887fcaf3",
+    "measurementId": "G-CCV7N0M509"
+  }
+}
