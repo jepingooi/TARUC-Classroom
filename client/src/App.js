@@ -18,7 +18,7 @@ const db = getFirestore();
 let rand = Math.floor(Math.random() * 5) + 1;
 const loginUser = {
   email: `dummy${rand}@gmail.com`,
-  name: `Dummy ${rand}"`,
+  name: `Dummy ${rand}`,
   ownedRoomList: [],
   participatedRoomList: [],
 };
@@ -69,8 +69,7 @@ export default class Home extends Component {
           raiseHand: false,
         };
 
-        let tempParticipantInRoomList =
-          roomSnapshot.data().participantInRoomList;
+        let tempParticipantInRoomList = roomSnapshot.data().participantInRoomList;
         tempParticipantInRoomList.push(participantData);
         await updateDoc(roomRef, {
           participantInRoomList: tempParticipantInRoomList,
@@ -85,8 +84,7 @@ export default class Home extends Component {
   };
 
   handleNavigation = (tempPage, selectedRoomId) => {
-    if (this.state.page !== tempPage)
-      this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
+    if (this.state.page !== tempPage) this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
   };
 
   renderVideoConferencingHome = () => {
@@ -176,9 +174,7 @@ export default class Home extends Component {
           <Route exact path={"/videoConferencing"}>
             {this.renderVideoConferencingHome()}
           </Route>
-          <Route path={`/videoConferencing/${this.state.selectedRoomId}`}>
-            {this.renderVideoConferencingRoom()}
-          </Route>
+          <Route path={`/videoConferencing/${this.state.selectedRoomId}`}>{this.renderVideoConferencingRoom()}</Route>
           <Route path={"/onlineSurvey"}>{this.renderOnlineSurvey()}</Route>
           <Route path={"/onlineExam"}>{this.renderOnlineExam()}</Route>
         </Switch>
