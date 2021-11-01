@@ -57,7 +57,7 @@ export default class ChatBox extends Component {
   generateChatHistory = () => {
     let chatHistoryList = [];
 
-    if (this.state.chatMessageList && this.state.chatMessageList.length > 0) {
+    if (this.state.chatMessageList?.length > 0) {
       // eslint-disable-next-line
       this.state.chatMessageList.map((eachMessage) => {
         let time =
@@ -90,7 +90,7 @@ export default class ChatBox extends Component {
         <InputContainer>
           <Form onSubmit={() => this.inputNewMessage()}>
             <Form.Input
-              style={this.props.selectedRoom && this.props.selectedRoom.emoji ? { width: "200px" } : { width: "238px" }}
+              style={this.props.selectedRoom?.emoji ? { width: "200px" } : { width: "238px" }}
               id="inputMessage"
               placeholder={"Type here..."}
               value={this.state.inputMessage ? this.state.inputMessage : ""}
@@ -107,7 +107,7 @@ export default class ChatBox extends Component {
             />
           </Form>
 
-          {this.props.selectedRoom && this.props.selectedRoom.emoji && this.props.selectedRoom.chat && (
+          {this.props.selectedRoom?.emoji && this.props.selectedRoom?.chat && (
             <EmojiContainer>
               <Button
                 onClick={() => this.setState({ emojiPicker: !this.state.emojiPicker })}

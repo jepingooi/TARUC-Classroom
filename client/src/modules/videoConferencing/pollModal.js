@@ -476,7 +476,7 @@ export default class pollModal extends Component {
   renderTopSide = () => {
     return (
       <StyledHeader>
-        {this.state.pollList && this.state.pollList.length > 0 && <div>Poll list</div>}
+        {this.state.pollList?.length > 0 && <div>Poll list</div>}
         <div style={{ flex: 1 }} />
         {this.state.action === "edit" ||
           (!this.state.belowPart && this.state.action === "create" && (
@@ -489,7 +489,7 @@ export default class pollModal extends Component {
   };
 
   renderPollTable = () => {
-    if (this.state.pollList && this.state.pollList.length > 0) {
+    if (this.state.pollList?.length > 0) {
       return (
         <div style={{ marginTop: "10px" }}>
           <Table celled>

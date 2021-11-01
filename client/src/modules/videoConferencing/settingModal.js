@@ -127,7 +127,7 @@ export default class settingModal extends Component {
     if (!email || email.length === 0) emailError = "Email is invalid.";
 
     // Check if user exist
-    if (this.state.userList && this.state.userList.length > 0) {
+    if (this.state.userList?.length > 0) {
       // eslint-disable-next-line
       this.state.userList.map((eachUser) => {
         if (eachUser.email === email) exist = true;
@@ -136,7 +136,7 @@ export default class settingModal extends Component {
     if (!exist) emailError = "The user is not exist.";
 
     // Check if user has been invited
-    if (tempParticipantIdList && tempParticipantIdList.length > 0) {
+    if (tempParticipantIdList?.length > 0) {
       // eslint-disable-next-line
       tempParticipantIdList.map((eachParticipant) => {
         if (eachParticipant === email) emailError = "The user has been invited.";
@@ -182,7 +182,7 @@ export default class settingModal extends Component {
     let participantIdList = this.state.selectedRoom ? this.state.selectedRoom.participantIdList : [];
     let userList = this.state.userList;
 
-    if (participantIdList && participantIdList.length > 0 && userList && userList.length > 0) {
+    if (participantIdList?.length > 0 && userList?.length > 0) {
       // eslint-disable-next-line
       participantIdList.map((eachParticipantId, i) => {
         // eslint-disable-next-line

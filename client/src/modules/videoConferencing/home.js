@@ -131,7 +131,7 @@ export default class VideoConferencingHome extends Component {
   getOwnerName = (ownerId) => {
     let ownerName = "";
 
-    if (this.state.userList && this.state.userList.length > 0) {
+    if (this.state.userList?.length > 0) {
       // eslint-disable-next-line
       this.state.userList.map((eachUser) => {
         if (eachUser.email === ownerId) {
@@ -156,7 +156,7 @@ export default class VideoConferencingHome extends Component {
     let end = this.state.page * 10;
 
     let collectedRoom = [];
-    if (roomList && roomList.length > 0) {
+    if (roomList?.length > 0) {
       // eslint-disable-next-line
       roomList.map((eachRoom, i) => {
         let ownerName = this.getOwnerName(eachRoom.ownerId);
@@ -201,7 +201,7 @@ export default class VideoConferencingHome extends Component {
   // Generate 10 max room per page
   generatePagination = () => {
     let collectedPagination = [];
-    let tempNum = Math.floor(this.state.roomList.length / 10);
+    let tempNum = Math.floor(this.state.roomList?.length / 10);
 
     for (let i = 0; i <= tempNum; i++) {
       collectedPagination.push(
@@ -239,7 +239,7 @@ export default class VideoConferencingHome extends Component {
 
   // Pagination for room list table
   renderPagination = () => {
-    if (this.state.roomList && this.state.roomList.length > 10)
+    if (this.state.roomList?.length > 10)
       return (
         <StyledMenuContainer>
           <Menu pagination>

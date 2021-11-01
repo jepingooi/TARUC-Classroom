@@ -20,7 +20,7 @@ export default class mainScreen extends Component {
     let microphoneMutedIcon = <Icon name="microphone slash" size="large" />;
     let raiseHandIcon = <Icon name="hand paper" size="large" />;
 
-    if (this.props.selectedRoom && this.props.selectedRoom.participantInRoomList.length > 0) {
+    if (this.props.selectedRoom?.participantInRoomList?.length > 0) {
       let participantList = this.props.selectedRoom.participantInRoomList;
 
       // eslint-disable-next-line
@@ -62,7 +62,7 @@ export default class mainScreen extends Component {
     let microphoneMutedIcon = <Icon name="microphone slash" size="large" />;
     let raiseHandIcon = <Icon name="hand paper" size="large" />;
 
-    if (this.props.selectedRoom && this.props.selectedRoom.participantInRoomList.length > 0) {
+    if (this.props.selectedRoom?.participantInRoomList?.length > 0) {
       let participantList = this.props.selectedRoom.participantInRoomList;
 
       // eslint-disable-next-line
