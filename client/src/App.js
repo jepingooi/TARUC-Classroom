@@ -151,6 +151,7 @@ export default class Home extends Component {
         <Header
           page={this.state.page ? this.state.page : ""}
           handleNavigation={(page) => this.handleNavigation(page)}
+          loginUser={this.state.loginUser}
         />
       </StyledHeader>
     );

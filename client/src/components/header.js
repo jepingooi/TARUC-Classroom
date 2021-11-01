@@ -41,8 +41,7 @@ export default class Header extends Component {
           <StyledNavitgationItem
             onClick={() => this.props.handleNavigation("videoConferencing")}
             style={
-              this.props.page === "videoConferencing" ||
-              this.props.page === "videoConferencingRoom"
+              this.props.page === "videoConferencing" || this.props.page === "videoConferencingRoom"
                 ? { color: "#FAFF04" }
                 : { color: "#ffffff" }
             }
@@ -54,11 +53,7 @@ export default class Header extends Component {
         <Link to={"/onlineSurvey"}>
           <StyledNavitgationItem
             onClick={() => this.props.handleNavigation("onlineSurvey")}
-            style={
-              this.props.page === "onlineSurvey"
-                ? { color: "#FAFF04" }
-                : { color: "#ffffff" }
-            }
+            style={this.props.page === "onlineSurvey" ? { color: "#FAFF04" } : { color: "#ffffff" }}
           >
             Survey
           </StyledNavitgationItem>
@@ -67,11 +62,7 @@ export default class Header extends Component {
         <Link to={"/onlineExam"}>
           <StyledNavitgationItem
             onClick={() => this.props.handleNavigation("onlineExam")}
-            style={
-              this.props.page === "onlineExam"
-                ? { color: "#FAFF04" }
-                : { color: "#ffffff" }
-            }
+            style={this.props.page === "onlineExam" ? { color: "#FAFF04" } : { color: "#ffffff" }}
           >
             Exam
           </StyledNavitgationItem>
@@ -83,17 +74,16 @@ export default class Header extends Component {
   renderUser = () => {
     return (
       <StyledUserContainer>
-        <Button
-          onClick={() =>
-            this.setState({ userDropdown: !this.state.userDropdown })
-          }
-          icon="user"
-          size="medium"
-        />
         <Dropdown
           open={this.state.userDropdown}
           pointing="top right"
-          icon={null}
+          icon="user"
+          text={this.props.loginUser.name}
+          button
+          labeled
+          className="icon"
+          floating
+          onClick={() => this.setState({ userDropdown: !this.state.userDropdown })}
         >
           <Dropdown.Menu>
             <Link to={"/"}>{this.generateUserOption()}</Link>
