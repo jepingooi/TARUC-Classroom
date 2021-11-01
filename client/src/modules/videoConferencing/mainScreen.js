@@ -30,6 +30,9 @@ export default class mainScreen extends Component {
             key={`All${eachParticipant.id}`}
             onClick={() => this.handleScreen("focus", eachParticipant)}
           >
+            <ScreenContainer>
+              <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
+            </ScreenContainer>
             <ParticipantDetailContainer>
               <div>{eachParticipant.name}</div>
               <div>
@@ -56,7 +59,8 @@ export default class mainScreen extends Component {
 
   generateParticipantSplit = () => {
     let collectedParticipantScreen = [];
-    let loginUser = [];
+    let loginUserScreen = [];
+    let collectedScreen = [];
     let sharingScreenIcon = <Icon name="laptop" size="large" />;
     let cameraOnIcon = <Icon name="video camera" size="large" />;
     let microphoneMutedIcon = <Icon name="microphone slash" size="large" />;
@@ -68,11 +72,14 @@ export default class mainScreen extends Component {
       // eslint-disable-next-line
       participantList.map((eachParticipant, i) => {
         if (eachParticipant.id === this.props.loginUser.email) {
-          loginUser.push(
+          loginUserScreen.push(
             <SplitRightParticipant
               key={`LoginUser${eachParticipant.id}`}
               onClick={() => this.handleScreen("focus", eachParticipant)}
             >
+              <ScreenContainer>
+                <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
+              </ScreenContainer>
               <ParticipantDetailContainer>
                 <div>{eachParticipant.name}</div>
                 <div>
@@ -90,6 +97,9 @@ export default class mainScreen extends Component {
               key={`Split${eachParticipant.id}`}
               onClick={() => this.handleScreen("focus", eachParticipant)}
             >
+              <ScreenContainer>
+                <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
+              </ScreenContainer>
               <ParticipantDetailContainer>
                 <div>{eachParticipant.name}</div>
                 <div>
@@ -103,11 +113,11 @@ export default class mainScreen extends Component {
           );
         }
 
-        collectedParticipantScreen = loginUser.concat(collectedParticipantScreen);
+        collectedScreen = loginUserScreen.concat(collectedParticipantScreen);
       });
     }
 
-    return collectedParticipantScreen;
+    return collectedScreen;
   };
 
   renderAllScreen = () => {
@@ -118,6 +128,9 @@ export default class mainScreen extends Component {
     return (
       <FocusContainer>
         <ParticipantFocusScreen onClick={() => this.handleScreen("all")}>
+          <ScreenContainer>
+            <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
+          </ScreenContainer>
           <FocusParticipantDetailContainer>{this.state.selectedParticipant.name}</FocusParticipantDetailContainer>
         </ParticipantFocusScreen>
         <RightPanelContainer onClick={() => this.handleScreen("split", this.state.selectedParticipant)}>
@@ -131,6 +144,9 @@ export default class mainScreen extends Component {
     return (
       <SplitContainer>
         <SplitLeftContainer onClick={() => this.handleScreen("focus", this.state.selectedParticipant)}>
+          <ScreenContainer>
+            <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
+          </ScreenContainer>
           <FocusParticipantDetailContainer>{this.state.selectedParticipant.name}</FocusParticipantDetailContainer>
         </SplitLeftContainer>
         <SplitRightContainer>{this.generateParticipantSplit()}</SplitRightContainer>
@@ -148,10 +164,17 @@ export default class mainScreen extends Component {
 const ParticipantDetailContainer = styled.div`
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: 15%;
   width: 100%;
   align-items: flex-end;
   justify-content: space-between;
+`;
+
+const ScreenContainer = styled.div`
+  width: 100%;
+  height: 85%;
+  display: flex;
+  border: 1px solid black;
 `;
 
 // All
@@ -184,7 +207,8 @@ const FocusContainer = styled.div`
 
 const FocusParticipantDetailContainer = styled.div`
   display: flex;
-  height: 100%;
+  width: 100%;
+  height: 10%;
   align-items: flex-end;
   justify-content: space-between;
 `;
@@ -197,6 +221,7 @@ const ParticipantFocusScreen = styled.div`
   background-color: #e0e1e2;
   padding: 20px;
   display: flex;
+  flex-direction: column;
 
   :hover {
     cursor: pointer;
@@ -229,11 +254,12 @@ const SplitContainer = styled.div`
 const SplitLeftContainer = styled.div`
   display: flex;
   width: calc(100% - 270px);
-  height: calc(100% - 100px);
+  height: 100%;
   background-color: #e0e1e2;
   border-radius: 20px;
   align-items: flex-end;
   padding: 20px;
+  flex-direction: column;
 
   :hover {
     cursor: pointer;
@@ -255,6 +281,7 @@ const SplitRightParticipant = styled.div`
   background-color: #e0e1e2;
   padding: 20px 10px;
   margin-bottom: 20px;
+  flex-direction: column;
 
   :hover {
     cursor: pointer;
