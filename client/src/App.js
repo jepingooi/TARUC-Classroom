@@ -16,7 +16,7 @@ import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
 initializeApp(firebaseConfig);
 const db = getFirestore();
 
-let rand = Math.floor(Math.random() * 4) + 1;
+let rand = Math.floor(Math.random() * 1) + 1;
 const loginUser = {
   email: `dummy${rand}@gmail.com`,
   name: `Dummy ${rand}`,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal } from "semantic-ui-react";
 import styled from "styled-components";
 import { useReactMediaRecorder } from "react-media-recorder";
@@ -8,7 +8,7 @@ import emailjs, { init } from "emailjs-com";
 // import { firebaseConfig } from "../../firebaseConfig.json";
 // import { initializeApp } from "firebase/app";
 // import { getFirestore, collection, getDoc, getDocs, updateDoc, doc } from "firebase/firestore";
-// import { getStorage, ref, uploadBytes } from "firebase/storage";
+// import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 
 // initializeApp(firebaseConfig);
 // const db = getFirestore();
@@ -20,7 +20,6 @@ init("user_sX4pbznpHOIlHhAofPGDe");
 
 const ScreenRecordingModal = (props) => {
   const [videoId, setVideoId] = useState("");
-
   const {
     status,
     startRecording: startRecord,
@@ -28,7 +27,11 @@ const ScreenRecordingModal = (props) => {
     mediaBlobUrl,
   } = useReactMediaRecorder({ screen: true });
 
-  const startRecording = () => {
+  useEffect(() => {
+    return () => stopRecord();
+  }, []);
+
+  function startRecording() {
     let today = new Date();
     let tempVideoId = `${props.selectedRoom.id}$${getRoomDate(today)}`;
     setVideoId(tempVideoId);
@@ -36,31 +39,50 @@ const ScreenRecordingModal = (props) => {
     props.handleModal(false);
     props.handleRecording(true);
     return startRecord();
-  };
+  }
 
-  const stopRecording = () => {
+  function stopRecording() {
     props.handleRecording(false);
     return stopRecord();
-  };
+  }
 
-  // const uploadToFirebase = () => {
-  //   console.log(mediaBlobUrl);
+  // function uploadToFirebase() {
+  //   const file = new File([mediaBlobUrl], `${mediaBlobUrl}.mp4`, {
+  //     type: "mp4",
+  //   });
   //   let storageRef = ref(storage, `recorded_videos/${videoId}.mp4`);
 
-  // uploadBytes(storageRef, mediaBlobUrl).then((snapshot) => {
-  //   console.log(`Uploaded a blob ${videoId}!`);
-  // });
-  // };
+  //   uploadBytes(storageRef, mediaBlobUrl);
+  //   // const uploadTask = uploadBytesResumable(storageRef, file);
+
+  //   // uploadTask.on("state_changed", (snapshot) => {
+  //   //   const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //   //   console.log("Upload is " + progress + "% done");
+  //   //   switch (snapshot.state) {
+  //   //     case "paused":
+  //   //       console.log("Upload is paused");
+  //   //       break;
+  //   //     case "running":
+  //   //       console.log("Upload is running");
+  //   //       break;
+  //   //   }
+  //   //   if (progress === 100) {
+  //   //     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+  //   //       console.log("File available at", downloadURL);
+  //   //     });
+  //   //   }
+  //   // });
+  // }
 
   // Convert Date to string (DDMMYYYYHHMM)
-  const getRoomDate = (dateTime) => {
+  function getRoomDate(dateTime) {
     let date = `${dateTime.getDate()}${dateTime.getMonth() + 1}${dateTime.getFullYear()}`;
     let time = `${dateTime.getHours()}${("0" + dateTime.getMinutes()).slice(-2)}`;
     let result = date + time;
     return result;
-  };
+  }
 
-  const downloadRecording = () => {
+  function downloadRecording() {
     let pathName = `${videoId}.mp4`;
     let link = document.createElement("a");
 
@@ -69,33 +91,34 @@ const ScreenRecordingModal = (props) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
+  }
 
-  const mailRecording = () => {
+  function mailRecording() {
+    // uploadToFirebase();
     sendFeedback({
       name: props.loginUser.name,
       room_name: props.selectedRoom.name,
       reply_to: props.loginUser.email,
       message: mediaBlobUrl,
     });
-  };
+  }
 
-  const sendFeedback = (variables) => {
+  function sendFeedback(variables) {
     emailjs
       .send(serviceId, templateId, variables)
       .then((res) => {
         console.log("Email successfully sent!");
       })
       .catch((err) => console.error("Oh well, you failed. Here some thoughts on the error that occured:", err));
-  };
+  }
 
-  const renderRecordedVideo = () => {
+  function renderRecordedVideo() {
     return (
       <RecordedVideoContainer>
         <video src={mediaBlobUrl} controls autoPlay width={800} height={400} />;
       </RecordedVideoContainer>
     );
-  };
+  }
 
   return (
     <Modal closeIcon open={props.recordingModal} onClose={() => props.handleModal(false)}>
@@ -109,25 +132,25 @@ const ScreenRecordingModal = (props) => {
 
       <Modal.Actions>
         {status && status !== "recording" && (
-          <Button positive onClick={startRecording}>
+          <Button positive onClick={() => startRecording()}>
             {mediaBlobUrl ? "Record again" : "Start recording"}
           </Button>
         )}
 
         {mediaBlobUrl && status && status === "stopped" && (
-          <Button positive onClick={downloadRecording}>
+          <Button positive onClick={() => downloadRecording()}>
             Download recording
           </Button>
         )}
 
         {mediaBlobUrl && status && status === "stopped" && (
-          <Button positive onClick={mailRecording}>
+          <Button positive onClick={() => mailRecording()}>
             Send this recording to your email
           </Button>
         )}
 
         {status && status === "recording" && (
-          <Button positive onClick={stopRecording}>
+          <Button positive onClick={() => stopRecording()}>
             Stop recording
           </Button>
         )}
