@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React, { Component, createRef } from "react";
+import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button, Modal, Icon } from "semantic-ui-react";
-
 // Modals
 import SettingModal from "./settingModal";
 import PollModal from "./pollModal";
 import MainScreen from "./mainScreen";
 import ChatBox from "./chatBox";
 import ScreenRecordingModal from "./screenRecordingModal";
+import Room from "./connection";
 
 // Firebase
 import { firebaseConfig } from "../../firebaseConfig.json";
@@ -22,13 +22,15 @@ let unsubRoom;
 let unsubChatHistory;
 let unsubAttendance;
 
-export default class VideoConferencingRoom extends Component {
+class VideoConferencingRoom extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginUser: this.props.loginUser,
+      loginUser: props.loginUser,
       recording: false,
       attendanceMarked: false,
+      toggleMicButton: "",
+      toggleVideoButton: "",
 
       // Modal
       hangUpModal: false,
@@ -37,7 +39,17 @@ export default class VideoConferencingRoom extends Component {
       micModal: false,
       recordingModal: false,
       settingModal: false,
+
+      // Video conferencing
+      peers: [],
+      videoFlag: true,
+      audioFlag: false,
+      userUpdate: [],
     };
+    this.socketRef = createRef();
+    this.userVideoRef = createRef();
+    this.peersRef = createRef();
+    this.peersRef.current = [];
   }
 
   onUnload = (e) => {
@@ -233,8 +245,52 @@ export default class VideoConferencingRoom extends Component {
     this.setState({ recording: status });
   };
 
+  // Camera
+  handleCamera = () => {
+    if (this.userVideoRef.current.srcObject) {
+      this.userVideoRef.srcObject.getTracks().forEach(function (track) {
+        if (track.kind === "video") {
+          let bool = track.enabled;
+          this.socketRef.current.emit("change", [
+            this.state.userUpdate,
+            {
+              id: this.socketRef.current.id,
+              videoFlag: !bool,
+              audioFlag: this.state.audioFlag,
+            },
+          ]);
+          track.enabled = !bool;
+          this.setState({ videoFlag: !bool });
+        }
+      });
+    }
+  };
+
+  // Mic
+  handleMic = () => {
+    if (this.userVideoRef.current.srcObject) {
+      this.userVideoRef.srcObject.getTracks().forEach(function (track) {
+        if (track.kind === "audio") {
+          let bool = track.enabled;
+          this.socketRef.current.emit("change", [
+            this.state.userUpdate,
+            {
+              id: this.socketRef.current.id,
+              videoFlag: this.state.videoFlag,
+              audioFlag: !bool,
+            },
+          ]);
+          track.enabled = !bool;
+          this.setState({ audioFlag: !bool });
+        }
+      });
+    }
+  };
+
   // Hang up function
   handleHangUp = async () => {
+    if (!this.state.selectedRoom) return;
+
     let tempParticipantInRoomList = [];
     let participantInRoomList = this.state.selectedRoom.participantInRoomList;
 
@@ -248,6 +304,7 @@ export default class VideoConferencingRoom extends Component {
 
     this.handleModal("hangUpModal", false);
     this.props.handleNavigation("videoConferencing", null);
+    this.props.history.push(`/videoConferencing`);
   };
 
   // Handle open or close modal
@@ -338,7 +395,7 @@ export default class VideoConferencingRoom extends Component {
             />
           )}
 
-          {(this.state.selectedRoom.pollIdList.length > 0 || tempUser.owner) && (
+          {(this.state.selectedRoom?.pollIdList.length > 0 || tempUser.owner) && (
             <Button
               onClick={() => this.handleModal("pollModal", true)}
               icon="list ul"
@@ -358,7 +415,7 @@ export default class VideoConferencingRoom extends Component {
             />
           )}
 
-          {this.state.selectedRoom && this.state.selectedRoom.raiseHand && (
+          {this.state.selectedRoom?.raiseHand && (
             <Button
               onClick={() => this.handleRaiseHand()}
               icon="hand paper"
@@ -368,27 +425,11 @@ export default class VideoConferencingRoom extends Component {
             />
           )}
 
-          {((this.state.selectedRoom && this.state.selectedRoom.mic) || tempUser.owner) && (
-            <Button
-              onClick={() => this.handleModal("micModal", true)}
-              icon={tempUser.mic ? "microphone" : "microphone slash"}
-              size="massive"
-              circular
-              color={tempUser.mic ? "green" : "grey"}
-            />
-          )}
+          {(this.state.selectedRoom?.mic || tempUser.owner) && this.state.toggleMicButton}
 
-          {((this.state.selectedRoom && this.state.selectedRoom.camera) || tempUser.owner) && (
-            <Button
-              onClick={() => this.handleModal("cameraModal", true)}
-              icon={"video camera"}
-              size="massive"
-              circular
-              color={tempUser.camera ? "green" : "grey"}
-            />
-          )}
+          {(this.state.selectedRoom?.camera || tempUser.owner) && this.state.toggleVideoButton}
 
-          {((this.state.selectedRoom && this.state.selectedRoom.shareScreen) || tempUser.owner) && (
+          {(this.state.selectedRoom?.shareScreen || tempUser.owner) && (
             <Button
               onClick={() => this.handleModal("shareScreenModal", true)}
               icon={"laptop"}
@@ -450,6 +491,45 @@ export default class VideoConferencingRoom extends Component {
     );
   };
 
+  // Toggle camera modal
+  renderCameraModal = () => {
+    return (
+      <Modal
+        closeIcon
+        open={this.state.cameraModal}
+        size={"tiny"}
+        onClose={() => this.handleModal("cameraModal", false)}
+      >
+        <Modal.Header>Turn {this.state.videoFlag ? "off" : "on"} camera?</Modal.Header>
+        <Modal.Actions>
+          <Button negative onClick={() => this.handleModal("cameraModal", false)}>
+            Cancel
+          </Button>
+          <Button positive onClick={() => this.handleCamera()}>
+            Confirm
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    );
+  };
+
+  // Toggle camera modal
+  renderMicModal = () => {
+    return (
+      <Modal closeIcon open={this.state.micModal} size={"tiny"} onClose={() => this.handleModal("micModal", false)}>
+        <Modal.Header>Turn {this.state.audioFlag ? "off" : "on"} mic?</Modal.Header>
+        <Modal.Actions>
+          <Button negative onClick={() => this.handleModal("micModal", false)}>
+            Cancel
+          </Button>
+          <Button positive onClick={() => this.handleMic()}>
+            Confirm
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    );
+  };
+
   // Hang up modal
   renderHangUpModal = () => {
     return (
@@ -464,11 +544,9 @@ export default class VideoConferencingRoom extends Component {
           <Button negative onClick={() => this.handleModal("hangUpModal", false)}>
             Cancel
           </Button>
-          <Link to={"/videoConferencing"}>
-            <Button positive onClick={() => this.handleHangUp()}>
-              Confirm
-            </Button>
-          </Link>
+          <Button positive onClick={() => this.handleHangUp()}>
+            Confirm
+          </Button>
         </Modal.Actions>
       </Modal>
     );
@@ -489,10 +567,20 @@ export default class VideoConferencingRoom extends Component {
     );
   };
 
+  renderRoom = () => {
+    return (
+      <Room
+        setButton={(type, data) => this.setState({ [type]: data })}
+        selectedRoom={this.state.selectedRoom}
+        loginUser={this.state.loginUser}
+      />
+    );
+  };
+
   render = () => {
     if (this.state.selectedRoom && this.state.userList && this.state.loginUser) {
       return (
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <StyledContent>
           {this.state.loginUser &&
             this.state.loginUser.email === this.state.selectedRoom.ownerId &&
             this.renderRoomSettingModal()}
@@ -502,28 +590,33 @@ export default class VideoConferencingRoom extends Component {
             this.renderPollModal()}
 
           {this.renderRecordingModal()}
+          {this.renderCameraModal()}
+          {this.renderMicModal()}
           {this.renderHangUpModal()}
           <div>
             <ParticipantListContainer>{this.renderParticipants()}</ParticipantListContainer>
             {this.renderChatBox()}
           </div>
           <div style={{ backgroundColor: "black" }}>
-            <MainScreenContainer>{this.renderMainScreen()}</MainScreenContainer>
+            {this.renderRoom()}
+            {/* <MainScreenContainer>{this.renderMainScreen()}</MainScreenContainer> */}
             <div style={{ backgroundColor: "blue", width: "100%" }}>{this.renderFunctionsButton()}</div>
           </div>
-        </div>
+        </StyledContent>
       );
     } else {
-      return "loading...";
+      return <StyledContent>"loading..."</StyledContent>;
     }
   };
 }
 
-const MainScreenContainer = styled.div`
-  margin: 30px 30px 0px;
-  width: calc(100vw - 60px - 240px);
-  height: calc(100% - 140px);
-  border: 1px black solid;
+export default withRouter(VideoConferencingRoom);
+
+const StyledContent = styled.div`
+  display: flex;
+  width: calc(100vw - 140px);
+  height: calc(100vh - 70px);
+  flex-direction: row;
 `;
 
 const ParticipantListContainer = styled.div`

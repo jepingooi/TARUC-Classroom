@@ -1,26 +1,26 @@
 import React, { Component } from "react";
 import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
-import styled from "styled-components";
 import VideoConferencing from "./modules/videoConferencing/home";
 import VideoConferencingRoom from "./modules/videoConferencing/room";
 import OnlineSurvey from "./modules/onlineSurvey/onlineSurvey";
 import OnlineExam from "./modules/onlineExam/onlineExam";
 import Login from "./modules/login/login";
 import Header from "./components/header";
+import Connection from "./modules/videoConferencing/connection";
 
 // Firebase
 import { firebaseConfig } from "./firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
+import { connect } from "socket.io-client";
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
-let rand = Math.floor(Math.random() * 5) + 1;
+
+let rand = Math.floor(Math.random() * 4) + 1;
 const loginUser = {
   email: `dummy${rand}@gmail.com`,
   name: `Dummy ${rand}`,
-  ownedRoomList: [],
-  participatedRoomList: [],
 };
 
 export default class Home extends Component {
@@ -40,9 +40,9 @@ export default class Home extends Component {
       let secondParam = pathName.split("/")[2];
       if (secondParam) {
         this.joinRoom(secondParam);
-        this.setState({ selectedRoomId: secondParam });
-      }
-    }
+        this.setState({ selectedRoomId: secondParam, page: "videoConferencingRooms" });
+      } else this.setState({ page: "videoConferencing" });
+    } else this.setState({ page: "login" });
   }
 
   // Join a room
@@ -79,7 +79,8 @@ export default class Home extends Component {
       this.handleNavigation("videoConferencingRoom", selectedRoomId);
     } else {
       this.handleNavigation("videoConferencing");
-      window.location.href = "/videoConferencing";
+      // window.location.href = "/videoConferencing";
+      this.props.history.push("/videoConferencing");
     }
   };
 
@@ -89,85 +90,61 @@ export default class Home extends Component {
 
   renderVideoConferencingHome = () => {
     return (
-      <div>
-        {this.renderHeader()}
-        <StyledContent>
-          <VideoConferencing
-            handleNavigation={(page, room) => this.handleNavigation(page, room)}
-            loginUser={this.state.loginUser}
-            joinRoom={(selectedRoomId) => this.joinRoom(selectedRoomId)}
-          />
-        </StyledContent>
-      </div>
+      <VideoConferencing
+        handleNavigation={(page, room) => this.handleNavigation(page, room)}
+        loginUser={this.state.loginUser}
+        joinRoom={(selectedRoomId) => this.joinRoom(selectedRoomId)}
+      />
     );
   };
 
   renderVideoConferencingRoom = () => {
     if (this.state.selectedRoomId) {
       return (
-        <div>
-          {this.renderHeader()}
-          <StyledContent>
-            <VideoConferencingRoom
-              loginUser={this.state.loginUser}
-              selectedRoomId={this.state.selectedRoomId}
-              handleNavigation={(page) => this.handleNavigation(page, null)}
-            />
-          </StyledContent>
-        </div>
+        <VideoConferencingRoom
+          loginUser={this.state.loginUser}
+          selectedRoomId={this.state.selectedRoomId}
+          handleNavigation={(page) => this.handleNavigation(page, null)}
+        />
       );
     }
   };
 
   renderOnlineSurvey = () => {
-    return (
-      <div>
-        {this.renderHeader()}
-        <StyledContent>
-          <OnlineSurvey />
-        </StyledContent>
-      </div>
-    );
+    return <OnlineSurvey />;
   };
 
   renderOnlineExam = () => {
-    return (
-      <div>
-        {this.renderHeader()}
-        <StyledContent>
-          <OnlineExam />
-        </StyledContent>
-      </div>
-    );
+    return <OnlineExam />;
   };
 
   renderErrorPage = () => {
     return <div>Error</div>;
   };
 
-  renderHeader = () => {
-    return (
-      <StyledHeader>
-        <Header
-          page={this.state.page ? this.state.page : ""}
-          handleNavigation={(page) => this.handleNavigation(page)}
-          loginUser={this.state.loginUser}
-        />
-      </StyledHeader>
-    );
+  renderLogin = () => {
+    return <Login handleNavigation={() => this.handleNavigation("videoConferencing", null)} />;
   };
 
-  renderLogin = () => {
-    return (
-      <StyledLogin>
-        <Login />
-      </StyledLogin>
-    );
+  renderConnection = () => {
+    return <Connection loginUser={this.state.loginUser} selectedRoomId={this.state.selectedRoomId} />;
   };
 
   render = () => {
     return (
       <Router>
+        {(this.state.page === "videoConferencing" ||
+          this.state.page === "onlineSurvey" ||
+          this.state.page === "onlineExam" ||
+          this.state.page === "videoConferencingRoom" ||
+          this.state.page === "connection") && (
+          <Header
+            page={this.state.page ? this.state.page : ""}
+            handleNavigation={(page) => this.handleNavigation(page)}
+            loginUser={this.state.loginUser}
+          />
+        )}
+
         <Switch>
           <Route exact path="/">
             {this.renderLogin()}
@@ -175,29 +152,12 @@ export default class Home extends Component {
           <Route exact path={"/videoConferencing"}>
             {this.renderVideoConferencingHome()}
           </Route>
-          <Route path={`/videoConferencing/${this.state.selectedRoomId}`}>{this.renderVideoConferencingRoom()}</Route>
+          <Route path={`/videoConferencing/:roomID`}>{this.renderVideoConferencingRoom()}</Route>
           <Route path={"/onlineSurvey"}>{this.renderOnlineSurvey()}</Route>
           <Route path={"/onlineExam"}>{this.renderOnlineExam()}</Route>
+          <Route path={"/connection"}>{this.renderConnection()}</Route>
         </Switch>
       </Router>
     );
   };
 }
-
-const StyledHeader = styled.div`
-  display: flex;
-  width: 100vw;
-  height: 70px;
-`;
-
-const StyledContent = styled.div`
-  display: flex;
-  width: calc(100vw - 140px);
-  height: calc(100vh - 70px);
-`;
-
-const StyledLogin = styled.div`
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-`;

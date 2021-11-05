@@ -67,6 +67,15 @@ export default class Header extends Component {
             Exam
           </StyledNavitgationItem>
         </Link>
+
+        <Link to={"/connection"}>
+          <StyledNavitgationItem
+            onClick={() => this.props.handleNavigation("connection")}
+            style={this.props.page === "connection" ? { color: "#FAFF04" } : { color: "#ffffff" }}
+          >
+            Connection
+          </StyledNavitgationItem>
+        </Link>
       </StyledNavigationContainer>
     );
   };
@@ -110,6 +119,7 @@ const StyledHeaderContainer = styled.div`
   width: 100vw;
   display: flex;
   align-items: center;
+  height: 70px;
 `;
 
 const StyledLogo = styled.div`

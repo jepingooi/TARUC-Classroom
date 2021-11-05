@@ -34,7 +34,10 @@ class Login extends Component {
       .catch(function () {
         console.log("error");
       });
+
+    this.props.handleNavigation();
   };
+
   render() {
     return (
       <div>
@@ -64,11 +67,7 @@ class Login extends Component {
 
             <br />
             <div style={{ width: "30%" }}>
-              <Link
-                to="/videoConferencing"
-                onClick={this.handleOnClick}
-                className="btn btn-primary"
-              >
+              <Link to="/videoConferencing" onClick={this.handleOnClick} className="btn btn-primary">
                 Login
               </Link>
             </div>

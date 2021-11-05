@@ -318,19 +318,25 @@ export default class VideoConferencingHome extends Component {
   // Main
   render = () => {
     return (
-      <div>
+      <StyledContent>
         {this.renderRoomSettingModal()}
-        <StyledContent>
+        <StyledSubContent>
           {this.renderTopSide()}
           {this.renderBottomTable()}
-        </StyledContent>
+        </StyledSubContent>
         {this.renderPagination()}
-      </div>
+      </StyledContent>
     );
   };
 }
 
 const StyledContent = styled.div`
+  display: flex;
+  width: calc(100vw - 140px);
+  height: calc(100vh - 70px);
+`;
+
+const StyledSubContent = styled.div`
   margin-top: 20px;
   margin-right: 50px;
   margin-left: 50px;

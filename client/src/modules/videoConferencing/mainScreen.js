@@ -1,6 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import styled from "styled-components";
 import { Icon } from "semantic-ui-react";
+
+let sharingScreenIcon = <Icon name="laptop" size="large" />;
+let cameraOnIcon = <Icon name="video camera" size="large" />;
+let microphoneMutedIcon = <Icon name="microphone slash" size="large" />;
+let raiseHandIcon = <Icon name="hand paper" size="large" />;
 
 export default class mainScreen extends Component {
   constructor(props) {
@@ -12,34 +17,64 @@ export default class mainScreen extends Component {
     this.setState({ type: type, selectedParticipant: participant });
   };
 
+  generateVideo = (user) => {
+    if (user.ref) return <video playsInline autoPlay ref={user.ref} style={{ maxHeight: "100%" }} />;
+    else if (user.peer) {
+      let videoRef = createRef();
+      user.peer.on("stream", (stream) => {
+        videoRef.current.srcObject = stream;
+      });
+      return <video playsInline autoPlay ref={videoRef} style={{ maxHeight: "100%" }} />;
+    }
+  };
+
+  filterUser = (participantList, loginUser, loginUserVideoRef, peers) => {
+    let filteredList = [];
+
+    participantList.map((eachParticipant) => {
+      let userData = {
+        id: eachParticipant.id,
+        name: eachParticipant.name,
+        shareScreen: eachParticipant.shareScreen,
+        camera: eachParticipant.camera,
+        mic: eachParticipant.mic,
+        raiseHand: eachParticipant.raiseHand,
+      };
+      if (eachParticipant.id === loginUser.email) userData.ref = loginUserVideoRef;
+      else {
+        peers.map((eachPeer) => {
+          if (eachPeer.userID === eachParticipant.id) {
+            userData.peer = eachPeer.peer;
+          }
+        });
+      }
+
+      filteredList.push(userData);
+    });
+
+    return filteredList;
+  };
+
   generateParticipantScreen = () => {
-    let tempParticipantScreen = [];
     let collectedParticipantScreen = [];
-    let sharingScreenIcon = <Icon name="laptop" size="large" />;
-    let cameraOnIcon = <Icon name="video camera" size="large" />;
-    let microphoneMutedIcon = <Icon name="microphone slash" size="large" />;
-    let raiseHandIcon = <Icon name="hand paper" size="large" />;
 
     if (this.props.selectedRoom?.participantInRoomList?.length > 0) {
       let participantList = this.props.selectedRoom.participantInRoomList;
+      let list = this.filterUser(participantList, this.props.loginUser, this.props.userVideoRef, this.props.peers);
+      let tempParticipantScreen = [];
 
       // eslint-disable-next-line
-      participantList.map((eachParticipant, i) => {
+      list.map((eachUser, i) => {
         tempParticipantScreen.push(
-          <ParticipantContainer
-            key={`All${eachParticipant.id}`}
-            onClick={() => this.handleScreen("focus", eachParticipant)}
-          >
-            <ScreenContainer>
-              <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
-            </ScreenContainer>
+          <ParticipantContainer key={`All${eachUser.id}`} onClick={() => this.handleScreen("focus", eachUser)}>
+            <ScreenContainer>{this.generateVideo(eachUser)}</ScreenContainer>
             <ParticipantDetailContainer>
-              <div>{eachParticipant.name}</div>
+              <div>{eachUser.name}</div>
               <div>
-                {eachParticipant.shareScreen && sharingScreenIcon}
-                {eachParticipant.camera && cameraOnIcon}
-                {!eachParticipant.mic && microphoneMutedIcon}
-                {eachParticipant.raiseHand && raiseHandIcon}
+                {eachUser.shareScreen && sharingScreenIcon}
+                {eachUser.camera && cameraOnIcon}
+                {!eachUser.mic && microphoneMutedIcon}
+                {eachUser.raiseHand && raiseHandIcon}
               </div>
             </ParticipantDetailContainer>
           </ParticipantContainer>
@@ -57,102 +92,96 @@ export default class mainScreen extends Component {
     return collectedParticipantScreen;
   };
 
-  generateParticipantSplit = () => {
-    let collectedParticipantScreen = [];
-    let loginUserScreen = [];
-    let collectedScreen = [];
-    let sharingScreenIcon = <Icon name="laptop" size="large" />;
-    let cameraOnIcon = <Icon name="video camera" size="large" />;
-    let microphoneMutedIcon = <Icon name="microphone slash" size="large" />;
-    let raiseHandIcon = <Icon name="hand paper" size="large" />;
+  // generateParticipantSplit = () => {
+  //   let collectedParticipantScreen = [];
+  //   let loginUserScreen = [];
+  //   let collectedScreen = [];
+  //   let sharingScreenIcon = <Icon name="laptop" size="large" />;
+  //   let cameraOnIcon = <Icon name="video camera" size="large" />;
+  //   let microphoneMutedIcon = <Icon name="microphone slash" size="large" />;
+  //   let raiseHandIcon = <Icon name="hand paper" size="large" />;
 
-    if (this.props.selectedRoom?.participantInRoomList?.length > 0) {
-      let participantList = this.props.selectedRoom.participantInRoomList;
+  //   if (this.props.selectedRoom?.participantInRoomList?.length > 0) {
+  //     let participantList = this.props.selectedRoom.participantInRoomList;
 
-      // eslint-disable-next-line
-      participantList.map((eachParticipant, i) => {
-        if (eachParticipant.id === this.props.loginUser.email) {
-          loginUserScreen.push(
-            <SplitRightParticipant
-              key={`LoginUser${eachParticipant.id}`}
-              onClick={() => this.handleScreen("focus", eachParticipant)}
-            >
-              <ScreenContainer>
-                <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
-              </ScreenContainer>
-              <ParticipantDetailContainer>
-                <div>{eachParticipant.name}</div>
-                <div>
-                  {eachParticipant.shareScreen && sharingScreenIcon}
-                  {eachParticipant.camera && cameraOnIcon}
-                  {!eachParticipant.mic && microphoneMutedIcon}
-                  {eachParticipant.raiseHand && raiseHandIcon}
-                </div>
-              </ParticipantDetailContainer>
-            </SplitRightParticipant>
-          );
-        } else {
-          collectedParticipantScreen.push(
-            <SplitRightParticipant
-              key={`Split${eachParticipant.id}`}
-              onClick={() => this.handleScreen("focus", eachParticipant)}
-            >
-              <ScreenContainer>
-                <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
-              </ScreenContainer>
-              <ParticipantDetailContainer>
-                <div>{eachParticipant.name}</div>
-                <div>
-                  {eachParticipant.shareScreen && sharingScreenIcon}
-                  {eachParticipant.camera && cameraOnIcon}
-                  {!eachParticipant.mic && microphoneMutedIcon}
-                  {eachParticipant.raiseHand && raiseHandIcon}
-                </div>
-              </ParticipantDetailContainer>
-            </SplitRightParticipant>
-          );
-        }
+  //     // eslint-disable-next-line
+  //     participantList.map((eachParticipant, i) => {
+  //       if (eachParticipant.id === this.state.selectedParticipant.id) return;
 
-        collectedScreen = loginUserScreen.concat(collectedParticipantScreen);
-      });
-    }
+  //       if (eachParticipant.id === this.props.loginUser.email) {
+  //         loginUserScreen.push(
+  //           <SplitRightParticipant
+  //             key={`LoginUser${eachParticipant.id}`}
+  //             onClick={() => this.handleScreen("focus", eachParticipant)}
+  //           >
+  //             <ScreenContainer>{this.generateVideo()}</ScreenContainer>
+  //             <ParticipantDetailContainer>
+  //               <div>{eachParticipant.name}</div>
+  //               <div>
+  //                 {eachParticipant.shareScreen && sharingScreenIcon}
+  //                 {eachParticipant.camera && cameraOnIcon}
+  //                 {!eachParticipant.mic && microphoneMutedIcon}
+  //                 {eachParticipant.raiseHand && raiseHandIcon}
+  //               </div>
+  //             </ParticipantDetailContainer>
+  //           </SplitRightParticipant>
+  //         );
+  //       } else {
+  //         collectedParticipantScreen.push(
+  //           <SplitRightParticipant
+  //             key={`Split${eachParticipant.id}`}
+  //             onClick={() => this.handleScreen("focus", eachParticipant)}
+  //           >
+  //             <ScreenContainer>{this.generateVideo()}</ScreenContainer>
+  //             <ParticipantDetailContainer>
+  //               <div>{eachParticipant.name}</div>
+  //               <div>
+  //                 {eachParticipant.shareScreen && sharingScreenIcon}
+  //                 {eachParticipant.camera && cameraOnIcon}
+  //                 {!eachParticipant.mic && microphoneMutedIcon}
+  //                 {eachParticipant.raiseHand && raiseHandIcon}
+  //               </div>
+  //             </ParticipantDetailContainer>
+  //           </SplitRightParticipant>
+  //         );
+  //       }
 
-    return collectedScreen;
-  };
+  //       collectedScreen = loginUserScreen.concat(collectedParticipantScreen);
+  //     });
+  //   }
+
+  //   return collectedScreen;
+  // };
 
   renderAllScreen = () => {
     return <div style={{ overflowY: "auto" }}>{this.generateParticipantScreen()}</div>;
   };
 
-  renderFocusScreen = () => {
-    return (
-      <FocusContainer>
-        <ParticipantFocusScreen onClick={() => this.handleScreen("all")}>
-          <ScreenContainer>
-            <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
-          </ScreenContainer>
-          <FocusParticipantDetailContainer>{this.state.selectedParticipant.name}</FocusParticipantDetailContainer>
-        </ParticipantFocusScreen>
-        <RightPanelContainer onClick={() => this.handleScreen("split", this.state.selectedParticipant)}>
-          <Icon name="arrow alternate circle left outline" size="huge" />
-        </RightPanelContainer>
-      </FocusContainer>
-    );
-  };
+  // renderFocusScreen = () => {
+  //   return (
+  //     <FocusContainer>
+  //       <ParticipantFocusScreen onClick={() => this.handleScreen("all")}>
+  //         <ScreenContainer style={{ height: "95%" }}>{this.generateVideo()}</ScreenContainer>
+  //         <FocusParticipantDetailContainer>{this.state.selectedParticipant.name}</FocusParticipantDetailContainer>
+  //       </ParticipantFocusScreen>
+  //       <RightPanelContainer onClick={() => this.handleScreen("split", this.state.selectedParticipant)}>
+  //         <Icon name="arrow alternate circle left outline" size="huge" />
+  //       </RightPanelContainer>
+  //     </FocusContainer>
+  //   );
+  // };
 
-  renderSplitScreen = () => {
-    return (
-      <SplitContainer>
-        <SplitLeftContainer onClick={() => this.handleScreen("focus", this.state.selectedParticipant)}>
-          <ScreenContainer>
-            <video ref={this.props.setLocalVideoRef} autoPlay playsInline />
-          </ScreenContainer>
-          <FocusParticipantDetailContainer>{this.state.selectedParticipant.name}</FocusParticipantDetailContainer>
-        </SplitLeftContainer>
-        <SplitRightContainer>{this.generateParticipantSplit()}</SplitRightContainer>
-      </SplitContainer>
-    );
-  };
+  // renderSplitScreen = () => {
+  //   return (
+  //     <SplitContainer>
+  //       <SplitLeftContainer onClick={() => this.handleScreen("focus", this.state.selectedParticipant)}>
+  //         <ScreenContainer>{this.generateVideo()}</ScreenContainer>
+  //         <FocusParticipantDetailContainer>{this.state.selectedParticipant.name}</FocusParticipantDetailContainer>
+  //       </SplitLeftContainer>
+  //       <SplitRightContainer>{this.generateParticipantSplit()}</SplitRightContainer>
+  //     </SplitContainer>
+  //   );
+  // };
 
   render = () => {
     if (this.state.type === "all") return this.renderAllScreen();
@@ -174,7 +203,8 @@ const ScreenContainer = styled.div`
   width: 100%;
   height: 85%;
   display: flex;
-  border: 1px solid black;
+  justify-content: center;
+  align-items: center;
 `;
 
 // All
