@@ -1,11 +1,11 @@
-import React, { Component, createRef } from "react";
+import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button, Modal, Icon } from "semantic-ui-react";
+
 // Modals
 import SettingModal from "./settingModal";
 import PollModal from "./pollModal";
-import MainScreen from "./mainScreen";
 import ChatBox from "./chatBox";
 import ScreenRecordingModal from "./screenRecordingModal";
 import Room from "./connection";
@@ -29,27 +29,13 @@ class VideoConferencingRoom extends Component {
       loginUser: props.loginUser,
       recording: false,
       attendanceMarked: false,
-      toggleMicButton: "",
-      toggleVideoButton: "",
 
       // Modal
       hangUpModal: false,
       shareScreenModal: false,
-      cameraModal: false,
-      micModal: false,
       recordingModal: false,
       settingModal: false,
-
-      // Video conferencing
-      peers: [],
-      videoFlag: true,
-      audioFlag: false,
-      userUpdate: [],
     };
-    this.socketRef = createRef();
-    this.userVideoRef = createRef();
-    this.peersRef = createRef();
-    this.peersRef.current = [];
   }
 
   onUnload = (e) => {
@@ -245,48 +231,6 @@ class VideoConferencingRoom extends Component {
     this.setState({ recording: status });
   };
 
-  // Camera
-  handleCamera = () => {
-    if (this.userVideoRef.current.srcObject) {
-      this.userVideoRef.srcObject.getTracks().forEach(function (track) {
-        if (track.kind === "video") {
-          let bool = track.enabled;
-          this.socketRef.current.emit("change", [
-            this.state.userUpdate,
-            {
-              id: this.socketRef.current.id,
-              videoFlag: !bool,
-              audioFlag: this.state.audioFlag,
-            },
-          ]);
-          track.enabled = !bool;
-          this.setState({ videoFlag: !bool });
-        }
-      });
-    }
-  };
-
-  // Mic
-  handleMic = () => {
-    if (this.userVideoRef.current.srcObject) {
-      this.userVideoRef.srcObject.getTracks().forEach(function (track) {
-        if (track.kind === "audio") {
-          let bool = track.enabled;
-          this.socketRef.current.emit("change", [
-            this.state.userUpdate,
-            {
-              id: this.socketRef.current.id,
-              videoFlag: this.state.videoFlag,
-              audioFlag: !bool,
-            },
-          ]);
-          track.enabled = !bool;
-          this.setState({ audioFlag: !bool });
-        }
-      });
-    }
-  };
-
   // Hang up function
   handleHangUp = async () => {
     if (!this.state.selectedRoom) return;
@@ -409,45 +353,6 @@ class VideoConferencingRoom extends Component {
     );
   };
 
-  // Toggle camera modal
-  renderCameraModal = () => {
-    return (
-      <Modal
-        closeIcon
-        open={this.state.cameraModal}
-        size={"tiny"}
-        onClose={() => this.handleModal("cameraModal", false)}
-      >
-        <Modal.Header>Turn {this.state.videoFlag ? "off" : "on"} camera?</Modal.Header>
-        <Modal.Actions>
-          <Button negative onClick={() => this.handleModal("cameraModal", false)}>
-            Cancel
-          </Button>
-          <Button positive onClick={() => this.handleCamera()}>
-            Confirm
-          </Button>
-        </Modal.Actions>
-      </Modal>
-    );
-  };
-
-  // Toggle camera modal
-  renderMicModal = () => {
-    return (
-      <Modal closeIcon open={this.state.micModal} size={"tiny"} onClose={() => this.handleModal("micModal", false)}>
-        <Modal.Header>Turn {this.state.audioFlag ? "off" : "on"} mic?</Modal.Header>
-        <Modal.Actions>
-          <Button negative onClick={() => this.handleModal("micModal", false)}>
-            Cancel
-          </Button>
-          <Button positive onClick={() => this.handleMic()}>
-            Confirm
-          </Button>
-        </Modal.Actions>
-      </Modal>
-    );
-  };
-
   // Hang up modal
   renderHangUpModal = () => {
     return (
@@ -505,8 +410,6 @@ class VideoConferencingRoom extends Component {
             this.renderPollModal()}
 
           {this.renderRecordingModal()}
-          {this.renderCameraModal()}
-          {this.renderMicModal()}
           {this.renderHangUpModal()}
 
           <div>
