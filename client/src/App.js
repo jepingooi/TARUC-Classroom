@@ -12,7 +12,6 @@ import Connection from "./modules/videoConferencing/connection";
 import { firebaseConfig } from "./firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
-import { connect } from "socket.io-client";
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -63,9 +62,9 @@ export default class Home extends Component {
         let participantData = {
           id: this.state.loginUser.email,
           name: this.state.loginUser.name,
-          mic: false,
+          mic: true,
           shareScreen: false,
-          camera: false,
+          camera: true,
           raiseHand: false,
         };
 
@@ -79,7 +78,6 @@ export default class Home extends Component {
       this.handleNavigation("videoConferencingRoom", selectedRoomId);
     } else {
       this.handleNavigation("videoConferencing");
-      // window.location.href = "/videoConferencing";
       this.props.history.push("/videoConferencing");
     }
   };
@@ -134,9 +132,9 @@ export default class Home extends Component {
     return (
       <Router>
         {(this.state.page === "videoConferencing" ||
+          this.state.page === "videoConferencingRoom" ||
           this.state.page === "onlineSurvey" ||
           this.state.page === "onlineExam" ||
-          this.state.page === "videoConferencingRoom" ||
           this.state.page === "connection") && (
           <Header
             page={this.state.page ? this.state.page : ""}

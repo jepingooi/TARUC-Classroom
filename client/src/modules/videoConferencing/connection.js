@@ -1,8 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import io from "socket.io-client";
-import Peer from "simple-peer";
 import styled from "styled-components";
 import { Button, Icon } from "semantic-ui-react";
+import io from "socket.io-client";
+import Peer from "simple-peer";
+
+// Firebase
+import { firebaseConfig } from "../../firebaseConfig.json";
+import { initializeApp } from "firebase/app";
+import { getFirestore, updateDoc, doc } from "firebase/firestore";
+
+initializeApp(firebaseConfig);
+const db = getFirestore();
 
 const FunctionButtons = (props) => {
   const selectedRoom = props.selectedRoom;
@@ -71,8 +79,25 @@ const FunctionButtons = (props) => {
           />
         )}
 
-        {(selectedRoom.mic || tempUser.owner) && props.toggleMicButton()}
-        {(selectedRoom.camera || tempUser.owner) && props.toggleVideoButton()}
+        {(selectedRoom.mic || tempUser.owner) && (
+          <Button
+            icon={props.audioFlag ? "microphone" : "microphone slash"}
+            size="massive"
+            circular
+            color={props.audioFlag ? "green" : "grey"}
+            onClick={() => props.toggleMic()}
+          />
+        )}
+
+        {(selectedRoom.camera || tempUser.owner) && (
+          <Button
+            icon={"video camera"}
+            size="massive"
+            circular
+            color={props.videoFlag ? "green" : "grey"}
+            onClick={() => props.toggleCamera()}
+          />
+        )}
 
         {(selectedRoom.shareScreen || tempUser.owner) && (
           <Button
@@ -179,88 +204,72 @@ const Room = (props) => {
     return peer;
   }
 
-  function toggleMicButton() {
-    return (
-      <Button
-        icon={audioFlag ? "microphone" : "microphone slash"}
-        size="massive"
-        circular
-        color={audioFlag ? "green" : "grey"}
-        onClick={() => {
-          if (userVideoRef.current.srcObject) {
-            userVideoRef.current.srcObject.getTracks().forEach(function (track) {
-              if (track.kind === "audio") {
-                if (track.enabled) {
-                  socketRef.current.emit("change", [
-                    ...userUpdate,
-                    {
-                      id: socketRef.current.id,
-                      videoFlag,
-                      audioFlag: false,
-                    },
-                  ]);
-                  track.enabled = false;
-                  setAudioFlag(false);
-                } else {
-                  socketRef.current.emit("change", [
-                    ...userUpdate,
-                    {
-                      id: socketRef.current.id,
-                      videoFlag,
-                      audioFlag: true,
-                    },
-                  ]);
-                  track.enabled = true;
-                  setAudioFlag(true);
-                }
-              }
-            });
-          }
-        }}
-      />
-    );
+  function toggleMic() {
+    if (userVideoRef.current.srcObject) {
+      userVideoRef.current.srcObject.getTracks().forEach(function (track) {
+        if (track.kind === "audio") {
+          let status = !track.enabled;
+          socketRef.current.emit("change", [
+            ...userUpdate,
+            {
+              id: socketRef.current.id,
+              videoFlag,
+              audioFlag: status,
+            },
+          ]);
+          track.enabled = status;
+          setAudioFlag(status);
+          updateStatusInFirebase("mic", status);
+        }
+      });
+    }
   }
 
-  function toggleVideoButton() {
-    return (
-      <Button
-        icon={"video camera"}
-        size="massive"
-        circular
-        color={videoFlag ? "green" : "grey"}
-        onClick={() => {
-          if (userVideoRef.current.srcObject) {
-            userVideoRef.current.srcObject.getTracks().forEach(function (track) {
-              if (track.kind === "video") {
-                if (track.enabled) {
-                  socketRef.current.emit("change", [
-                    ...userUpdate,
-                    {
-                      id: socketRef.current.id,
-                      videoFlag: false,
-                      audioFlag,
-                    },
-                  ]);
-                  track.enabled = false;
-                  setVideoFlag(false);
-                } else {
-                  socketRef.current.emit("change", [
-                    ...userUpdate,
-                    {
-                      id: socketRef.current.id,
-                      videoFlag: true,
-                      audioFlag,
-                    },
-                  ]);
-                  track.enabled = true;
-                  setVideoFlag(true);
-                }
-              }
-            });
-          }
-        }}
-      />
-    );
+  function toggleCamera() {
+    if (userVideoRef.current.srcObject) {
+      userVideoRef.current.srcObject.getTracks().forEach(function (track) {
+        if (track.kind === "video") {
+          let status = !track.enabled;
+          socketRef.current.emit("change", [
+            ...userUpdate,
+            {
+              id: socketRef.current.id,
+              videoFlag: status,
+              audioFlag,
+            },
+          ]);
+          track.enabled = status;
+          setVideoFlag(status);
+          updateStatusInFirebase("camera", status);
+        }
+      });
+    }
+  }
+
+  async function updateStatusInFirebase(type, status) {
+    let onlineUserList = Object.assign([], selectedRoom.participantInRoomList);
+
+    // eslint-disable-next-line
+    onlineUserList.map((eachUser) => {
+      if (eachUser.id === loginUser.email) {
+        eachUser[type] = status;
+      }
+    });
+
+    let roomRef = doc(db, "videoConferencingRooms", selectedRoom.id);
+    await updateDoc(roomRef, { participantInRoomList: onlineUserList });
+  }
+
+  // id to name & id
+  function getUserDetail(userID) {
+    let name = "";
+    selectedRoom.participantInRoomList.map((eachParticipant) => {
+      if (eachParticipant.id === userID) {
+        name = eachParticipant.name;
+      }
+    });
+
+    return name;
   }
 
   return (
@@ -293,25 +302,15 @@ const Room = (props) => {
             });
           }
 
-          // Get user name
-          let name = "";
-          let id = "";
-          selectedRoom.participantInRoomList.map((eachParticipant) => {
-            if (eachParticipant.id === peer.userID) {
-              name = eachParticipant.name;
-              id = eachParticipant.id;
-            }
-          });
-
           // Collect all screen
           return (
             // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
-            <ParticipantContainer key={id}>
+            <ParticipantContainer key={peer.userID}>
               <ScreenContainer>
                 <Video peer={peer.peer} />
               </ScreenContainer>
               <ParticipantDetailContainer>
-                <div>{name}</div>
+                <div>{getUserDetail(peer.userID)}</div>
                 <div>
                   {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
                   {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
@@ -326,8 +325,10 @@ const Room = (props) => {
       <FunctionButtons
         selectedRoom={selectedRoom}
         loginUser={loginUser}
-        toggleMicButton={() => toggleMicButton()}
-        toggleVideoButton={() => toggleVideoButton()}
+        audioFlag={audioFlag}
+        videoFlag={videoFlag}
+        toggleMic={() => toggleMic()}
+        toggleCamera={() => toggleCamera()}
         handleModal={(type, status, action) => props.handleModal(type, status, action)}
         handleRaiseHand={() => props.handleRaiseHand()}
         recording={props.recording}
