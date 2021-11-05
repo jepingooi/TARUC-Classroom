@@ -1,8 +1,94 @@
-import React, { createRef, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
 import { Button, Icon } from "semantic-ui-react";
+
+const FunctionButtons = (props) => {
+  const selectedRoom = props.selectedRoom;
+  const loginUser = props.loginUser;
+
+  useEffect(() => {
+    return () => handleHangUp();
+  }, []);
+
+  function handleHangUp() {
+    props.socketRef.current.disconnect();
+    props.handleModal("hangUpModal", true);
+  }
+
+  let tempUser = {};
+  // eslint-disable-next-line
+  selectedRoom.participantInRoomList.map((eachParticipant) => {
+    if (eachParticipant.id === loginUser.email) {
+      tempUser = eachParticipant;
+
+      if (eachParticipant.id === selectedRoom.ownerId) tempUser.owner = true;
+      else tempUser.owner = false;
+    }
+  });
+
+  return (
+    <div style={{ margin: "30px" }}>
+      <Button.Group floated="right">
+        {tempUser.owner && (
+          <Button
+            onClick={() => props.handleModal("settingModal", true, "edit")}
+            icon="setting"
+            size="massive"
+            circular
+            color={"grey"}
+          />
+        )}
+
+        {(selectedRoom.pollIdList.length > 0 || tempUser.owner) && (
+          <Button
+            onClick={() => props.handleModal("pollModal", true)}
+            icon="list ul"
+            size="massive"
+            circular
+            color={"grey"}
+          />
+        )}
+
+        {tempUser.owner && (
+          <Button
+            onClick={() => props.handleModal("recordingModal", true)}
+            icon="film"
+            size="massive"
+            circular
+            color={props.recording ? "green" : "grey"}
+          />
+        )}
+
+        {selectedRoom.raiseHand && (
+          <Button
+            onClick={() => props.handleRaiseHand()}
+            icon="hand paper"
+            size="massive"
+            circular
+            color={tempUser.raiseHand ? "green" : "grey"}
+          />
+        )}
+
+        {(selectedRoom.mic || tempUser.owner) && props.toggleMicButton()}
+        {(selectedRoom.camera || tempUser.owner) && props.toggleVideoButton()}
+
+        {(selectedRoom.shareScreen || tempUser.owner) && (
+          <Button
+            onClick={() => props.handleModal("shareScreenModal", true)}
+            icon={"laptop"}
+            size="massive"
+            circular
+            color={tempUser.shareScreen ? "green" : "grey"}
+          />
+        )}
+
+        <Button onClick={() => handleHangUp()} icon="shutdown" size="massive" circular color={"grey"} />
+      </Button.Group>
+    </div>
+  );
+};
 
 const Video = (props) => {
   const ref = useRef();
@@ -26,12 +112,6 @@ const Room = (props) => {
   const peersRef = useRef([]);
   const selectedRoom = props.selectedRoom;
   const loginUser = props.loginUser;
-  const videoConstraints = {
-    minAspectRatio: 1.333,
-    minFrameRate: 60,
-    height: window.innerHeight / 1.8,
-    width: window.innerWidth / 2,
-  };
 
   useEffect(() => {
     socketRef.current = io.connect("/");
@@ -39,12 +119,9 @@ const Room = (props) => {
   }, []);
 
   function createStream() {
-    navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true }).then((stream) => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
       userVideoRef.current.srcObject = stream;
       socketRef.current.emit("join room", selectedRoom.id, loginUser.email);
-
-      // props.setButton("toggleMicButton", toggleMicButton);
-      // props.setButton("toggleVideoButton", toggleVideoButton);
 
       socketRef.current.on("all users", (users) => {
         const peers = [];
@@ -102,7 +179,7 @@ const Room = (props) => {
     return peer;
   }
 
-  const toggleMicButton = () => {
+  function toggleMicButton() {
     return (
       <Button
         icon={audioFlag ? "microphone" : "microphone slash"}
@@ -142,9 +219,9 @@ const Room = (props) => {
         }}
       />
     );
-  };
+  }
 
-  const toggleVideoButton = () => {
+  function toggleVideoButton() {
     return (
       <Button
         icon={"video camera"}
@@ -184,98 +261,85 @@ const Room = (props) => {
         }}
       />
     );
-  };
-
-  // const generateParticipantScreen = () => {
-  //   // Push login user screen first
-  //   let tempParticipantScreen = [];
-  //   tempParticipantScreen.push();
-
-  //   // Push the rest of user
-
-  //   // // Arrange the users into 3/row
-  //   // let collectedParticipantScreen = [];
-  //   // let tempCollectedParticipantScreen = [];
-  //   // tempParticipantScreen.map((eachScreen, i) => {
-  //   //   tempCollectedParticipantScreen.push(eachScreen);
-
-  //   //   if ((i + 1) % 3 === 0 || i + 1 === tempParticipantScreen.length || i === tempParticipantScreen.length) {
-  //   //     collectedParticipantScreen.push(
-  //   //       <ParticipantContainerRow key={`row${i / 2}`}>{tempCollectedParticipantScreen}</ParticipantContainerRow>
-  //   //     );
-  //   //     tempCollectedParticipantScreen = [];
-  //   //   }
-  //   // });
-
-  //   return tempParticipantScreen;
-  // };
+  }
 
   return (
     <MainScreenContainer>
-      {/* <div style={{ overflowY: "auto" }}>{generateParticipantScreen()}</div> */}
-      <ParticipantContainer key={loginUser.email}>
-        <ScreenContainer>
-          <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%" }} />
-        </ScreenContainer>
-        <ParticipantDetailContainer>
-          <div>{loginUser.name}</div>
-          <div>
-            {videoFlag && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
-            {!audioFlag && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-            {/* {eachUser.shareScreen && sharingScreenIcon}
+      <ParticipantScreenContainer>
+        <ParticipantContainer key={loginUser.email}>
+          <ScreenContainer>
+            <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%" }} />
+          </ScreenContainer>
+          <ParticipantDetailContainer>
+            <div>{loginUser.name}</div>
+            <div>
+              {videoFlag && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
+              {!audioFlag && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
+              {/* {eachUser.shareScreen && sharingScreenIcon}
               {eachUser.raiseHand && raiseHandIcon} */}
-          </div>
-        </ParticipantDetailContainer>
-      </ParticipantContainer>
-      {peers.map((peer) => {
-        // Check audio and video status
-        let audioFlagTemp = false;
-        let videoFlagTemp = false;
-        if (userUpdate) {
-          userUpdate.forEach((entry) => {
-            if (peer?.peerID && peer?.peerID === entry.id) {
-              audioFlagTemp = entry.audioFlag;
-              videoFlagTemp = entry.videoFlag;
+            </div>
+          </ParticipantDetailContainer>
+        </ParticipantContainer>
+        {peers.map((peer) => {
+          // Check audio and video status
+          let audioFlagTemp = true;
+          let videoFlagTemp = true;
+          if (userUpdate) {
+            userUpdate.forEach((entry) => {
+              if (peer?.peerID && peer?.peerID === entry.id) {
+                audioFlagTemp = entry.audioFlag;
+                videoFlagTemp = entry.videoFlag;
+              }
+            });
+          }
+
+          // Get user name
+          let name = "";
+          let id = "";
+          selectedRoom.participantInRoomList.map((eachParticipant) => {
+            if (eachParticipant.id === peer.userID) {
+              name = eachParticipant.name;
+              id = eachParticipant.id;
             }
           });
-        }
 
-        // Get user name
-        let name = "";
-        let id = "";
-        selectedRoom.participantInRoomList.map((eachParticipant) => {
-          if (eachParticipant.id === peer.userID) {
-            name = eachParticipant.name;
-            id = eachParticipant.id;
-          }
-        });
-
-        // Collect all screen
-        return (
-          // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
-          <ParticipantContainer key={id}>
-            <ScreenContainer>
-              <Video peer={peer.peer} />
-            </ScreenContainer>
-            <ParticipantDetailContainer>
-              <div>{name}</div>
-              <div>
-                {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
-                {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-                {/* {eachUser.shareScreen && sharingScreenIcon}
+          // Collect all screen
+          return (
+            // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
+            <ParticipantContainer key={id}>
+              <ScreenContainer>
+                <Video peer={peer.peer} />
+              </ScreenContainer>
+              <ParticipantDetailContainer>
+                <div>{name}</div>
+                <div>
+                  {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
+                  {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
+                  {/* {eachUser.shareScreen && sharingScreenIcon}
                 {eachUser.raiseHand && raiseHandIcon} */}
-              </div>
-            </ParticipantDetailContainer>
-          </ParticipantContainer>
-        );
-      })}
+                </div>
+              </ParticipantDetailContainer>
+            </ParticipantContainer>
+          );
+        })}
+      </ParticipantScreenContainer>
+      <FunctionButtons
+        selectedRoom={selectedRoom}
+        loginUser={loginUser}
+        toggleMicButton={() => toggleMicButton()}
+        toggleVideoButton={() => toggleVideoButton()}
+        handleModal={(type, status, action) => props.handleModal(type, status, action)}
+        handleRaiseHand={() => props.handleRaiseHand()}
+        recording={props.recording}
+        socketRef={socketRef}
+      />
     </MainScreenContainer>
   );
 };
 
 export default Room;
 
-const MainScreenContainer = styled.div`
+const ParticipantScreenContainer = styled.div`
   margin: 30px 30px 0px;
   width: calc(100vw - 60px - 240px);
   height: calc(100% - 140px);
@@ -283,6 +347,14 @@ const MainScreenContainer = styled.div`
   display: flex;
   flex-direction: row;
   overflow-y: auto;
+`;
+
+const MainScreenContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: black;
 `;
 
 const ParticipantContainer = styled.div`

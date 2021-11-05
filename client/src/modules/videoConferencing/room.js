@@ -369,88 +369,6 @@ class VideoConferencingRoom extends Component {
     return onlineUser;
   };
 
-  // All function buttons
-  renderFunctionsButton = () => {
-    let tempUser = {};
-    // eslint-disable-next-line
-    this.state.selectedRoom.participantInRoomList.map((eachParticipant) => {
-      if (eachParticipant.id === this.state.loginUser.email) {
-        tempUser = eachParticipant;
-
-        if (eachParticipant.id === this.state.selectedRoom.ownerId) tempUser.owner = true;
-        else tempUser.owner = false;
-      }
-    });
-
-    return (
-      <div style={{ margin: "30px" }}>
-        <Button.Group floated="right">
-          {tempUser.owner && (
-            <Button
-              onClick={() => this.handleModal("settingModal", true, "edit")}
-              icon="setting"
-              size="massive"
-              circular
-              color={"grey"}
-            />
-          )}
-
-          {(this.state.selectedRoom?.pollIdList.length > 0 || tempUser.owner) && (
-            <Button
-              onClick={() => this.handleModal("pollModal", true)}
-              icon="list ul"
-              size="massive"
-              circular
-              color={"grey"}
-            />
-          )}
-
-          {tempUser.owner && (
-            <Button
-              onClick={() => this.handleModal("recordingModal", true)}
-              icon="film"
-              size="massive"
-              circular
-              color={this.state.recording ? "green" : "grey"}
-            />
-          )}
-
-          {this.state.selectedRoom?.raiseHand && (
-            <Button
-              onClick={() => this.handleRaiseHand()}
-              icon="hand paper"
-              size="massive"
-              circular
-              color={tempUser.raiseHand ? "green" : "grey"}
-            />
-          )}
-
-          {(this.state.selectedRoom?.mic || tempUser.owner) && this.state.toggleMicButton}
-
-          {(this.state.selectedRoom?.camera || tempUser.owner) && this.state.toggleVideoButton}
-
-          {(this.state.selectedRoom?.shareScreen || tempUser.owner) && (
-            <Button
-              onClick={() => this.handleModal("shareScreenModal", true)}
-              icon={"laptop"}
-              size="massive"
-              circular
-              color={tempUser.shareScreen ? "green" : "grey"}
-            />
-          )}
-
-          <Button
-            onClick={() => this.handleModal("hangUpModal", true)}
-            icon="shutdown"
-            size="massive"
-            circular
-            color={"grey"}
-          />
-        </Button.Group>
-      </div>
-    );
-  };
-
   // Setting modal
   renderRoomSettingModal = () => {
     return (
@@ -552,11 +470,6 @@ class VideoConferencingRoom extends Component {
     );
   };
 
-  // Big main screen
-  renderMainScreen = () => {
-    return <MainScreen selectedRoom={this.state.selectedRoom} loginUser={this.state.loginUser} />;
-  };
-
   renderChatBox = () => {
     return (
       <ChatBox
@@ -567,12 +480,14 @@ class VideoConferencingRoom extends Component {
     );
   };
 
-  renderRoom = () => {
+  renderMainScreen = () => {
     return (
       <Room
-        setButton={(type, data) => this.setState({ [type]: data })}
         selectedRoom={this.state.selectedRoom}
         loginUser={this.state.loginUser}
+        handleModal={(type, status, action) => this.handleModal(type, status, action)}
+        handleRaiseHand={() => this.handleRaiseHand()}
+        recording={this.state.recording}
       />
     );
   };
@@ -593,15 +508,13 @@ class VideoConferencingRoom extends Component {
           {this.renderCameraModal()}
           {this.renderMicModal()}
           {this.renderHangUpModal()}
+
           <div>
             <ParticipantListContainer>{this.renderParticipants()}</ParticipantListContainer>
             {this.renderChatBox()}
           </div>
-          <div style={{ backgroundColor: "black" }}>
-            {this.renderRoom()}
-            {/* <MainScreenContainer>{this.renderMainScreen()}</MainScreenContainer> */}
-            <div style={{ backgroundColor: "blue", width: "100%" }}>{this.renderFunctionsButton()}</div>
-          </div>
+
+          {this.renderMainScreen()}
         </StyledContent>
       );
     } else {
@@ -614,7 +527,7 @@ export default withRouter(VideoConferencingRoom);
 
 const StyledContent = styled.div`
   display: flex;
-  width: calc(100vw - 140px);
+  width: 100%;
   height: calc(100vh - 70px);
   flex-direction: row;
 `;
