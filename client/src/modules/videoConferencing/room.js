@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Button, Modal, Icon } from "semantic-ui-react";
+import { v4 as uuidv4 } from "uuid";
 
 // Modals
 import SettingModal from "./settingModal";
@@ -211,6 +212,22 @@ class VideoConferencingRoom extends Component {
     return hours + " Hour(s) " + minutes + " Minute(s) " + seconds + " Second(s)";
   };
 
+  // Input new message in chat box
+  inputNewMessage = async (message) => {
+    let tempChatMessageList = this.state.chatMessageList;
+    let id = uuidv4();
+
+    tempChatMessageList.push({
+      id: id,
+      message: message,
+      sender: this.props.loginUser.name,
+      time: new Date(),
+    });
+
+    let chatHistoryRef = doc(db, "chatHistory", this.state.selectedRoom.id);
+    await updateDoc(chatHistoryRef, { messageList: tempChatMessageList });
+  };
+
   // Raise hand
   handleRaiseHand = async () => {
     let onlineUserList = Object.assign([], this.state.selectedRoom.participantInRoomList);
@@ -221,6 +238,8 @@ class VideoConferencingRoom extends Component {
         eachUser.raiseHand = !eachUser.raiseHand;
       }
     });
+
+    this.inputNewMessage(`**${this.state.loginUser.name} raised hand.**`);
 
     let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
     await updateDoc(roomRef, { participantInRoomList: onlineUserList });

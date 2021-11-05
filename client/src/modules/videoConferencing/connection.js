@@ -284,8 +284,6 @@ const Room = (props) => {
             <div>
               {videoFlag && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
               {!audioFlag && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-              {/* {eachUser.shareScreen && sharingScreenIcon}
-              {eachUser.raiseHand && raiseHandIcon} */}
             </div>
           </ParticipantDetailContainer>
         </ParticipantContainer>
@@ -314,8 +312,6 @@ const Room = (props) => {
                 <div>
                   {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
                   {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-                  {/* {eachUser.shareScreen && sharingScreenIcon}
-                {eachUser.raiseHand && raiseHandIcon} */}
                 </div>
               </ParticipantDetailContainer>
             </ParticipantContainer>
