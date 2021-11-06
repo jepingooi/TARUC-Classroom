@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Button, Icon } from "semantic-ui-react";
+import { Button, Icon, Modal } from "semantic-ui-react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 
@@ -85,7 +85,9 @@ const FunctionButtons = (props) => {
             size="massive"
             circular
             color={props.audioFlag ? "green" : "grey"}
-            onClick={() => props.toggleMic()}
+            onClick={() => {
+              props.audioFlag ? props.toggleMic() : props.setMicModal();
+            }}
           />
         )}
 
@@ -95,7 +97,9 @@ const FunctionButtons = (props) => {
             size="massive"
             circular
             color={props.videoFlag ? "green" : "grey"}
-            onClick={() => props.toggleCamera()}
+            onClick={() => {
+              props.videoFlag ? props.toggleCamera() : props.setCameraModal();
+            }}
           />
         )}
 
@@ -137,6 +141,8 @@ const Room = (props) => {
   const peersRef = useRef([]);
   const selectedRoom = props.selectedRoom;
   const loginUser = props.loginUser;
+  const [micModal, setMicModal] = useState(false);
+  const [cameraModal, setCameraModal] = useState(false);
 
   useEffect(() => {
     socketRef.current = io.connect("/");
@@ -144,42 +150,46 @@ const Room = (props) => {
   }, []);
 
   function createStream() {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-      userVideoRef.current.srcObject = stream;
-      socketRef.current.emit("join room", selectedRoom.id, loginUser.email);
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        userVideoRef.current.srcObject = stream;
+        socketRef.current.emit("join room", selectedRoom.id, loginUser.email);
 
-      socketRef.current.on("all users", (users) => {
-        const peers = [];
-        users.forEach((user) => {
-          const peer = createPeer(user.socketID, socketRef.current.id, stream);
-          peersRef.current.push({ userID: user.userID, peerID: user.socketID, peer });
-          peers.push({ userID: user.userID, peerID: user.socketID, peer });
+        socketRef.current.on("all users", (users) => {
+          const peers = [];
+          users.forEach((user) => {
+            const peer = createPeer(user.socketID, socketRef.current.id, stream);
+            peersRef.current.push({ userID: user.userID, peerID: user.socketID, peer });
+            peers.push({ userID: user.userID, peerID: user.socketID, peer });
+          });
+          setPeers(peers);
         });
-        setPeers(peers);
-      });
 
-      socketRef.current.on("user joined", (payload) => {
-        const peer = addPeer(payload.signal, payload.callerID, stream);
-        peersRef.current.push({ userID: payload.userID, peerID: payload.callerID, peer });
-        const peerObj = { userID: payload.userID, peerID: payload.callerID, peer };
-        setPeers((users) => [...users, peerObj]);
-      });
+        socketRef.current.on("user joined", (payload) => {
+          const peer = addPeer(payload.signal, payload.callerID, stream);
+          peersRef.current.push({ userID: payload.userID, peerID: payload.callerID, peer });
+          const peerObj = { userID: payload.userID, peerID: payload.callerID, peer };
+          setPeers((users) => [...users, peerObj]);
+        });
 
-      socketRef.current.on("user left", (id) => {
-        const peerObj = peersRef.current.find((p) => p.peerID === id);
-        if (peerObj) peerObj.peer.destroy();
-        const peers = peersRef.current.filter((p) => p.peerID !== id);
-        peersRef.current = peers;
-        setPeers(peers);
-      });
+        socketRef.current.on("user left", (id) => {
+          const peerObj = peersRef.current.find((p) => p.peerID === id);
+          if (peerObj) peerObj.peer.destroy();
+          const peers = peersRef.current.filter((p) => p.peerID !== id);
+          peersRef.current = peers;
+          setPeers(peers);
+        });
 
-      socketRef.current.on("receiving returned signal", (payload) => {
-        const item = peersRef.current.find((p) => p.peerID === payload.id);
-        item.peer.signal(payload.signal);
-      });
+        socketRef.current.on("receiving returned signal", (payload) => {
+          const item = peersRef.current.find((p) => p.peerID === payload.id);
+          item.peer.signal(payload.signal);
+        });
 
-      socketRef.current.on("change", (payload) => setUserUpdate(payload));
-    });
+        socketRef.current.on("change", (payload) => setUserUpdate(payload));
+      })
+      .then(() => toggleMic())
+      .then(() => toggleCamera());
   }
 
   function createPeer(userToSignal, callerID, stream) {
@@ -205,6 +215,7 @@ const Room = (props) => {
   }
 
   function toggleMic() {
+    setMicModal(false);
     if (userVideoRef.current.srcObject) {
       userVideoRef.current.srcObject.getTracks().forEach(function (track) {
         if (track.kind === "audio") {
@@ -226,6 +237,7 @@ const Room = (props) => {
   }
 
   function toggleCamera() {
+    setCameraModal(false);
     if (userVideoRef.current.srcObject) {
       userVideoRef.current.srcObject.getTracks().forEach(function (track) {
         if (track.kind === "video") {
@@ -272,8 +284,44 @@ const Room = (props) => {
     return name;
   }
 
+  // Mic modal
+  function renderMicModal() {
+    return (
+      <Modal closeIcon open={micModal} size={"tiny"} onClose={() => setMicModal(false)}>
+        <Modal.Header>Turning on mic?</Modal.Header>
+        <Modal.Actions>
+          <Button negative onClick={() => setMicModal(false)}>
+            Cancel
+          </Button>
+          <Button positive onClick={() => toggleMic()}>
+            Confirm
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    );
+  }
+
+  // Camera modal
+  function renderCameraModal() {
+    return (
+      <Modal closeIcon open={cameraModal} size={"tiny"} onClose={() => setCameraModal(false)}>
+        <Modal.Header>Turning on camera?</Modal.Header>
+        <Modal.Actions>
+          <Button negative onClick={() => setCameraModal(false)}>
+            Cancel
+          </Button>
+          <Button positive onClick={() => toggleCamera()}>
+            Confirm
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    );
+  }
+
   return (
     <MainScreenContainer>
+      {renderMicModal()}
+      {renderCameraModal()}
       <ParticipantScreenContainer>
         <ParticipantContainer key={loginUser.email}>
           <ScreenContainer>
@@ -329,6 +377,8 @@ const Room = (props) => {
         handleRaiseHand={() => props.handleRaiseHand()}
         recording={props.recording}
         socketRef={socketRef}
+        setMicModal={() => setMicModal(true)}
+        setCameraModal={() => setCameraModal(true)}
       />
     </MainScreenContainer>
   );
