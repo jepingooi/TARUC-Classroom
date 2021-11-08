@@ -157,28 +157,29 @@ const Room = (props) => {
         socketRef.current.emit("join room", selectedRoom.id, loginUser.email);
 
         socketRef.current.on("all users", (users) => {
-          const peers = [];
+          const tempPeers = [];
           users.forEach((user) => {
             const peer = createPeer(user.socketID, socketRef.current.id, stream);
             peersRef.current.push({ userID: user.userID, peerID: user.socketID, peer });
-            peers.push({ userID: user.userID, peerID: user.socketID, peer });
+            tempPeers.push({ userID: user.userID, peerID: user.socketID, peer });
           });
-          setPeers(peers);
+          setPeers(tempPeers);
         });
 
         socketRef.current.on("user joined", (payload) => {
           const peer = addPeer(payload.signal, payload.callerID, stream);
           peersRef.current.push({ userID: payload.userID, peerID: payload.callerID, peer });
           const peerObj = { userID: payload.userID, peerID: payload.callerID, peer };
+
           setPeers((users) => [...users, peerObj]);
         });
 
         socketRef.current.on("user left", (id) => {
           const peerObj = peersRef.current.find((p) => p.peerID === id);
           if (peerObj) peerObj.peer.destroy();
-          const peers = peersRef.current.filter((p) => p.peerID !== id);
-          peersRef.current = peers;
-          setPeers(peers);
+          const tempPeers = peersRef.current.filter((p) => p.peerID !== id);
+          peersRef.current = tempPeers;
+          setPeers(tempPeers);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
@@ -272,18 +273,6 @@ const Room = (props) => {
     await updateDoc(roomRef, { participantInRoomList: onlineUserList });
   }
 
-  // id to name & id
-  function getUserDetail(userID) {
-    let name = "";
-    selectedRoom.participantInRoomList.map((eachParticipant) => {
-      if (eachParticipant.id === userID) {
-        name = eachParticipant.name;
-      }
-    });
-
-    return name;
-  }
-
   // Mic modal
   function renderMicModal() {
     return (
@@ -335,35 +324,45 @@ const Room = (props) => {
             </div>
           </ParticipantDetailContainer>
         </ParticipantContainer>
-        {peers.map((peer) => {
-          // Check audio and video status
-          let audioFlagTemp = true;
-          let videoFlagTemp = true;
-          if (userUpdate) {
-            userUpdate.forEach((entry) => {
-              if (peer?.peerID && peer?.peerID === entry.id) {
-                audioFlagTemp = entry.audioFlag;
-                videoFlagTemp = entry.videoFlag;
-              }
-            });
-          }
+        {selectedRoom.participantInRoomList.map((eachUser) => {
+          let tempPeer;
 
-          // Collect all screen
-          return (
-            // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
-            <ParticipantContainer key={peer.userID}>
-              <ScreenContainer>
-                <Video peer={peer.peer} />
-              </ScreenContainer>
-              <ParticipantDetailContainer>
-                <div>{getUserDetail(peer.userID)}</div>
-                <div>
-                  {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
-                  {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-                </div>
-              </ParticipantDetailContainer>
-            </ParticipantContainer>
-          );
+          peers.map((eachPeer) => {
+            if (eachPeer.userID === eachUser.id) {
+              tempPeer = eachPeer;
+            }
+          });
+
+          if (tempPeer) {
+            // Check audio and video status
+            let audioFlagTemp = true;
+            let videoFlagTemp = true;
+            if (userUpdate) {
+              userUpdate.forEach((entry) => {
+                if (tempPeer.peerID && tempPeer.peerID === entry.id) {
+                  audioFlagTemp = entry.audioFlag;
+                  videoFlagTemp = entry.videoFlag;
+                }
+              });
+            }
+
+            // Collect all screen
+            return (
+              // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
+              <ParticipantContainer key={eachUser.id}>
+                <ScreenContainer>
+                  <Video peer={tempPeer.peer} />
+                </ScreenContainer>
+                <ParticipantDetailContainer>
+                  <div>{eachUser.name}</div>
+                  <div>
+                    {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
+                    {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
+                  </div>
+                </ParticipantDetailContainer>
+              </ParticipantContainer>
+            );
+          }
         })}
       </ParticipantScreenContainer>
       <FunctionButtons

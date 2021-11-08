@@ -12,8 +12,7 @@ const socketToRoom = {};
 
 io.on("connection", (socket) => {
   socket.on("join room", (roomID, userID) => {
-    console.log("join room");
-
+    console.log("join room", socket.id);
     let tempUser = { socketID: socket.id, userID: userID };
     if (users[roomID]) users[roomID].push(tempUser);
     else users[roomID] = [tempUser];
@@ -24,27 +23,26 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sending signal", (payload) => {
-    console.log("sending signal");
-    const user = users[payload.roomID].filter((user) => user.socketID === socket.id);
-    user.map((eachUser) => {
-      io.to(payload.userToSignal).emit("user joined", {
-        signal: payload.signal,
-        callerID: payload.callerID,
-        userID: eachUser.userID,
-      });
+    console.log("sending signal", socket.id);
+    let userID = "";
+    users[payload.roomID].forEach((user) => {
+      if (user.socketID === payload.callerID) userID = user.userID;
+    });
+
+    io.to(payload.userToSignal).emit("user joined", {
+      signal: payload.signal,
+      callerID: payload.callerID,
+      userID: userID,
     });
   });
 
   socket.on("returning signal", (payload) => {
-    console.log("returning signal");
-    io.to(payload.callerID).emit("receiving returned signal", {
-      signal: payload.signal,
-      id: socket.id,
-    });
+    console.log("returning signal", socket.id);
+    io.to(payload.callerID).emit("receiving returned signal", { signal: payload.signal, id: socket.id });
   });
 
   socket.on("disconnect", () => {
-    console.log("disconnected");
+    console.log("disconnected", socket.id);
     const roomID = socketToRoom[socket.id];
     let room = users[roomID];
     if (room) {
