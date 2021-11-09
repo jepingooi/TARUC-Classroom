@@ -3,6 +3,8 @@ import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
 import VideoConferencingRoom from "./modules/videoConferencing/room";
 import Survey from "./modules/onlineSurvey/Survey";
+import SurveyDetails from "./modules/onlineSurvey/SurveyDetails";
+import ExamDetails from "./modules/onlineExam/ExamDetails";
 import Exam from "./modules/onlineExam/Exam";
 import Login from "./modules/login/Login";
 import Header from "./components/header";
@@ -163,18 +165,24 @@ export default class App extends Component {
           <Route path={`/videoConferencing/:roomID`}>
             {this.renderVideoConferencingRoom()}
           </Route>
-          <Route path={"/surveys"} exact>
+
+          <Route path={"/surveys/new"} exact></Route>
+          <Route path={"/surveys/:id/edit"}></Route>
+          <Route path={"/surveys/:id"}>
+            <SurveyDetails />
+          </Route>
+          <Route path={"/surveys"}>
             <Survey />
           </Route>
-          <Route path={"/surveys/new"}></Route>
-          <Route path={"/surveys/:id"}></Route>
-          <Route path={"/surveys/:id/edit"}></Route>
-          <Route path={"/exams"} exact></Route>
-          <Route path={"/exams/new"}>
+
+          <Route path={"/exams/new"} exact>
             <Exam />
           </Route>
-          <Route path={"/exams/:id"}></Route>
           <Route path={"/exams/:id/edit"}></Route>
+          <Route path={"/exams/:id"}>
+            <ExamDetails />
+          </Route>
+          <Route path={"/exams"}></Route>
         </Switch>
       </Router>
     );
