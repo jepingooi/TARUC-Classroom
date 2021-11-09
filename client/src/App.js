@@ -152,7 +152,10 @@ export default class App extends Component {
 
         <Switch>
           <Route exact path="/">
-            {this.renderLogin()}
+            <Redirect to="/login" />
+          </Route>
+          <Route path={"/login"}>
+            <Login />
           </Route>
           <Route exact path={"/videoConferencing"}>
             {this.renderVideoConferencingHome()}

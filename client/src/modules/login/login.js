@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Exam = (props) => {
   return (
     <Fragment>
-      <NavLink to="/videoConferencing">Login</NavLink>
+      <Link to="/videoConferencing">Login</Link>
     </Fragment>
   );
 };
