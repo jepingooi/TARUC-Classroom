@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
 import VideoConferencingRoom from "./modules/videoConferencing/room";
-import OnlineSurvey from "./modules/onlineSurvey/onlineSurvey";
-import OnlineExam from "./modules/onlineExam/onlineExam";
-import Login from "./modules/login/login";
+import OnlineSurvey from "./modules/onlineSurvey/Survey";
+import OnlineExam from "./modules/onlineExam/Exam";
+import Login from "./modules/login/Login";
 import Header from "./components/header";
 
 // Firebase
@@ -21,7 +21,7 @@ const loginUser = {
   name: `Dummy ${rand}`,
 };
 
-export default class Home extends Component {
+export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -149,8 +149,8 @@ export default class Home extends Component {
       <Router>
         {(this.state.page === "videoConferencing" ||
           this.state.page === "videoConferencingRoom" ||
-          this.state.page === "onlineSurvey" ||
-          this.state.page === "onlineExam") && (
+          this.state.page === "surveys" ||
+          this.state.page === "exams") && (
           <Header
             page={this.state.page ? this.state.page : ""}
             handleNavigation={(page) => this.handleNavigation(page)}
@@ -168,18 +168,14 @@ export default class Home extends Component {
           <Route path={`/videoConferencing/:roomID`}>
             {this.renderVideoConferencingRoom()}
           </Route>
-          <Route path={"/onlineSurvey"}>{this.renderOnlineSurvey()}</Route>
-          <Route path={"/onlineSurvey/new"}>{this.renderOnlineSurvey()}</Route>
-          <Route path={"/onlineSurvey/:id"}>{this.renderOnlineSurvey()}</Route>
-          <Route path={"/onlineSurvey/:id/edit"}>
-            {this.renderOnlineSurvey()}
-          </Route>
-          <Route path={"/onlineExam"}>{this.renderOnlineExam()}</Route>
-          <Route path={"/onlineExam/new"}>{this.renderOnlineExam()}</Route>
-          <Route path={"/onlineExam/:id"}>{this.renderOnlineExam()}</Route>
-          <Route path={"/onlineExamy/:id/edit"}>
-            {this.renderOnlineExam()}
-          </Route>
+          <Route path={"/surveys"}>{this.renderOnlineSurvey()}</Route>
+          <Route path={"/surveys/new"}>{this.renderOnlineSurvey()}</Route>
+          <Route path={"/surveys/:id"}>{this.renderOnlineSurvey()}</Route>
+          <Route path={"/surveys/:id/edit"}>{this.renderOnlineSurvey()}</Route>
+          <Route path={"/exams"}>{this.renderOnlineExam()}</Route>
+          <Route path={"/exams/new"}>{this.renderOnlineExam()}</Route>
+          <Route path={"/exams/:id"}>{this.renderOnlineExam()}</Route>
+          <Route path={"/exams/:id/edit"}>{this.renderOnlineExam()}</Route>
         </Switch>
       </Router>
     );
