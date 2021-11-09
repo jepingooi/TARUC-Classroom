@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Button, Icon, Modal } from "semantic-ui-react";
+import { Button, ButtonGroup, Icon, Modal } from "semantic-ui-react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
+import ScreenSharingModal from "./screenSharingModal";
 
 // Firebase
 import { firebaseConfig } from "../../firebaseConfig.json";
@@ -15,15 +16,6 @@ const db = getFirestore();
 const FunctionButtons = (props) => {
   const selectedRoom = props.selectedRoom;
   const loginUser = props.loginUser;
-
-  useEffect(() => {
-    return () => handleHangUp();
-  }, []);
-
-  function handleHangUp() {
-    props.socketRef.current.disconnect();
-    props.handleModal("hangUpModal", true);
-  }
 
   let tempUser = {};
   // eslint-disable-next-line
@@ -105,15 +97,15 @@ const FunctionButtons = (props) => {
 
         {(selectedRoom.shareScreen || tempUser.owner) && (
           <Button
-            onClick={() => props.handleModal("shareScreenModal", true)}
-            icon={"laptop"}
+            icon="laptop"
             size="massive"
             circular
-            color={tempUser.shareScreen ? "green" : "grey"}
+            color={props.screenSharing ? "green" : "grey"}
+            onClick={() => props.setScreenSharingModal()}
           />
         )}
 
-        <Button onClick={() => handleHangUp()} icon="shutdown" size="massive" circular color={"grey"} />
+        <Button onClick={() => props.setHangupModal()} icon="shutdown" size="massive" circular color={"grey"} />
       </Button.Group>
     </div>
   );
@@ -143,6 +135,8 @@ const Room = (props) => {
   const loginUser = props.loginUser;
   const [micModal, setMicModal] = useState(false);
   const [cameraModal, setCameraModal] = useState(false);
+  const [screenSharingModal, setScreenSharingModal] = useState(false);
+  const [hangupModal, setHangupModal] = useState(false);
 
   useEffect(() => {
     socketRef.current = io.connect("/");
@@ -167,11 +161,19 @@ const Room = (props) => {
         });
 
         socketRef.current.on("user joined", (payload) => {
-          const peer = addPeer(payload.signal, payload.callerID, stream);
-          peersRef.current.push({ userID: payload.userID, peerID: payload.callerID, peer });
-          const peerObj = { userID: payload.userID, peerID: payload.callerID, peer };
+          let exist = false;
 
-          setPeers((users) => [...users, peerObj]);
+          peersRef.current.forEach((peer) => {
+            if (peer.userID === payload.userID) exist = true;
+          });
+
+          if (!exist) {
+            const peer = addPeer(payload.signal, payload.callerID, stream, payload.type);
+            peersRef.current.push({ userID: payload.userID, peerID: payload.callerID, peer });
+            const peerObj = { userID: payload.userID, peerID: payload.callerID, peer };
+
+            setPeers((users) => [...users, peerObj]);
+          }
         });
 
         socketRef.current.on("user left", (id) => {
@@ -273,6 +275,13 @@ const Room = (props) => {
     await updateDoc(roomRef, { participantInRoomList: onlineUserList });
   }
 
+  // Hang up
+  function handleHangUp() {
+    props.handleHangUp();
+    socketRef.current.disconnect();
+    setHangupModal(false);
+  }
+
   // Mic modal
   function renderMicModal() {
     return (
@@ -307,64 +316,40 @@ const Room = (props) => {
     );
   }
 
-  return (
-    <MainScreenContainer>
-      {renderMicModal()}
-      {renderCameraModal()}
-      <ParticipantScreenContainer>
-        <ParticipantContainer key={loginUser.email}>
-          <ScreenContainer>
-            <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%" }} />
-          </ScreenContainer>
-          <ParticipantDetailContainer>
-            <div>{loginUser.name}</div>
-            <div>
-              {videoFlag && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
-              {!audioFlag && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-            </div>
-          </ParticipantDetailContainer>
-        </ParticipantContainer>
-        {selectedRoom.participantInRoomList.map((eachUser) => {
-          let tempPeer;
+  // Screen sharing modal
+  function renderScreenSharingModal() {
+    return (
+      <ScreenSharingModal
+        screenSharingModal={screenSharingModal}
+        setScreenSharingModal={() => setScreenSharingModal(false)}
+        screenSharing={props.screenSharing}
+        handleScreenSharing={(status) => props.handleScreenSharing(status)}
+        selectedRoom={selectedRoom}
+        loginUser={loginUser}
+        joinRoom={(screenSharing) => props.joinRoom(screenSharing)}
+      />
+    );
+  }
 
-          peers.map((eachPeer) => {
-            if (eachPeer.userID === eachUser.id) {
-              tempPeer = eachPeer;
-            }
-          });
+  // Hang up modal
+  function renderHangUpModal() {
+    return (
+      <Modal closeIcon open={hangupModal} size={"tiny"} onClose={() => setHangupModal(false)}>
+        <Modal.Header>Hang up from this call?</Modal.Header>
+        <Modal.Actions>
+          <Button negative onClick={() => setHangupModal(false)}>
+            Cancel
+          </Button>
+          <Button positive onClick={() => handleHangUp()}>
+            Confirm
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    );
+  }
 
-          if (tempPeer) {
-            // Check audio and video status
-            let audioFlagTemp = true;
-            let videoFlagTemp = true;
-            if (userUpdate) {
-              userUpdate.forEach((entry) => {
-                if (tempPeer.peerID && tempPeer.peerID === entry.id) {
-                  audioFlagTemp = entry.audioFlag;
-                  videoFlagTemp = entry.videoFlag;
-                }
-              });
-            }
-
-            // Collect all screen
-            return (
-              // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
-              <ParticipantContainer key={eachUser.id}>
-                <ScreenContainer>
-                  <Video peer={tempPeer.peer} />
-                </ScreenContainer>
-                <ParticipantDetailContainer>
-                  <div>{eachUser.name}</div>
-                  <div>
-                    {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
-                    {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-                  </div>
-                </ParticipantDetailContainer>
-              </ParticipantContainer>
-            );
-          }
-        })}
-      </ParticipantScreenContainer>
+  function renderFunctionButtons() {
+    return (
       <FunctionButtons
         selectedRoom={selectedRoom}
         loginUser={loginUser}
@@ -375,10 +360,82 @@ const Room = (props) => {
         handleModal={(type, status, action) => props.handleModal(type, status, action)}
         handleRaiseHand={() => props.handleRaiseHand()}
         recording={props.recording}
-        socketRef={socketRef}
         setMicModal={() => setMicModal(true)}
         setCameraModal={() => setCameraModal(true)}
+        setScreenSharingModal={() => setScreenSharingModal(true)}
+        screenSharing={props.screenSharing}
+        setHangupModal={() => setHangupModal(true)}
       />
+    );
+  }
+
+  function renderSelfScreen() {
+    return (
+      <ParticipantContainer key={loginUser.email}>
+        <ScreenContainer>
+          <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%" }} />
+        </ScreenContainer>
+        <ParticipantDetailContainer>
+          <div>{loginUser.name}</div>
+          {/* <div>
+            {videoFlag && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
+            {!audioFlag && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
+          </div> */}
+        </ParticipantDetailContainer>
+      </ParticipantContainer>
+    );
+  }
+
+  return (
+    <MainScreenContainer>
+      {renderMicModal()}
+      {renderCameraModal()}
+      {renderScreenSharingModal()}
+      {renderHangUpModal()}
+      <ParticipantScreenContainer>
+        {renderSelfScreen()}
+
+        {selectedRoom.participantInRoomList.map((eachUser) => {
+          let tempPeer;
+          peers.map((eachPeer) => {
+            if (eachPeer.userID === eachUser.id) {
+              tempPeer = eachPeer;
+            }
+          });
+
+          if (tempPeer) {
+            // Check audio and video status
+            // let audioFlagTemp = true;
+            // let videoFlagTemp = true;
+            // if (userUpdate) {
+            //   userUpdate.forEach((entry) => {
+            //     if (tempPeer.peerID && tempPeer.peerID === entry.id) {
+            //       audioFlagTemp = entry.audioFlag;
+            //       videoFlagTemp = entry.videoFlag;
+            //     }
+            //   });
+            // }
+
+            // Collect all screen
+            return (
+              // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
+              <ParticipantContainer key={eachUser.id}>
+                <ScreenContainer>
+                  <Video peer={tempPeer.peer} />
+                </ScreenContainer>
+                <ParticipantDetailContainer>
+                  <div>{eachUser.name}</div>
+                  {/* <div>
+                    {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
+                    {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
+                  </div> */}
+                </ParticipantDetailContainer>
+              </ParticipantContainer>
+            );
+          }
+        })}
+      </ParticipantScreenContainer>
+      {renderFunctionButtons()}
     </MainScreenContainer>
   );
 };
@@ -418,7 +475,7 @@ const ParticipantContainer = styled.div`
 
 const ScreenContainer = styled.div`
   width: 100%;
-  height: 85%;
+  height: 93%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -427,10 +484,10 @@ const ScreenContainer = styled.div`
 const ParticipantDetailContainer = styled.div`
   display: flex;
   flex-direction: row;
-  height: 15%;
+  height: 13%;
   width: 100%;
-  align-items: flex-end;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ParticipantContainerRow = styled.div`

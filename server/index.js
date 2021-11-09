@@ -29,10 +29,12 @@ io.on("connection", (socket) => {
       if (user.socketID === payload.callerID) userID = user.userID;
     });
 
+    // Signal existing user
     io.to(payload.userToSignal).emit("user joined", {
       signal: payload.signal,
       callerID: payload.callerID,
       userID: userID,
+      type: userID.split("_")[0] === "shareScreen" ? "screenSharing" : "default",
     });
   });
 

@@ -30,9 +30,9 @@ class VideoConferencingRoom extends Component {
       loginUser: props.loginUser,
       recording: false,
       attendanceMarked: false,
+      screenSharing: false,
 
       // Modal
-      hangUpModal: false,
       shareScreenModal: false,
       recordingModal: false,
       settingModal: false,
@@ -250,6 +250,11 @@ class VideoConferencingRoom extends Component {
     this.setState({ recording: status });
   };
 
+  // Screen sharing
+  handleScreenSharing = (status) => {
+    this.setState({ screenSharing: status });
+  };
+
   // Hang up function
   handleHangUp = async () => {
     if (!this.state.selectedRoom) return;
@@ -259,13 +264,16 @@ class VideoConferencingRoom extends Component {
 
     // eslint-disable-next-line
     participantInRoomList.map((eachParticipant) => {
-      if (eachParticipant.id !== this.state.loginUser.email) tempParticipantInRoomList.push(eachParticipant);
+      if (
+        eachParticipant.id !== this.state.loginUser.email &&
+        eachParticipant.id !== `shareScreen_${this.state.loginUser.email}`
+      )
+        tempParticipantInRoomList.push(eachParticipant);
     });
 
     let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
     await updateDoc(roomRef, { participantInRoomList: tempParticipantInRoomList });
 
-    this.handleModal("hangUpModal", false);
     this.props.handleNavigation("videoConferencing", null);
     this.props.history.push(`/videoConferencing`);
   };
@@ -300,30 +308,32 @@ class VideoConferencingRoom extends Component {
 
     // eslint-disable-next-line
     onlineUserList.map((eachUser) => {
-      if (eachUser.id !== this.state.loginUser.email) {
-        otherUser.push(
-          <ParticipantContainer key={`loginUser${eachUser.id}`}>
-            <ParticipantNameContainer>{eachUser.name}</ParticipantNameContainer>
-            <StatusContainer>
-              {eachUser.shareScreen && sharingScreenIcon}
-              {eachUser.camera && cameraOnIcon}
-              {!eachUser.mic && microphoneMutedIcon}
-              {eachUser.raiseHand && raiseHandIcon}
-            </StatusContainer>
-          </ParticipantContainer>
-        );
-      } else {
-        onlineUser.push(
-          <ParticipantContainer key={`otherUser${eachUser.id}`}>
-            <ParticipantNameContainer>{eachUser.name}</ParticipantNameContainer>
-            <StatusContainer>
-              {eachUser.shareScreen && sharingScreenIcon}
-              {eachUser.camera && cameraOnIcon}
-              {!eachUser.mic && microphoneMutedIcon}
-              {eachUser.raiseHand && raiseHandIcon}
-            </StatusContainer>
-          </ParticipantContainer>
-        );
+      if (eachUser.type !== "screenSharing") {
+        if (eachUser.id !== this.state.loginUser.email) {
+          otherUser.push(
+            <ParticipantContainer key={`loginUser${eachUser.id}`}>
+              <ParticipantNameContainer>{eachUser.name}</ParticipantNameContainer>
+              <StatusContainer>
+                {eachUser.shareScreen && sharingScreenIcon}
+                {eachUser.camera && cameraOnIcon}
+                {!eachUser.mic && microphoneMutedIcon}
+                {eachUser.raiseHand && raiseHandIcon}
+              </StatusContainer>
+            </ParticipantContainer>
+          );
+        } else {
+          onlineUser.push(
+            <ParticipantContainer key={`otherUser${eachUser.id}`}>
+              <ParticipantNameContainer>{eachUser.name}</ParticipantNameContainer>
+              <StatusContainer>
+                {eachUser.shareScreen && sharingScreenIcon}
+                {eachUser.camera && cameraOnIcon}
+                {!eachUser.mic && microphoneMutedIcon}
+                {eachUser.raiseHand && raiseHandIcon}
+              </StatusContainer>
+            </ParticipantContainer>
+          );
+        }
       }
     });
 
@@ -372,28 +382,6 @@ class VideoConferencingRoom extends Component {
     );
   };
 
-  // Hang up modal
-  renderHangUpModal = () => {
-    return (
-      <Modal
-        closeIcon
-        open={this.state.hangUpModal}
-        size={"tiny"}
-        onClose={() => this.handleModal("hangUpModal", false)}
-      >
-        <Modal.Header>Hang up from this call?</Modal.Header>
-        <Modal.Actions>
-          <Button negative onClick={() => this.handleModal("hangUpModal", false)}>
-            Cancel
-          </Button>
-          <Button positive onClick={() => this.handleHangUp()}>
-            Confirm
-          </Button>
-        </Modal.Actions>
-      </Modal>
-    );
-  };
-
   renderChatBox = () => {
     return (
       <ChatBox
@@ -412,6 +400,10 @@ class VideoConferencingRoom extends Component {
         handleModal={(type, status, action) => this.handleModal(type, status, action)}
         handleRaiseHand={() => this.handleRaiseHand()}
         recording={this.state.recording}
+        screenSharing={this.state.screenSharing}
+        handleScreenSharing={(status) => this.handleScreenSharing(status)}
+        joinRoom={(screenSharing) => this.props.joinRoom(this.state.selectedRoom.id, screenSharing)}
+        handleHangUp={() => this.handleHangUp()}
       />
     );
   };
@@ -429,7 +421,6 @@ class VideoConferencingRoom extends Component {
             this.renderPollModal()}
 
           {this.renderRecordingModal()}
-          {this.renderHangUpModal()}
 
           <div>
             <ParticipantListContainer>{this.renderParticipants()}</ParticipantListContainer>

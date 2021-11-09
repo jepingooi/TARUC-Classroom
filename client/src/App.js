@@ -6,7 +6,6 @@ import OnlineSurvey from "./modules/onlineSurvey/onlineSurvey";
 import OnlineExam from "./modules/onlineExam/onlineExam";
 import Login from "./modules/login/login";
 import Header from "./components/header";
-import Connection from "./modules/videoConferencing/connection";
 
 // Firebase
 import { firebaseConfig } from "./firebaseConfig.json";
@@ -45,7 +44,7 @@ export default class Home extends Component {
   }
 
   // Join a room
-  joinRoom = async (selectedRoomId) => {
+  joinRoom = async (selectedRoomId, screenSharing) => {
     let roomRef = doc(db, "videoConferencingRooms", selectedRoomId);
     let roomSnapshot = await getDoc(roomRef);
 
@@ -57,15 +56,18 @@ export default class Home extends Component {
         if (eachParticipant.id === this.state.loginUser.email) match = true;
       });
 
+      if (screenSharing) match = false;
+
       // If user didnt join the room before, update the participant in room data else skip
       if (!match) {
         let participantData = {
-          id: this.state.loginUser.email,
-          name: this.state.loginUser.name,
+          id: screenSharing ? `shareScreen_${this.state.loginUser.email}` : this.state.loginUser.email,
+          name: screenSharing ? `${this.state.loginUser.name}'s screen` : this.state.loginUser.name,
           mic: true,
           shareScreen: false,
-          camera: true,
+          camera: false,
           raiseHand: false,
+          type: screenSharing ? "screenSharing" : "default",
         };
 
         let tempParticipantInRoomList = roomSnapshot.data().participantInRoomList;
@@ -91,7 +93,7 @@ export default class Home extends Component {
       <VideoConferencing
         handleNavigation={(page, room) => this.handleNavigation(page, room)}
         loginUser={this.state.loginUser}
-        joinRoom={(selectedRoomId) => this.joinRoom(selectedRoomId)}
+        joinRoom={(selectedRoomId) => this.joinRoom(selectedRoomId, false)}
       />
     );
   };
@@ -103,6 +105,7 @@ export default class Home extends Component {
           loginUser={this.state.loginUser}
           selectedRoomId={this.state.selectedRoomId}
           handleNavigation={(page) => this.handleNavigation(page, null)}
+          joinRoom={(selectedRoomId, screenSharing) => this.joinRoom(selectedRoomId, screenSharing)}
         />
       );
     }
@@ -124,18 +127,13 @@ export default class Home extends Component {
     return <Login handleNavigation={() => this.handleNavigation("videoConferencing", null)} />;
   };
 
-  renderConnection = () => {
-    return <Connection loginUser={this.state.loginUser} selectedRoomId={this.state.selectedRoomId} />;
-  };
-
   render = () => {
     return (
       <Router>
         {(this.state.page === "videoConferencing" ||
           this.state.page === "videoConferencingRoom" ||
           this.state.page === "onlineSurvey" ||
-          this.state.page === "onlineExam" ||
-          this.state.page === "connection") && (
+          this.state.page === "onlineExam") && (
           <Header
             page={this.state.page ? this.state.page : ""}
             handleNavigation={(page) => this.handleNavigation(page)}
@@ -153,7 +151,6 @@ export default class Home extends Component {
           <Route path={`/videoConferencing/:roomID`}>{this.renderVideoConferencingRoom()}</Route>
           <Route path={"/onlineSurvey"}>{this.renderOnlineSurvey()}</Route>
           <Route path={"/onlineExam"}>{this.renderOnlineExam()}</Route>
-          <Route path={"/connection"}>{this.renderConnection()}</Route>
         </Switch>
       </Router>
     );

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import TarucLogo from "../resources/TARUCLogo.png";
-import { Dropdown, Button } from "semantic-ui-react";
+import { Dropdown } from "semantic-ui-react";
 
 export default class Header extends Component {
   constructor(props) {
@@ -65,15 +65,6 @@ export default class Header extends Component {
             style={this.props.page === "onlineExam" ? { color: "#FAFF04" } : { color: "#ffffff" }}
           >
             Exam
-          </StyledNavitgationItem>
-        </Link>
-
-        <Link to={"/connection"}>
-          <StyledNavitgationItem
-            onClick={() => this.props.handleNavigation("connection")}
-            style={this.props.page === "connection" ? { color: "#FAFF04" } : { color: "#ffffff" }}
-          >
-            Connection
           </StyledNavitgationItem>
         </Link>
       </StyledNavigationContainer>

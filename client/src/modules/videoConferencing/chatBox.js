@@ -98,8 +98,7 @@ export default class ChatBox extends Component {
               disabled={
                 (this.props.selectedRoom &&
                   !this.props.selectedRoom.chat &&
-                  this.props.loginUser &&
-                  this.props.loginUser.email !== this.props.selectedRoom.ownerId) ||
+                  this.props.loginUser?.email !== this.props.selectedRoom.ownerId) ||
                 this.state.chatCooldown
                   ? true
                   : false

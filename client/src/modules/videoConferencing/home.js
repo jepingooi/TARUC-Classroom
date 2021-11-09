@@ -150,6 +150,17 @@ export default class VideoConferencingHome extends Component {
     return result;
   };
 
+  getParticipantInRoomNumber = (room) => {
+    let num = 0;
+    if (room.participantInRoomList) {
+      room.participantInRoomList.forEach((eachParticipant) => {
+        if (eachParticipant.type !== "screenSharing") num++;
+      });
+    }
+
+    return num;
+  };
+
   // Generate room for room list table
   generateRoomList = (roomList) => {
     let start = (this.state.page - 1) * 10;
@@ -172,7 +183,7 @@ export default class VideoConferencingHome extends Component {
               <StyledCell>{startTime}</StyledCell>
               <StyledCell>{endTime}</StyledCell>
               <StyledCell>
-                {eachRoom.participantInRoomList ? eachRoom.participantInRoomList.length : 0} /{" "}
+                {this.getParticipantInRoomNumber(eachRoom)} /{" "}
                 {eachRoom.participantIdList ? eachRoom.participantIdList.length + 1 : 0 + 1}
               </StyledCell>
               <StyledCell style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
