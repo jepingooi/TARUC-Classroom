@@ -298,6 +298,8 @@ export default class pollModal extends Component {
     // await updateDoc(roomRef, { status: "inactive" });
 
     let pollId = this.state.selectedPollId;
+    this.handleConfirmDeleteModal(false);
+    this.handleAction("create", false);
 
     // Delete poll data
     let pollRef = doc(db, "poll", pollId);
@@ -314,9 +316,6 @@ export default class pollModal extends Component {
     await updateDoc(roomRef, {
       pollIdList: tempPollIdList,
     });
-
-    this.handleConfirmDeleteModal(false);
-    this.handleAction(this.state.action, false);
   };
 
   // Submit selected answer (participant)
@@ -478,12 +477,13 @@ export default class pollModal extends Component {
       <StyledHeader>
         {this.state.pollList?.length > 0 && <div>Poll list</div>}
         <div style={{ flex: 1 }} />
-        {this.state.action === "edit" ||
-          (!this.state.belowPart && this.state.action === "create" && (
-            <Button positive onClick={() => this.handleAction("create", true)}>
-              Create new poll
-            </Button>
-          ))}
+        {(this.state.action === "edit" ||
+          (!this.state.belowPart && this.state.action === "create") ||
+          this.state.action === "result") && (
+          <Button positive onClick={() => this.handleAction("create", true)}>
+            Create new poll
+          </Button>
+        )}
       </StyledHeader>
     );
   };
@@ -555,7 +555,7 @@ export default class pollModal extends Component {
   renderPollResult = () => {
     return (
       <div>
-        {`Poll result - ${this.state.selectedPoll.question}`}
+        {`Poll result - ${this.state.selectedPoll?.question}`}
         {this.renderResultTable()}
       </div>
     );
