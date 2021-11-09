@@ -38,7 +38,10 @@ export default class Home extends Component {
       let secondParam = pathName.split("/")[2];
       if (secondParam) {
         this.joinRoom(secondParam);
-        this.setState({ selectedRoomId: secondParam, page: "videoConferencingRooms" });
+        this.setState({
+          selectedRoomId: secondParam,
+          page: "videoConferencingRooms",
+        });
       } else this.setState({ page: "videoConferencing" });
     } else this.setState({ page: "login" });
   }
@@ -61,8 +64,12 @@ export default class Home extends Component {
       // If user didnt join the room before, update the participant in room data else skip
       if (!match) {
         let participantData = {
-          id: screenSharing ? `shareScreen_${this.state.loginUser.email}` : this.state.loginUser.email,
-          name: screenSharing ? `${this.state.loginUser.name}'s screen` : this.state.loginUser.name,
+          id: screenSharing
+            ? `shareScreen_${this.state.loginUser.email}`
+            : this.state.loginUser.email,
+          name: screenSharing
+            ? `${this.state.loginUser.name}'s screen`
+            : this.state.loginUser.name,
           mic: true,
           shareScreen: false,
           camera: false,
@@ -70,7 +77,8 @@ export default class Home extends Component {
           type: screenSharing ? "screenSharing" : "default",
         };
 
-        let tempParticipantInRoomList = roomSnapshot.data().participantInRoomList;
+        let tempParticipantInRoomList =
+          roomSnapshot.data().participantInRoomList;
         tempParticipantInRoomList.push(participantData);
         await updateDoc(roomRef, {
           participantInRoomList: tempParticipantInRoomList,
@@ -85,7 +93,8 @@ export default class Home extends Component {
   };
 
   handleNavigation = (tempPage, selectedRoomId) => {
-    if (this.state.page !== tempPage) this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
+    if (this.state.page !== tempPage)
+      this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
   };
 
   renderVideoConferencingHome = () => {
@@ -105,7 +114,9 @@ export default class Home extends Component {
           loginUser={this.state.loginUser}
           selectedRoomId={this.state.selectedRoomId}
           handleNavigation={(page) => this.handleNavigation(page, null)}
-          joinRoom={(selectedRoomId, screenSharing) => this.joinRoom(selectedRoomId, screenSharing)}
+          joinRoom={(selectedRoomId, screenSharing) =>
+            this.joinRoom(selectedRoomId, screenSharing)
+          }
         />
       );
     }
@@ -124,7 +135,13 @@ export default class Home extends Component {
   };
 
   renderLogin = () => {
-    return <Login handleNavigation={() => this.handleNavigation("videoConferencing", null)} />;
+    return (
+      <Login
+        handleNavigation={() =>
+          this.handleNavigation("videoConferencing", null)
+        }
+      />
+    );
   };
 
   render = () => {
@@ -148,9 +165,21 @@ export default class Home extends Component {
           <Route exact path={"/videoConferencing"}>
             {this.renderVideoConferencingHome()}
           </Route>
-          <Route path={`/videoConferencing/:roomID`}>{this.renderVideoConferencingRoom()}</Route>
+          <Route path={`/videoConferencing/:roomID`}>
+            {this.renderVideoConferencingRoom()}
+          </Route>
           <Route path={"/onlineSurvey"}>{this.renderOnlineSurvey()}</Route>
+          <Route path={"/onlineSurvey/new"}>{this.renderOnlineSurvey()}</Route>
+          <Route path={"/onlineSurvey/:id"}>{this.renderOnlineSurvey()}</Route>
+          <Route path={"/onlineSurvey/:id/edit"}>
+            {this.renderOnlineSurvey()}
+          </Route>
           <Route path={"/onlineExam"}>{this.renderOnlineExam()}</Route>
+          <Route path={"/onlineExam/new"}>{this.renderOnlineExam()}</Route>
+          <Route path={"/onlineExam/:id"}>{this.renderOnlineExam()}</Route>
+          <Route path={"/onlineExamy/:id/edit"}>
+            {this.renderOnlineExam()}
+          </Route>
         </Switch>
       </Router>
     );
