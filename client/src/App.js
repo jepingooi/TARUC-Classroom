@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
 import VideoConferencingRoom from "./modules/videoConferencing/room";
-import OnlineSurvey from "./modules/onlineSurvey/Survey";
-import OnlineExam from "./modules/onlineExam/Exam";
+import Survey from "./modules/onlineSurvey/Survey";
+import Exam from "./modules/onlineExam/Exam";
 import Login from "./modules/login/Login";
 import Header from "./components/header";
 
@@ -122,14 +122,6 @@ export default class App extends Component {
     }
   };
 
-  renderOnlineSurvey = () => {
-    return <OnlineSurvey />;
-  };
-
-  renderOnlineExam = () => {
-    return <OnlineExam />;
-  };
-
   renderErrorPage = () => {
     return <div>Error</div>;
   };
@@ -168,14 +160,18 @@ export default class App extends Component {
           <Route path={`/videoConferencing/:roomID`}>
             {this.renderVideoConferencingRoom()}
           </Route>
-          <Route path={"/surveys"}>{this.renderOnlineSurvey()}</Route>
-          <Route path={"/surveys/new"}>{this.renderOnlineSurvey()}</Route>
-          <Route path={"/surveys/:id"}>{this.renderOnlineSurvey()}</Route>
-          <Route path={"/surveys/:id/edit"}>{this.renderOnlineSurvey()}</Route>
-          <Route path={"/exams"}>{this.renderOnlineExam()}</Route>
-          <Route path={"/exams/new"}>{this.renderOnlineExam()}</Route>
-          <Route path={"/exams/:id"}>{this.renderOnlineExam()}</Route>
-          <Route path={"/exams/:id/edit"}>{this.renderOnlineExam()}</Route>
+          <Route path={"/surveys"} exact>
+            <Survey />
+          </Route>
+          <Route path={"/surveys/new"}></Route>
+          <Route path={"/surveys/:id"}></Route>
+          <Route path={"/surveys/:id/edit"}></Route>
+          <Route path={"/exams"} exact></Route>
+          <Route path={"/exams/new"}>
+            <Exam />
+          </Route>
+          <Route path={"/exams/:id"}></Route>
+          <Route path={"/exams/:id/edit"}></Route>
         </Switch>
       </Router>
     );
