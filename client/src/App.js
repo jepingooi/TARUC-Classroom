@@ -166,7 +166,7 @@ export default class App extends Component {
             {this.renderVideoConferencingRoom()}
           </Route>
 
-          <Route path={"/surveys/new"} exact></Route>
+          <Route path={"/surveys/new"}></Route>
           <Route path={"/surveys/:id/edit"}></Route>
           <Route path={"/surveys/:id"}>
             <SurveyDetails />
@@ -175,7 +175,7 @@ export default class App extends Component {
             <Survey />
           </Route>
 
-          <Route path={"/exams/new"} exact>
+          <Route path={"/exams/new"}>
             <Exam />
           </Route>
           <Route path={"/exams/:id/edit"}></Route>
