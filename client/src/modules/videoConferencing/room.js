@@ -52,7 +52,7 @@ class VideoConferencingRoom extends Component {
 
   async componentWillUnmount() {
     toast.dismiss();
-    // this.handleAttendance("leave");
+    this.handleAttendance("leave");
 
     this.handleHangUp(true);
 
@@ -77,10 +77,10 @@ class VideoConferencingRoom extends Component {
       this.getChatHistoryFromFirebases();
     });
 
-    // let attendanceRef = doc(db, "attendance", this.props.selectedRoomId);
-    // unsubAttendance = onSnapshot(attendanceRef, () => {
-    //   this.getAttendanceFromFirebase();
-    // });
+    let attendanceRef = doc(db, "attendance", this.props.selectedRoomId);
+    unsubAttendance = onSnapshot(attendanceRef, () => {
+      this.getAttendanceFromFirebase();
+    });
   }
 
   // Get selected room from firebase
