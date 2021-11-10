@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { Component, Suspense } from "react";
 import {
   Route,
@@ -5,6 +6,10 @@ import {
   Redirect,
   BrowserRouter as Router,
 } from "react-router-dom";
+=======
+import React, { Component, Suspense, useEffect, useState } from "react";
+import { Route, Switch, Redirect, BrowserRouter as Router } from "react-router-dom";
+>>>>>>> 200f83073262b1abcf082d923d39480a22845b2b
 import VideoConferencing from "./modules/videoConferencing/home";
 
 import Login from "./modules/login/pages/Login";
@@ -31,22 +36,17 @@ initializeApp(firebaseConfig);
 const db = getFirestore();
 
 let rand = Math.floor(Math.random() * 2) + 1;
-const loginUser = {
+const tempLoginUser = {
   email: `dummy${rand}@gmail.com`,
   name: `Dummy ${rand}`,
 };
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      page: "videoConferencing",
-      loginUser: loginUser,
-    };
-  }
+const App = (props) => {
+  const [page, setPage] = useState("videoConferencing");
+  const [loginUser, setLoginUser] = useState(tempLoginUser);
+  const [selectedRoomID, setSelectedRoomID] = useState(null);
 
-  componentDidMount() {
-    console.log(loginUser.email);
+  useEffect(() => {
     let pathName = window.location.pathname.trim();
     let firstParam = pathName.split("/")[1];
 
@@ -54,17 +54,14 @@ export default class App extends Component {
       let secondParam = pathName.split("/")[2];
       if (secondParam) {
         this.joinRoom(secondParam);
-        this.setState({
-          selectedRoomId: secondParam,
-          page: "videoConferencingRooms",
-        });
-      } else this.setState({ page: "videoConferencing" });
-    } else this.setState({ page: "login" });
-  }
+        setSelectedRoomID(secondParam);
+        setPage("videoConferencingRooms");
+      } else setPage("videoConferencing");
+    } else setPage("login");
+  }, []);
 
-  // Join a room
-  joinRoom = async (selectedRoomId, screenSharing) => {
-    let roomRef = doc(db, "videoConferencingRooms", selectedRoomId);
+  async function joinRoom(roomID, screenSharing) {
+    let roomRef = doc(db, "videoConferencingRooms", roomID);
     let roomSnapshot = await getDoc(roomRef);
 
     if (roomSnapshot.data()) {
@@ -72,7 +69,7 @@ export default class App extends Component {
 
       // eslint-disable-next-line
       roomSnapshot.data().participantInRoomList.map((eachParticipant) => {
-        if (eachParticipant.id === this.state.loginUser.email) match = true;
+        if (eachParticipant.id === loginUser.email) match = true;
       });
 
       if (screenSharing) match = false;
@@ -80,12 +77,8 @@ export default class App extends Component {
       // If user didnt join the room before, update the participant in room data else skip
       if (!match) {
         let participantData = {
-          id: screenSharing
-            ? `shareScreen_${this.state.loginUser.email}`
-            : this.state.loginUser.email,
-          name: screenSharing
-            ? `${this.state.loginUser.name}'s screen`
-            : this.state.loginUser.name,
+          id: screenSharing ? `shareScreen_${loginUser.email}` : loginUser.email,
+          name: screenSharing ? `${loginUser.name}'s screen` : loginUser.name,
           mic: true,
           shareScreen: false,
           camera: false,
@@ -101,32 +94,42 @@ export default class App extends Component {
         });
       }
 
-      this.handleNavigation("videoConferencingRoom", selectedRoomId);
+      this.handleNavigation("videoConferencingRoom", roomID);
     } else {
       this.handleNavigation("videoConferencing");
       this.props.history.push("/videoConferencing");
     }
-  };
+  }
 
+<<<<<<< HEAD
   handleNavigation = (tempPage, selectedRoomId) => {
     if (this.state.page !== tempPage)
       this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
   };
+=======
+  function handleNavigation(newPage, roomID) {
+    if (page !== newPage) {
+      setPage(newPage);
+      setSelectedRoomID(roomID);
+    }
+  }
+>>>>>>> 200f83073262b1abcf082d923d39480a22845b2b
 
-  renderVideoConferencingHome = () => {
+  function renderVideoConferencingHome() {
     return (
       <VideoConferencing
-        handleNavigation={(page, room) => this.handleNavigation(page, room)}
-        loginUser={this.state.loginUser}
-        joinRoom={(selectedRoomId) => this.joinRoom(selectedRoomId, false)}
+        handleNavigation={(page, room) => handleNavigation(page, room)}
+        loginUser={loginUser}
+        joinRoom={(roomID) => joinRoom(roomID, false)}
       />
     );
-  };
+  }
 
-  renderVideoConferencingRoom = () => {
-    if (this.state.selectedRoomId) {
+  function renderVideoConferencingRoom() {
+    if (selectedRoomID)
       return (
         <VideoConferencingRoom
+<<<<<<< HEAD
           loginUser={this.state.loginUser}
           selectedRoomId={this.state.selectedRoomId}
           handleNavigation={(page) => this.handleNavigation(page, null)}
@@ -151,11 +154,19 @@ export default class App extends Component {
       />
     );
   };
+=======
+          loginUser={loginUser}
+          selectedRoomId={selectedRoomID}
+          handleNavigation={(page) => handleNavigation(page, null)}
+          joinRoom={(roomID, screenSharing) => joinRoom(roomID, screenSharing)}
+        />
+      );
+  }
+>>>>>>> 200f83073262b1abcf082d923d39480a22845b2b
 
-  render = () => {
-    return (
-      <Router>
-        {/* {(this.state.page === "videoConferencing" ||
+  return (
+    <Router>
+      {/* {(this.state.page === "videoConferencing" ||
           this.state.page === "videoConferencingRoom" ||
           this.state.page === "surveys" ||
           this.state.page === "exams") && (
@@ -165,6 +176,7 @@ export default class App extends Component {
             loginUser={this.state.loginUser}
           />
         )} */}
+<<<<<<< HEAD
         <Layout>
           <Suspense fallback={<p>Loading...</p>}>
             <Switch>
@@ -209,3 +221,48 @@ export default class App extends Component {
     );
   };
 }
+=======
+      <Layout>
+        <Suspense fallback={<p>Loading...</p>}>
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/login" />
+            </Route>
+            <Route path={"/login"}>
+              <Login />
+            </Route>
+
+            <Route exact path={`/videoConferencing`}>
+              {renderVideoConferencingHome()}
+            </Route>
+            <Route path={`/videoConferencing/:roomID`}>{renderVideoConferencingRoom()}</Route>
+
+            <Route path={"/surveys/new"}></Route>
+            <Route path={"/surveys/:id/edit"}></Route>
+            <Route path={"/surveys/:id"}>
+              <SurveyDetails />
+            </Route>
+            <Route path={"/surveys"}>
+              <Survey />
+            </Route>
+
+            <Route path={"/exams/new"}></Route>
+            <Route path={"/exams/:id/edit"}></Route>
+            <Route path={"/exams/:id"}>
+              <ExamDetails />
+            </Route>
+            <Route path={"/exams"}>
+              <Exam />
+            </Route>
+            <Route path={"*"}>
+              <p>THIS SHOULD BE REPLACED WITH 404 PAGE</p>
+            </Route>
+          </Switch>
+        </Suspense>
+      </Layout>
+    </Router>
+  );
+};
+
+export default App;
+>>>>>>> 200f83073262b1abcf082d923d39480a22845b2b
