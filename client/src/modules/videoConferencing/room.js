@@ -31,10 +31,10 @@ class VideoConferencingRoom extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginUser: props.loginUser,
       recording: false,
       attendanceMarked: false,
       screenSharing: false,
+      firstJoin: false,
 
       // Modal
       shareScreenModal: false,
@@ -81,12 +81,6 @@ class VideoConferencingRoom extends Component {
     // });
   }
 
-  componentDidUpdate() {
-    if (this.state.loginUser !== this.props.loginUser || !this.state.loginUser) {
-      this.setState({ loginUser: this.props.loginUser });
-    }
-  }
-
   // Get selected room from firebase
   getSelectedRoomFromFirebase = async () => {
     let roomRef = doc(db, "videoConferencingRooms", this.props.selectedRoomId);
@@ -98,6 +92,11 @@ class VideoConferencingRoom extends Component {
       selectedRoom.endTime = new Date(selectedRoom.endTime.seconds * 1000);
 
       this.setState({ selectedRoom: selectedRoom });
+    }
+
+    if (!this.state.firstJoin && selectedRoom.autoRecord && this.props.loginUser.email === selectedRoom.ownerId) {
+      this.handleModal("recordingModal", true);
+      this.setState({ firstJoin: false });
     }
   };
 
@@ -130,7 +129,7 @@ class VideoConferencingRoom extends Component {
       if (
         this.state.chatMessageList &&
         JSON.stringify(this.state.chatMessageList[i]) !== JSON.stringify(tempMessage) &&
-        eachMessage.sender !== this.state.loginUser.name
+        eachMessage.sender !== this.props.loginUser.name
       ) {
         let message = "";
         if (eachMessage.message.substring(0, 2) === "**") message = `${eachMessage.message}`;
@@ -138,7 +137,8 @@ class VideoConferencingRoom extends Component {
 
         toast(message);
         speech.text = message;
-        window.speechSynthesis.speak(speech);
+
+        if (this.state.selectedRoom?.textToSpeech) window.speechSynthesis.speak(speech);
       }
       tempChatMessageList.push(tempMessage);
     });
@@ -167,9 +167,9 @@ class VideoConferencingRoom extends Component {
     let now = new Date();
     if (!this.state.attendanceMarked && type === "join") {
       this.setState({ attendanceMarked: true, joinTime: now });
-      if (!this.state.attendance.attendeeIdList.includes(this.state.loginUser.email)) {
+      if (!this.state.attendance.attendeeIdList.includes(this.props.loginUser.email)) {
         let tempAttendeeIdList = this.state.attendance.attendeeIdList;
-        tempAttendeeIdList.push(this.state.loginUser.email);
+        tempAttendeeIdList.push(this.props.loginUser.email);
       }
 
       let tempAttendanceList = this.state.attendance.attendanceList;
@@ -185,8 +185,8 @@ class VideoConferencingRoom extends Component {
 
       // Marked as late if user join 15 minutes after start time
       let attendance = {
-        attendeeName: this.state.loginUser.name,
-        attendeeId: this.state.loginUser.email,
+        attendeeName: this.props.loginUser.name,
+        attendeeId: this.props.loginUser.email,
         time: now,
         action: "Join",
         notes: now < tempStartTime ? "-" : "Late",
@@ -203,8 +203,8 @@ class VideoConferencingRoom extends Component {
       let joinDuration = now - this.state.joinTime;
       let tempAttendanceList = this.state.attendance.attendanceList;
       let attendance = {
-        attendeeName: this.state.loginUser.name,
-        attendeeId: this.state.loginUser.email,
+        attendeeName: this.props.loginUser.name,
+        attendeeId: this.props.loginUser.email,
         time: now,
         action: "Leave",
         notes: `Join duration: ${this.msToTime(joinDuration)}`,
@@ -252,8 +252,8 @@ class VideoConferencingRoom extends Component {
 
     // eslint-disable-next-line
     onlineUserList.map((eachUser) => {
-      if (eachUser.id === this.state.loginUser.email) {
-        if (!eachUser.raiseHand) this.inputNewMessage(`**${this.state.loginUser.name} raised hand.**`);
+      if (eachUser.id === this.props.loginUser.email) {
+        if (!eachUser.raiseHand) this.inputNewMessage(`**${this.props.loginUser.name} raised hand.**`);
 
         eachUser.raiseHand = !eachUser.raiseHand;
       }
@@ -283,8 +283,8 @@ class VideoConferencingRoom extends Component {
     // eslint-disable-next-line
     participantInRoomList.map((eachParticipant) => {
       if (
-        eachParticipant.id !== this.state.loginUser.email &&
-        eachParticipant.id !== `shareScreen_${this.state.loginUser.email}`
+        eachParticipant.id !== this.props.loginUser.email &&
+        eachParticipant.id !== `shareScreen_${this.props.loginUser.email}`
       )
         tempParticipantInRoomList.push(eachParticipant);
     });
@@ -301,12 +301,7 @@ class VideoConferencingRoom extends Component {
     let tempAction = action;
 
     // Poll action
-    if (
-      this.state.loginUser &&
-      this.state.loginUser.email === this.state.selectedRoom.ownerId &&
-      type === "pollModal" &&
-      status === true
-    ) {
+    if (this.props.loginUser?.email === this.state.selectedRoom.ownerId && type === "pollModal" && status === true) {
       tempAction = "create";
     } else if (type === "pollModal" && status === true) tempAction = "answer";
 
@@ -327,7 +322,7 @@ class VideoConferencingRoom extends Component {
     // eslint-disable-next-line
     onlineUserList.map((eachUser) => {
       if (eachUser.type !== "screenSharing") {
-        if (eachUser.id !== this.state.loginUser.email) {
+        if (eachUser.id !== this.props.loginUser.email) {
           otherUser.push(
             <ParticipantContainer key={`loginUser${eachUser.id}`}>
               <ParticipantNameContainer>{eachUser.name}</ParticipantNameContainer>
@@ -368,7 +363,7 @@ class VideoConferencingRoom extends Component {
         action={this.state.action}
         settingModal={this.state.settingModal}
         selectedRoom={this.state.selectedRoom}
-        loginUser={this.state.loginUser}
+        loginUser={this.props.loginUser}
         userList={this.state.userList}
       />
     );
@@ -379,7 +374,7 @@ class VideoConferencingRoom extends Component {
     return (
       <PollModal
         handleModal={(status) => this.handleModal("pollModal", status)}
-        loginUser={this.state.loginUser}
+        loginUser={this.props.loginUser}
         selectedRoom={this.state.selectedRoom}
         pollModal={this.state.pollModal}
         action={this.state.action}
@@ -395,7 +390,7 @@ class VideoConferencingRoom extends Component {
         handleRecording={(status) => this.handleRecording(status)}
         recordingModal={this.state.recordingModal}
         selectedRoom={this.state.selectedRoom}
-        loginUser={this.state.loginUser}
+        loginUser={this.props.loginUser}
       />
     );
   };
@@ -404,7 +399,7 @@ class VideoConferencingRoom extends Component {
     return (
       <ChatBox
         chatMessageList={this.state.chatMessageList}
-        loginUser={this.state.loginUser}
+        loginUser={this.props.loginUser}
         selectedRoom={this.state.selectedRoom}
       />
     );
@@ -414,7 +409,7 @@ class VideoConferencingRoom extends Component {
     return (
       <Room
         selectedRoom={this.state.selectedRoom}
-        loginUser={this.state.loginUser}
+        loginUser={this.props.loginUser}
         handleModal={(type, status, action) => this.handleModal(type, status, action)}
         handleRaiseHand={() => this.handleRaiseHand()}
         recording={this.state.recording}
@@ -427,18 +422,16 @@ class VideoConferencingRoom extends Component {
   };
 
   render = () => {
-    if (this.state.selectedRoom && this.state.userList && this.state.loginUser) {
+    if (this.state.selectedRoom && this.state.userList && this.props.loginUser) {
       return (
         <StyledContent>
           {this.state.selectedRoom.popup && (
             <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
           )}
-          {this.state.loginUser &&
-            this.state.loginUser.email === this.state.selectedRoom.ownerId &&
-            this.renderRoomSettingModal()}
+          {this.props.loginUser?.email === this.state.selectedRoom.ownerId && this.renderRoomSettingModal()}
 
-          {(this.state.selectedRoom.pollIdList.length > 0 ||
-            (this.state.loginUser && this.state.loginUser.email === this.state.selectedRoom.ownerId)) &&
+          {(this.state.selectedRoom?.pollIdList?.length > 0 ||
+            this.props.loginUser?.email === this.state.selectedRoom.ownerId) &&
             this.renderPollModal()}
 
           {this.renderRecordingModal()}

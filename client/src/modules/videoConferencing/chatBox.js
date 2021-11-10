@@ -18,21 +18,14 @@ export default class ChatBox extends Component {
     this.state = {
       inputMessage: "",
       emojiPicker: false,
-      chatMessageList: this.props.chatMessageList,
       chatCooldown: false,
     };
-  }
-
-  componentDidUpdate() {
-    if (this.state.chatMessageList !== this.props.chatMessageList || !this.state.chatMessageList) {
-      this.setState({ chatMessageList: this.props.chatMessageList });
-    }
   }
 
   // Input new message in chat box
   inputNewMessage = async () => {
     if (this.state.inputMessage && this.state.inputMessage.length > 0) {
-      let tempChatMessageList = this.state.chatMessageList;
+      let tempChatMessageList = this.props.chatMessageList;
       let id = uuidv4();
 
       tempChatMessageList.push({
@@ -57,9 +50,9 @@ export default class ChatBox extends Component {
   generateChatHistory = () => {
     let chatHistoryList = [];
 
-    if (this.state.chatMessageList?.length > 0) {
+    if (this.props.chatMessageList?.length > 0) {
       // eslint-disable-next-line
-      this.state.chatMessageList.map((eachMessage) => {
+      this.props.chatMessageList.map((eachMessage) => {
         let time =
           ("0" + eachMessage.time.getHours()).slice(-2) + ":" + ("0" + eachMessage.time.getMinutes()).slice(-2);
 
