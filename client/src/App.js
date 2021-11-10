@@ -1,15 +1,10 @@
-<<<<<<< HEAD
-import React, { Component, Suspense } from "react";
+import React, { Component, Suspense, useEffect, useState } from "react";
 import {
   Route,
   Switch,
   Redirect,
   BrowserRouter as Router,
 } from "react-router-dom";
-=======
-import React, { Component, Suspense, useEffect, useState } from "react";
-import { Route, Switch, Redirect, BrowserRouter as Router } from "react-router-dom";
->>>>>>> 200f83073262b1abcf082d923d39480a22845b2b
 import VideoConferencing from "./modules/videoConferencing/home";
 
 import Login from "./modules/login/pages/Login";
@@ -77,7 +72,9 @@ const App = (props) => {
       // If user didnt join the room before, update the participant in room data else skip
       if (!match) {
         let participantData = {
-          id: screenSharing ? `shareScreen_${loginUser.email}` : loginUser.email,
+          id: screenSharing
+            ? `shareScreen_${loginUser.email}`
+            : loginUser.email,
           name: screenSharing ? `${loginUser.name}'s screen` : loginUser.name,
           mic: true,
           shareScreen: false,
@@ -155,7 +152,9 @@ const App = (props) => {
             <Route exact path={`/videoConferencing`}>
               {renderVideoConferencingHome()}
             </Route>
-            <Route path={`/videoConferencing/:roomID`}>{renderVideoConferencingRoom()}</Route>
+            <Route path={`/videoConferencing/:roomID`}>
+              {renderVideoConferencingRoom()}
+            </Route>
 
             <Route path={"/surveys/new"}></Route>
             <Route path={"/surveys/:id/edit"}></Route>
