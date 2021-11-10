@@ -1,5 +1,10 @@
 import React, { Component } from "react";
-import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  Redirect,
+  BrowserRouter as Router,
+} from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
 import VideoConferencingRoom from "./modules/videoConferencing/room";
 import Survey from "./modules/onlineSurvey/Survey";
@@ -8,6 +13,7 @@ import ExamDetails from "./modules/onlineExam/ExamDetails";
 import Exam from "./modules/onlineExam/Exam";
 import Login from "./modules/login/Login";
 import Header from "./components/header";
+import Layout from "./layout/Layout";
 
 // Firebase
 import { firebaseConfig } from "./firebaseConfig.json";
@@ -141,7 +147,7 @@ export default class App extends Component {
   render = () => {
     return (
       <Router>
-        {(this.state.page === "videoConferencing" ||
+        {/* {(this.state.page === "videoConferencing" ||
           this.state.page === "videoConferencingRoom" ||
           this.state.page === "surveys" ||
           this.state.page === "exams") && (
@@ -150,40 +156,42 @@ export default class App extends Component {
             handleNavigation={(page) => this.handleNavigation(page)}
             loginUser={this.state.loginUser}
           />
-        )}
+        )} */}
+        <Layout>
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/login" />
+            </Route>
+            <Route path={"/login"}>
+              <Login />
+            </Route>
+            <Route exact path={"/videoConferencing"}>
+              {this.renderVideoConferencingHome()}
+            </Route>
+            <Route path={`/videoConferencing/:roomID`}>
+              {this.renderVideoConferencingRoom()}
+            </Route>
 
-        <Switch>
-          <Route exact path="/">
-            <Redirect to="/login" />
-          </Route>
-          <Route path={"/login"}>
-            <Login />
-          </Route>
-          <Route exact path={"/videoConferencing"}>
-            {this.renderVideoConferencingHome()}
-          </Route>
-          <Route path={`/videoConferencing/:roomID`}>
-            {this.renderVideoConferencingRoom()}
-          </Route>
+            <Route path={"/surveys/new"}></Route>
+            <Route path={"/surveys/:id/edit"}></Route>
+            <Route path={"/surveys/:id"}>
+              <SurveyDetails />
+            </Route>
+            <Route path={"/surveys"}>
+              <Survey />
+            </Route>
 
-          <Route path={"/surveys/new"}></Route>
-          <Route path={"/surveys/:id/edit"}></Route>
-          <Route path={"/surveys/:id"}>
-            <SurveyDetails />
-          </Route>
-          <Route path={"/surveys"}>
-            <Survey />
-          </Route>
-
-          <Route path={"/exams/new"}>
-            <Exam />
-          </Route>
-          <Route path={"/exams/:id/edit"}></Route>
-          <Route path={"/exams/:id"}>
-            <ExamDetails />
-          </Route>
-          <Route path={"/exams"}></Route>
-        </Switch>
+            <Route path={"/exams/new"}></Route>
+            <Route path={"/exams/:id/edit"}></Route>
+            <Route path={"/exams/:id"}>
+              <ExamDetails />
+            </Route>
+            <Route path={"/exams"}>
+              {" "}
+              <Exam />
+            </Route>
+          </Switch>
+        </Layout>
       </Router>
     );
   };
