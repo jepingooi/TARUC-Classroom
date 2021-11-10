@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
-import { Button, Modal, Icon } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
 
 // Modals
