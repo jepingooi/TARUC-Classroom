@@ -109,9 +109,9 @@ export default class VideoConferencingHome extends Component {
       // eslint-disable-next-line
       this.state.roomList.map((eachRoom) => {
         if (eachRoom.status === "active") {
-          if (eachRoom.ownerId === this.state.loginUser.email) {
+          if (eachRoom.ownerId === this.props.loginUser.email) {
             tempRoomList.push(eachRoom);
-          } else if (eachRoom.participantIdList.includes(this.state.loginUser.email)) {
+          } else if (eachRoom.participantIdList.includes(this.props.loginUser.email)) {
             participantRoom.push(eachRoom);
           }
         }
@@ -168,8 +168,8 @@ export default class VideoConferencingHome extends Component {
   generateRoomList = (roomList) => {
     let start = (this.state.page - 1) * 10;
     let end = this.state.page * 10;
-
     let collectedRoom = [];
+
     if (roomList?.length > 0) {
       // eslint-disable-next-line
       roomList.map((eachRoom, i) => {
@@ -190,7 +190,7 @@ export default class VideoConferencingHome extends Component {
                 {eachRoom.participantIdList ? eachRoom.participantIdList.length + 1 : 0 + 1}
               </StyledCell>
               <StyledCell style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-                {eachRoom.ownerId === this.state.loginUser.email && (
+                {eachRoom.ownerId === this.props.loginUser.email && (
                   <Button
                     onClick={() => {
                       this.handleModal(true, eachRoom, "edit");
@@ -322,7 +322,7 @@ export default class VideoConferencingHome extends Component {
         action={this.state.action}
         settingModal={this.state.settingModal}
         selectedRoom={this.state.selectedRoom}
-        loginUser={this.state.loginUser}
+        loginUser={this.props.loginUser}
         userList={this.state.userList}
         roomList={this.state.roomList}
       />

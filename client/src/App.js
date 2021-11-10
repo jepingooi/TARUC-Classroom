@@ -20,7 +20,7 @@ const ExamDetails = React.lazy(() => import("./modules/onlineExam/pages/ExamDeta
 initializeApp(firebaseConfig);
 const db = getFirestore();
 
-let rand = Math.floor(Math.random() * 2) + 1;
+let rand = Math.floor(Math.random() * 1) + 1;
 const tempLoginUser = {
   email: `dummy${rand}@gmail.com`,
   name: `Dummy ${rand}`,
