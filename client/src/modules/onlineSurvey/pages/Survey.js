@@ -1,7 +1,9 @@
 import React, { Fragment } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import CustomButton from "../components/Button";
 import Filters from "../components/Filters";
+import CustomButton from "../components/Button";
+import CustomTable from "../components/Table";
+import SearchBar from "../components/SearchBar";
 
 const Survey = (props) => {
   return (
@@ -21,7 +23,22 @@ const Survey = (props) => {
               ></Filters>
             </div>
           </Col>
-          <Col className="d-flex justify-content-end"></Col>
+          <Col className="d-flex justify-content-end">
+            <SearchBar text={"Search Survey..."} />
+          </Col>
+        </Row>
+        <Row className="py-3">
+          <Col>
+            <CustomTable
+              headers={[
+                "Title",
+                "Status",
+                "Responses",
+                "Created Date",
+                "Actions",
+              ]}
+            />
+          </Col>
         </Row>
       </Container>
     </Fragment>
