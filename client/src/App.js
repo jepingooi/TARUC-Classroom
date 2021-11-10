@@ -101,19 +101,12 @@ const App = (props) => {
     }
   }
 
-<<<<<<< HEAD
-  handleNavigation = (tempPage, selectedRoomId) => {
-    if (this.state.page !== tempPage)
-      this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
-  };
-=======
   function handleNavigation(newPage, roomID) {
     if (page !== newPage) {
       setPage(newPage);
       setSelectedRoomID(roomID);
     }
   }
->>>>>>> 200f83073262b1abcf082d923d39480a22845b2b
 
   function renderVideoConferencingHome() {
     return (
@@ -129,32 +122,6 @@ const App = (props) => {
     if (selectedRoomID)
       return (
         <VideoConferencingRoom
-<<<<<<< HEAD
-          loginUser={this.state.loginUser}
-          selectedRoomId={this.state.selectedRoomId}
-          handleNavigation={(page) => this.handleNavigation(page, null)}
-          joinRoom={(selectedRoomId, screenSharing) =>
-            this.joinRoom(selectedRoomId, screenSharing)
-          }
-        />
-      );
-    }
-  };
-
-  renderErrorPage = () => {
-    return <div>Error</div>;
-  };
-
-  renderLogin = () => {
-    return (
-      <Login
-        handleNavigation={() =>
-          this.handleNavigation("videoConferencing", null)
-        }
-      />
-    );
-  };
-=======
           loginUser={loginUser}
           selectedRoomId={selectedRoomID}
           handleNavigation={(page) => handleNavigation(page, null)}
@@ -162,7 +129,6 @@ const App = (props) => {
         />
       );
   }
->>>>>>> 200f83073262b1abcf082d923d39480a22845b2b
 
   return (
     <Router>
@@ -176,52 +142,6 @@ const App = (props) => {
             loginUser={this.state.loginUser}
           />
         )} */}
-<<<<<<< HEAD
-        <Layout>
-          <Suspense fallback={<p>Loading...</p>}>
-            <Switch>
-              <Route exact path="/">
-                <Redirect to="/login" />
-              </Route>
-              <Route path={"/login"}>
-                <Login />
-              </Route>
-
-              <Route exact path={`/videoConferencing`}>
-                {this.renderVideoConferencingHome()}
-              </Route>
-              <Route path={`/videoConferencing/:roomID`}>
-                {this.renderVideoConferencingRoom()}
-              </Route>
-
-              <Route path={"/surveys/new"}></Route>
-              <Route path={"/surveys/:id/edit"}></Route>
-              <Route path={"/surveys/:id"}>
-                <SurveyDetails />
-              </Route>
-              <Route path={"/surveys"}>
-                <Survey />
-              </Route>
-
-              <Route path={"/exams/new"}></Route>
-              <Route path={"/exams/:id/edit"}></Route>
-              <Route path={"/exams/:id"}>
-                <ExamDetails />
-              </Route>
-              <Route path={"/exams"}>
-                <Exam />
-              </Route>
-              <Route path={"*"}>
-                <p>THIS SHOULD BE REPLACED WITH 404 PAGE</p>
-              </Route>
-            </Switch>
-          </Suspense>
-        </Layout>
-      </Router>
-    );
-  };
-}
-=======
       <Layout>
         <Suspense fallback={<p>Loading...</p>}>
           <Switch>
@@ -265,4 +185,3 @@ const App = (props) => {
 };
 
 export default App;
->>>>>>> 200f83073262b1abcf082d923d39480a22845b2b
