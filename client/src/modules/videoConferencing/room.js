@@ -244,11 +244,11 @@ class VideoConferencingRoom extends Component {
     // eslint-disable-next-line
     onlineUserList.map((eachUser) => {
       if (eachUser.id === this.state.loginUser.email) {
+        if (!eachUser.raiseHand) this.inputNewMessage(`**${this.state.loginUser.name} raised hand.**`);
+
         eachUser.raiseHand = !eachUser.raiseHand;
       }
     });
-
-    this.inputNewMessage(`**${this.state.loginUser.name} raised hand.**`);
 
     let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
     await updateDoc(roomRef, { participantInRoomList: onlineUserList });
