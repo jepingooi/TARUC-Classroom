@@ -303,7 +303,6 @@ export default class settingModal extends Component {
         participantIdList: selectedRoom.participantIdList,
         pollIdList: selectedRoom.pollIdList,
         recordingIdList: selectedRoom.recordingIdList,
-        attendanceId: selectedRoom.attendanceId,
         participantInRoomList: [],
       });
 
