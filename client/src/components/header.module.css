@@ -1,0 +1,16 @@
+.navbar {
+  background-color: #438eb9;
+  font-weight: 600;
+}
+
+.img {
+  width: auto;
+  height: 50px;
+}
+
+.container {
+  display: flex;
+}
+
+.btn-logout {
+}

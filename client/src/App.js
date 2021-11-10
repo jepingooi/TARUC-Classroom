@@ -1,11 +1,18 @@
 import React, { Component } from "react";
-import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  Redirect,
+  BrowserRouter as Router,
+} from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
 import VideoConferencingRoom from "./modules/videoConferencing/room";
-import OnlineSurvey from "./modules/onlineSurvey/onlineSurvey";
-import OnlineExam from "./modules/onlineExam/onlineExam";
-import Login from "./modules/login/login";
-import Header from "./components/header";
+import Survey from "./modules/onlineSurvey/pages/Survey";
+import SurveyDetails from "./modules/onlineSurvey/pages/SurveyDetails";
+import ExamDetails from "./modules/onlineExam/pages/ExamDetails";
+import Exam from "./modules/onlineExam/pages/Exam";
+import Login from "./modules/login/pages/Login";
+import Layout from "./layout/Layout";
 
 // Firebase
 import { firebaseConfig } from "./firebaseConfig.json";
@@ -21,7 +28,7 @@ const loginUser = {
   name: `Dummy ${rand}`,
 };
 
-export default class Home extends Component {
+export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +45,10 @@ export default class Home extends Component {
       let secondParam = pathName.split("/")[2];
       if (secondParam) {
         this.joinRoom(secondParam);
-        this.setState({ selectedRoomId: secondParam, page: "videoConferencingRooms" });
+        this.setState({
+          selectedRoomId: secondParam,
+          page: "videoConferencingRooms",
+        });
       } else this.setState({ page: "videoConferencing" });
     } else this.setState({ page: "login" });
   }
@@ -61,8 +71,12 @@ export default class Home extends Component {
       // If user didnt join the room before, update the participant in room data else skip
       if (!match) {
         let participantData = {
-          id: screenSharing ? `shareScreen_${this.state.loginUser.email}` : this.state.loginUser.email,
-          name: screenSharing ? `${this.state.loginUser.name}'s screen` : this.state.loginUser.name,
+          id: screenSharing
+            ? `shareScreen_${this.state.loginUser.email}`
+            : this.state.loginUser.email,
+          name: screenSharing
+            ? `${this.state.loginUser.name}'s screen`
+            : this.state.loginUser.name,
           mic: true,
           shareScreen: false,
           camera: false,
@@ -70,7 +84,8 @@ export default class Home extends Component {
           type: screenSharing ? "screenSharing" : "default",
         };
 
-        let tempParticipantInRoomList = roomSnapshot.data().participantInRoomList;
+        let tempParticipantInRoomList =
+          roomSnapshot.data().participantInRoomList;
         tempParticipantInRoomList.push(participantData);
         await updateDoc(roomRef, {
           participantInRoomList: tempParticipantInRoomList,
@@ -85,7 +100,8 @@ export default class Home extends Component {
   };
 
   handleNavigation = (tempPage, selectedRoomId) => {
-    if (this.state.page !== tempPage) this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
+    if (this.state.page !== tempPage)
+      this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
   };
 
   renderVideoConferencingHome = () => {
@@ -105,18 +121,12 @@ export default class Home extends Component {
           loginUser={this.state.loginUser}
           selectedRoomId={this.state.selectedRoomId}
           handleNavigation={(page) => this.handleNavigation(page, null)}
-          joinRoom={(selectedRoomId, screenSharing) => this.joinRoom(selectedRoomId, screenSharing)}
+          joinRoom={(selectedRoomId, screenSharing) =>
+            this.joinRoom(selectedRoomId, screenSharing)
+          }
         />
       );
     }
-  };
-
-  renderOnlineSurvey = () => {
-    return <OnlineSurvey />;
-  };
-
-  renderOnlineExam = () => {
-    return <OnlineExam />;
   };
 
   renderErrorPage = () => {
@@ -124,34 +134,63 @@ export default class Home extends Component {
   };
 
   renderLogin = () => {
-    return <Login handleNavigation={() => this.handleNavigation("videoConferencing", null)} />;
+    return (
+      <Login
+        handleNavigation={() =>
+          this.handleNavigation("videoConferencing", null)
+        }
+      />
+    );
   };
 
   render = () => {
     return (
       <Router>
-        {(this.state.page === "videoConferencing" ||
+        {/* {(this.state.page === "videoConferencing" ||
           this.state.page === "videoConferencingRoom" ||
-          this.state.page === "onlineSurvey" ||
-          this.state.page === "onlineExam") && (
+          this.state.page === "surveys" ||
+          this.state.page === "exams") && (
           <Header
             page={this.state.page ? this.state.page : ""}
             handleNavigation={(page) => this.handleNavigation(page)}
             loginUser={this.state.loginUser}
           />
-        )}
+        )} */}
+        <Layout>
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/login" />
+            </Route>
+            <Route path={"/login"}>
+              <Login />
+            </Route>
+            <Route exact path={"/videoConferencing"}>
+              {this.renderVideoConferencingHome()}
+            </Route>
+            <Route path={`/videoConferencing/:roomID`}>
+              {this.renderVideoConferencingRoom()}
+            </Route>
 
-        <Switch>
-          <Route exact path="/">
-            {this.renderLogin()}
-          </Route>
-          <Route exact path={"/videoConferencing"}>
-            {this.renderVideoConferencingHome()}
-          </Route>
-          <Route path={`/videoConferencing/:roomID`}>{this.renderVideoConferencingRoom()}</Route>
-          <Route path={"/onlineSurvey"}>{this.renderOnlineSurvey()}</Route>
-          <Route path={"/onlineExam"}>{this.renderOnlineExam()}</Route>
-        </Switch>
+            <Route path={"/surveys/new"}></Route>
+            <Route path={"/surveys/:id/edit"}></Route>
+            <Route path={"/surveys/:id"}>
+              <SurveyDetails />
+            </Route>
+            <Route path={"/surveys"}>
+              <Survey />
+            </Route>
+
+            <Route path={"/exams/new"}></Route>
+            <Route path={"/exams/:id/edit"}></Route>
+            <Route path={"/exams/:id"}>
+              <ExamDetails />
+            </Route>
+            <Route path={"/exams"}>
+              {" "}
+              <Exam />
+            </Route>
+          </Switch>
+        </Layout>
       </Router>
     );
   };

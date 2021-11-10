@@ -41,7 +41,8 @@ export default class Header extends Component {
           <StyledNavitgationItem
             onClick={() => this.props.handleNavigation("videoConferencing")}
             style={
-              this.props.page === "videoConferencing" || this.props.page === "videoConferencingRoom"
+              this.props.page === "videoConferencing" ||
+              this.props.page === "videoConferencingRoom"
                 ? { color: "#FAFF04" }
                 : { color: "#ffffff" }
             }
@@ -50,21 +51,29 @@ export default class Header extends Component {
           </StyledNavitgationItem>
         </Link>
 
-        <Link to={"/onlineSurvey"}>
+        <Link to={"/surveys"}>
           <StyledNavitgationItem
-            onClick={() => this.props.handleNavigation("onlineSurvey")}
-            style={this.props.page === "onlineSurvey" ? { color: "#FAFF04" } : { color: "#ffffff" }}
+            onClick={() => this.props.handleNavigation("surveys")}
+            style={
+              this.props.page === "surveys"
+                ? { color: "#FAFF04" }
+                : { color: "#ffffff" }
+            }
           >
-            Survey
+            Surveys
           </StyledNavitgationItem>
         </Link>
 
-        <Link to={"/onlineExam"}>
+        <Link to={"/exams"}>
           <StyledNavitgationItem
-            onClick={() => this.props.handleNavigation("onlineExam")}
-            style={this.props.page === "onlineExam" ? { color: "#FAFF04" } : { color: "#ffffff" }}
+            onClick={() => this.props.handleNavigation("exams")}
+            style={
+              this.props.page === "exams"
+                ? { color: "#FAFF04" }
+                : { color: "#ffffff" }
+            }
           >
-            Exam
+            Exams
           </StyledNavitgationItem>
         </Link>
       </StyledNavigationContainer>
@@ -83,7 +92,9 @@ export default class Header extends Component {
           labeled
           className="icon"
           floating
-          onClick={() => this.setState({ userDropdown: !this.state.userDropdown })}
+          onClick={() =>
+            this.setState({ userDropdown: !this.state.userDropdown })
+          }
         >
           <Dropdown.Menu>
             <Link to={"/"}>{this.generateUserOption()}</Link>
