@@ -7,12 +7,11 @@ import {
 } from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
 import VideoConferencingRoom from "./modules/videoConferencing/room";
-import Survey from "./modules/onlineSurvey/Survey";
-import SurveyDetails from "./modules/onlineSurvey/SurveyDetails";
-import ExamDetails from "./modules/onlineExam/ExamDetails";
-import Exam from "./modules/onlineExam/Exam";
-import Login from "./modules/login/Login";
-import Header from "./components/new-header";
+import Survey from "./modules/onlineSurvey/pages/Survey";
+import SurveyDetails from "./modules/onlineSurvey/pages/SurveyDetails";
+import ExamDetails from "./modules/onlineExam/pages/ExamDetails";
+import Exam from "./modules/onlineExam/pages/Exam";
+import Login from "./modules/login/pages/Login";
 import Layout from "./layout/Layout";
 
 // Firebase
