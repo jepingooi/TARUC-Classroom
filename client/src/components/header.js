@@ -1,167 +1,66 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
+import Button from "./Button";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import TarucLogo from "../resources/TARUCLogo.png";
-import { Dropdown } from "semantic-ui-react";
+import classes from "./header.module.css";
+import { NavLink, Link } from "react-router-dom";
+import { useHistory } from "react-router";
+import { useContext } from "react";
+import AuthContext from "../store/auth-context";
 
-export default class Header extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { userDropdown: false };
-  }
+const Header = () => {
+  const authContext = useContext(AuthContext);
 
-  generateUserOption = () => {
-    let logOutOption = (
-      <StyledDropdownItem
-        key="sign-out"
-        text="Sign Out"
-        icon="sign out"
-        onClick={() => {
-          this.props.handleNavigation("login");
-        }}
-      />
-    );
-
-    return logOutOption;
+  const isLoggedIn = authContext.isLoggedIn;
+  const history = useHistory();
+  const logoutHandler = () => {
+    authContext.logout();
+    history.push("/login");
   };
 
-  renderLogo = () => {
-    return (
-      <StyledLogo>
-        <StyledLogoImg src={TarucLogo} alt="Taruc Logo" />
-        <StyledLogoText>TARUC Classroom</StyledLogoText>
-      </StyledLogo>
-    );
-  };
+  const loginHandler = () => {};
 
-  renderNavigation = () => {
-    return (
-      <StyledNavigationContainer>
-        <Link to={"/videoConferencing"}>
-          <StyledNavitgationItem
-            onClick={() => this.props.handleNavigation("videoConferencing")}
-            style={
-              this.props.page === "videoConferencing" ||
-              this.props.page === "videoConferencingRoom"
-                ? { color: "#FAFF04" }
-                : { color: "#ffffff" }
-            }
-          >
-            Video Conferencing
-          </StyledNavitgationItem>
-        </Link>
-
-        <Link to={"/surveys"}>
-          <StyledNavitgationItem
-            onClick={() => this.props.handleNavigation("surveys")}
-            style={
-              this.props.page === "surveys"
-                ? { color: "#FAFF04" }
-                : { color: "#ffffff" }
-            }
-          >
-            Surveys
-          </StyledNavitgationItem>
-        </Link>
-
-        <Link to={"/exams"}>
-          <StyledNavitgationItem
-            onClick={() => this.props.handleNavigation("exams")}
-            style={
-              this.props.page === "exams"
-                ? { color: "#FAFF04" }
-                : { color: "#ffffff" }
-            }
-          >
-            Exams
-          </StyledNavitgationItem>
-        </Link>
-      </StyledNavigationContainer>
-    );
-  };
-
-  renderUser = () => {
-    return (
-      <StyledUserContainer>
-        <Dropdown
-          open={this.state.userDropdown}
-          pointing="top right"
-          icon="user"
-          text={this.props.loginUser.name}
-          button
-          labeled
-          className="icon"
-          floating
-          onClick={() =>
-            this.setState({ userDropdown: !this.state.userDropdown })
-          }
+  return (
+    <Navbar
+      className={classes.navbar}
+      variant="dark"
+      style={{ height: "70px" }}
+    >
+      <Container>
+        <Link
+          to="/videoConferencing"
+          className={`${classes.navbar} navbar-brand mx-3`}
         >
-          <Dropdown.Menu>
-            <Link to={"/"}>{this.generateUserOption()}</Link>
-          </Dropdown.Menu>
-        </Dropdown>
-      </StyledUserContainer>
-    );
-  };
+          <img
+            alt=""
+            src={TarucLogo}
+            width="30"
+            height="30"
+            className={`${classes.img} d-inline-block align-center`}
+          />{" "}
+          TARUC Classroom
+        </Link>
+        {isLoggedIn && (
+          <Nav className="me-auto">
+            <NavLink className="nav-link" to="/videoConferencing">
+              Video Conferencing
+            </NavLink>
+            <NavLink className="nav-link" to="/exams">
+              Exams
+            </NavLink>
+            <NavLink className="nav-link" to="/surveys">
+              Surveys
+            </NavLink>
+          </Nav>
+        )}
 
-  render = () => {
-    return (
-      <StyledHeaderContainer>
-        {this.renderLogo()}
-        {this.renderNavigation()}
-        <div style={{ flex: 1 }} />
-        {this.renderUser()}
-      </StyledHeaderContainer>
-    );
-  };
-}
+        {isLoggedIn && (
+          <Button variant="secondary" onClick={logoutHandler}>
+            Logout
+          </Button>
+        )}
+      </Container>
+    </Navbar>
+  );
+};
 
-const StyledHeaderContainer = styled.div`
-  background-color: #438eb9;
-  width: 100vw;
-  display: flex;
-  align-items: center;
-  height: 70px;
-`;
-
-const StyledLogo = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const StyledLogoImg = styled.img`
-  width: auto;
-  height: 50px;
-  margin-left: 100px;
-`;
-
-const StyledLogoText = styled.div`
-  font-size: 20px;
-  margin-left: 10px;
-  color: #ffffff;
-  font-weight: 600;
-`;
-
-const StyledNavigationContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-left: 40px;
-`;
-
-const StyledNavitgationItem = styled.div`
-  margin-left: 30px;
-  :hover {
-    cursor: pointer;
-  }
-`;
-
-const StyledUserContainer = styled.div`
-  margin-right: 100px;
-`;
-
-const StyledDropdownItem = styled(Dropdown.Item)`
-  color: #000000;
-  margin: 5px;
-`;
+export default Header;
