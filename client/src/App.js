@@ -37,7 +37,7 @@ const App = (props) => {
     if (firstParam === "videoConferencing") {
       let secondParam = pathName.split("/")[2];
       if (secondParam) {
-        this.joinRoom(secondParam);
+        joinRoom(secondParam);
         setSelectedRoomID(secondParam);
         setPage("videoConferencingRooms");
       } else setPage("videoConferencing");
@@ -77,10 +77,10 @@ const App = (props) => {
         });
       }
 
-      this.handleNavigation("videoConferencingRoom", roomID);
+      handleNavigation("videoConferencingRoom", roomID);
     } else {
-      this.handleNavigation("videoConferencing");
-      this.props.history.push("/videoConferencing");
+      handleNavigation("videoConferencing");
+      props.history.push("/videoConferencing");
     }
   }
 
