@@ -38,6 +38,7 @@ const Login = (props) => {
         }
       })
       .then((data) => {
+        console.log(data);
         authContext.login(data.idToken);
         history.replace("/videoConferencing");
       })
