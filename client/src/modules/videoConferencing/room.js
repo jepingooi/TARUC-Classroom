@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Icon } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 // Modals
 import SettingModal from "./settingModal";
@@ -116,13 +116,21 @@ class VideoConferencingRoom extends Component {
     let tempChatMessageList = [];
 
     // eslint-disable-next-line
-    chatHistorySnapshot.data().messageList.map((eachMessage) => {
+    chatHistorySnapshot.data().messageList.map((eachMessage, i) => {
       let tempMessage = {
         id: eachMessage.id,
         message: eachMessage.message,
         sender: eachMessage.sender,
         time: new Date(eachMessage.time.seconds * 1000),
       };
+      if (
+        this.state.chatMessageList &&
+        JSON.stringify(this.state.chatMessageList[i]) !== JSON.stringify(tempMessage) &&
+        eachMessage.sender !== this.state.loginUser.name
+      ) {
+        if (eachMessage.message.substring(0, 2) === "**") toast(`${eachMessage.message}`);
+        else toast(`${eachMessage.sender} said ${eachMessage.message}.`);
+      }
       tempChatMessageList.push(tempMessage);
     });
 
