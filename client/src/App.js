@@ -1,9 +1,10 @@
-import React, { Component, Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState, useContext } from "react";
 import { Route, Switch, Redirect, BrowserRouter as Router } from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
 
 import Login from "./modules/login/pages/Login";
 import Layout from "./layout/Layout";
+import AuthContext from "./store/auth-context";
 
 // Firebase
 import { firebaseConfig } from "./firebaseConfig.json";
@@ -26,6 +27,7 @@ const tempLoginUser = {
 };
 
 const App = (props) => {
+  const authContext = useContext(AuthContext);
   const [page, setPage] = useState("videoConferencing");
   const [loginUser, setLoginUser] = useState(tempLoginUser);
   const [selectedRoomID, setSelectedRoomID] = useState(null);
@@ -107,54 +109,55 @@ const App = (props) => {
       );
   }
 
+  const loggedInRoutes = (
+    <Switch>
+      <Route exact path="/">
+        <Redirect to="/login" />
+      </Route>
+      <Route path={"/login"}>
+        <Login />
+      </Route>
+
+      <Route exact path={`/videoConferencing`}>
+        {renderVideoConferencingHome()}
+      </Route>
+      <Route path={`/videoConferencing/:roomID`}>{renderVideoConferencingRoom()}</Route>
+
+      <Route path={"/surveys/new"}></Route>
+      <Route path={"/surveys/:id/edit"}></Route>
+      <Route path={"/surveys/:id"}>
+        <SurveyDetails />
+      </Route>
+      <Route path={"/surveys"}>
+        <Survey />
+      </Route>
+
+      <Route path={"/exams/new"}></Route>
+      <Route path={"/exams/:id/edit"}></Route>
+      <Route path={"/exams/:id"}>
+        <ExamDetails />
+      </Route>
+      <Route path={"/exams"}>
+        <Exam />
+      </Route>
+      <Route path={"*"}>
+        <p>THIS SHOULD BE REPLACED WITH 404 PAGE</p>
+      </Route>
+    </Switch>
+  );
+
   return (
     <Router>
-      {/* {(this.state.page === "videoConferencing" ||
-          this.state.page === "videoConferencingRoom" ||
-          this.state.page === "surveys" ||
-          this.state.page === "exams") && (
-          <Header
-            page={this.state.page ? this.state.page : ""}
-            handleNavigation={(page) => this.handleNavigation(page)}
-            loginUser={this.state.loginUser}
-          />
-        )} */}
       <Layout>
         <Suspense fallback={<p>Loading...</p>}>
-          <Switch>
-            <Route exact path="/">
-              <Redirect to="/login" />
-            </Route>
-            <Route path={"/login"}>
-              <Login />
-            </Route>
-
-            <Route exact path={`/videoConferencing`}>
-              {renderVideoConferencingHome()}
-            </Route>
-            <Route path={`/videoConferencing/:roomID`}>{renderVideoConferencingRoom()}</Route>
-
-            <Route path={"/surveys/new"}></Route>
-            <Route path={"/surveys/:id/edit"}></Route>
-            <Route path={"/surveys/:id"}>
-              <SurveyDetails />
-            </Route>
-            <Route path={"/surveys"}>
-              <Survey />
-            </Route>
-
-            <Route path={"/exams/new"}></Route>
-            <Route path={"/exams/:id/edit"}></Route>
-            <Route path={"/exams/:id"}>
-              <ExamDetails />
-            </Route>
-            <Route path={"/exams"}>
-              <Exam />
-            </Route>
-            <Route path={"*"}>
-              <p>THIS SHOULD BE REPLACED WITH 404 PAGE</p>
-            </Route>
-          </Switch>
+          {authContext.isLoggedIn && loggedInRoutes}
+          {!authContext.isLoggedIn && (
+            <Switch>
+              <Route path={"*"}>
+                <Login />
+              </Route>
+            </Switch>
+          )}
         </Suspense>
       </Layout>
     </Router>
