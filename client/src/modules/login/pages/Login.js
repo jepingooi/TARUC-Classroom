@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Modal } from "react-bootstrap";
 import classes from "./login.module.css";
 import AuthContext from "../../../store/auth-context";
 import * as yup from "yup";
@@ -17,13 +17,16 @@ const Login = (props) => {
 
   function handleSubmit(event) {
     event.preventDefault();
-    fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
-      method: "POST",
-      body: JSON.stringify({ email, password, returnSecureToken: true }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+      {
+        method: "POST",
+        body: JSON.stringify({ email, password, returnSecureToken: true }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -49,14 +52,39 @@ const Login = (props) => {
 
   return (
     <div className={classes.login}>
+      <Modal.Dialog>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal title</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>Modal body text goes here.</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary">Close</Button>
+          <Button variant="primary">Save changes</Button>
+        </Modal.Footer>
+      </Modal.Dialog>
       <Form noValidate onSubmit={handleSubmit}>
         <Form.Group className="mb-3" size="lg" controlId="email">
           <Form.Label>Email</Form.Label>
-          <Form.Control autoFocus type="email" value={email} required onChange={(e) => setEmail(e.target.value)} />
+          <Form.Control
+            autoFocus
+            type="email"
+            value={email}
+            required
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </Form.Group>
         <Form.Group className="mb-3" size="lg" controlId="password">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="password" value={password} required onChange={(e) => setPassword(e.target.value)} />
+          <Form.Control
+            type="password"
+            value={password}
+            required
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </Form.Group>
         <Button block size="lg" type="submit">
           Login
