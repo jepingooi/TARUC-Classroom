@@ -1,13 +1,26 @@
-import React, { Component } from "react";
-import { Route, Switch, Redirect, BrowserRouter as Router } from "react-router-dom";
+import React, { Component, Suspense } from "react";
+import {
+  Route,
+  Switch,
+  Redirect,
+  BrowserRouter as Router,
+} from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
-import VideoConferencingRoom from "./modules/videoConferencing/room";
-import Survey from "./modules/onlineSurvey/pages/Survey";
-import SurveyDetails from "./modules/onlineSurvey/pages/SurveyDetails";
-import ExamDetails from "./modules/onlineExam/pages/ExamDetails";
-import Exam from "./modules/onlineExam/pages/Exam";
+
 import Login from "./modules/login/pages/Login";
 import Layout from "./layout/Layout";
+
+const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
+const SurveyDetails = React.lazy(() =>
+  import("./modules/onlineSurvey/pages/SurveyDetails")
+);
+const VideoConferencingRoom = React.lazy(() =>
+  import("/modules/videoConferencing/room")
+);
+const Exam = React.lazy(() => import("./modules/onlineExam/pages/Exam"));
+const ExamDetails = React.lazy(() =>
+  import("./modules/onlineExam/pages/ExamDetails")
+);
 
 // Firebase
 import { firebaseConfig } from "./firebaseConfig.json";
@@ -138,6 +151,7 @@ export default class App extends Component {
           />
         )} */}
         <Layout>
+<<<<<<< HEAD
           <Switch>
             <Route exact path="/">
               <Redirect to="/login" />
@@ -169,6 +183,43 @@ export default class App extends Component {
               <Exam />
             </Route>
           </Switch>
+=======
+          <Suspense>
+            <Switch>
+              <Route exact path="/">
+                <Redirect to="/login" />
+              </Route>
+              <Route path={"/login"}>
+                <Login />
+              </Route>
+              <Route exact path={"/videoConferencing"}>
+                {this.renderVideoConferencingHome()}
+              </Route>
+              <Route path={`/videoConferencing/:roomID`}>
+                {this.renderVideoConferencingRoom()}
+              </Route>
+
+              <Route path={"/surveys/new"}></Route>
+              <Route path={"/surveys/:id/edit"}></Route>
+              <Route path={"/surveys/:id"}>
+                <SurveyDetails />
+              </Route>
+              <Route path={"/surveys"}>
+                <Survey />
+              </Route>
+
+              <Route path={"/exams/new"}></Route>
+              <Route path={"/exams/:id/edit"}></Route>
+              <Route path={"/exams/:id"}>
+                <ExamDetails />
+              </Route>
+              <Route path={"/exams"}>
+                {" "}
+                <Exam />
+              </Route>
+            </Switch>
+          </Suspense>
+>>>>>>> 56c98da89aea1996fb0a4e56d9bf3193cc34de2c
         </Layout>
       </Router>
     );
