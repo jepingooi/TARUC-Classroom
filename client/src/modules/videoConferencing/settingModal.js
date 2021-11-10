@@ -167,7 +167,7 @@ export default class settingModal extends Component {
 
     // eslint-disable-next-line
     tempRoom.invitedParticipantList.map((eachParticipant) => {
-      if (eachParticipant !== id) {
+      if (eachParticipant.id !== id) {
         tempParticipantList.push(eachParticipant);
       }
     });
@@ -184,9 +184,9 @@ export default class settingModal extends Component {
     let userList = this.state.userList;
 
     if (invitedParticipantList?.length > 0 && userList?.length > 0) {
-      invitedParticipantList.forEach((eachParticipantId, i) => {
+      invitedParticipantList.forEach((eachParticipant, i) => {
         userList.forEach((eachUser) => {
-          if (eachParticipantId === eachUser.email) {
+          if (eachParticipant.id === eachUser.email) {
             tempParticipants.push(
               <StyledParticipantContainer key={eachUser.email}>
                 <Button
