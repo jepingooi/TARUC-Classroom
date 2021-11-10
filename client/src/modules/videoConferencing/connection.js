@@ -141,7 +141,9 @@ const Room = (props) => {
   useEffect(() => {
     socketRef.current = io.connect("/");
     createStream();
-    return socketRef.current.disconnect();
+    return () => {
+      handleHangUp();
+    };
   }, []);
 
   function createStream() {

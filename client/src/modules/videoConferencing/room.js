@@ -274,7 +274,7 @@ class VideoConferencingRoom extends Component {
   };
 
   // Hang up function
-  handleHangUp = async () => {
+  handleHangUp = async (type) => {
     if (!this.state.selectedRoom) return;
 
     let tempParticipantInRoomList = [];
@@ -292,8 +292,10 @@ class VideoConferencingRoom extends Component {
     let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
     await updateDoc(roomRef, { participantInRoomList: tempParticipantInRoomList });
 
-    this.props.handleNavigation("videoConferencing", null);
-    this.props.history.push(`/videoConferencing`);
+    if (type === "normal") {
+      this.props.handleNavigation("videoConferencing", null);
+      this.props.history.push(`/videoConferencing`);
+    }
   };
 
   // Handle open or close modal
@@ -421,7 +423,7 @@ class VideoConferencingRoom extends Component {
         screenSharing={this.state.screenSharing}
         handleScreenSharing={(status) => this.handleScreenSharing(status)}
         joinRoom={(screenSharing) => this.props.joinRoom(this.state.selectedRoom.id, screenSharing)}
-        handleHangUp={() => this.handleHangUp()}
+        handleHangUp={() => this.handleHangUp("normal")}
       />
     );
   };
