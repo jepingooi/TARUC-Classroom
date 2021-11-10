@@ -24,6 +24,9 @@ let unsubRoom;
 let unsubChatHistory;
 let unsubAttendance;
 
+let speech = new SpeechSynthesisUtterance();
+speech.lang = "en-UK";
+
 class VideoConferencingRoom extends Component {
   constructor(props) {
     super(props);
@@ -129,8 +132,13 @@ class VideoConferencingRoom extends Component {
         JSON.stringify(this.state.chatMessageList[i]) !== JSON.stringify(tempMessage) &&
         eachMessage.sender !== this.state.loginUser.name
       ) {
-        if (eachMessage.message.substring(0, 2) === "**") toast(`${eachMessage.message}`);
-        else toast(`${eachMessage.sender} said ${eachMessage.message}.`);
+        let message = "";
+        if (eachMessage.message.substring(0, 2) === "**") message = `${eachMessage.message}`;
+        else message = `${eachMessage.sender} said ${eachMessage.message}.`;
+
+        toast(message);
+        speech.text = message;
+        window.speechSynthesis.speak(speech);
       }
       tempChatMessageList.push(tempMessage);
     });
