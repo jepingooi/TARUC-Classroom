@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Button, ButtonGroup, Icon, Modal } from "semantic-ui-react";
+import { Button, Modal } from "semantic-ui-react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import ScreenSharingModal from "./screenSharingModal";
@@ -141,6 +141,7 @@ const Room = (props) => {
   useEffect(() => {
     socketRef.current = io.connect("/");
     createStream();
+    return socketRef.current.disconnect();
   }, []);
 
   function createStream() {
