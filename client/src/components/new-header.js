@@ -10,6 +10,7 @@ const Header = () => {
   const logoutHandler = () => {
     history.push("/login");
   };
+
   return (
     <Navbar className={classes.navbar} variant="dark" style={{ height: "70px" }}>
       <Container>
