@@ -33,7 +33,7 @@ const defaultRoom = {
   camera: true,
   shareScreen: true,
   emoji: true,
-  participantIdList: [],
+  invitedParticipantList: [],
   pollIdList: [],
   recordingIdList: [],
   chatHistoryId: "",
@@ -109,11 +109,10 @@ export default class VideoConferencingHome extends Component {
       // eslint-disable-next-line
       this.state.roomList.map((eachRoom) => {
         if (eachRoom.status === "active") {
-          if (eachRoom.ownerId === this.props.loginUser.email) {
-            tempRoomList.push(eachRoom);
-          } else if (eachRoom.participantIdList.includes(this.props.loginUser.email)) {
-            participantRoom.push(eachRoom);
-          }
+          let filterRoom = eachRoom.invitedParticipantList.filter((list) => list.id === this.props.loginUser.email);
+
+          if (eachRoom.ownerId === this.props.loginUser.email) tempRoomList.push(eachRoom);
+          else if (filterRoom.length > 0) participantRoom.push(eachRoom);
         }
       });
       tempRoomList = tempRoomList.concat(participantRoom);
@@ -187,7 +186,7 @@ export default class VideoConferencingHome extends Component {
               <StyledCell>{endTime}</StyledCell>
               <StyledCell>
                 {this.getParticipantInRoomNumber(eachRoom)} /{" "}
-                {eachRoom.participantIdList ? eachRoom.participantIdList.length + 1 : 0 + 1}
+                {eachRoom.invitedParticipantList ? eachRoom.invitedParticipantList.length + 1 : 0 + 1}
               </StyledCell>
               <StyledCell style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                 {eachRoom.ownerId === this.props.loginUser.email && (

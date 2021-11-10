@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
-import { Icon } from "semantic-ui-react";
+import { Icon, Button } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -11,6 +11,7 @@ import PollModal from "./pollModal";
 import ChatBox from "./chatBox";
 import ScreenRecordingModal from "./screenRecordingModal";
 import Room from "./connection";
+import UserControlModal from "./userControlModal";
 
 // Firebase
 import { firebaseConfig } from "../../firebaseConfig.json";
@@ -40,6 +41,7 @@ class VideoConferencingRoom extends Component {
       shareScreenModal: false,
       recordingModal: false,
       settingModal: false,
+      userControlModal: false,
     };
   }
 
@@ -305,45 +307,64 @@ class VideoConferencingRoom extends Component {
       tempAction = "create";
     } else if (type === "pollModal" && status === true) tempAction = "answer";
 
-    this.setState({ [type]: status, action: tempAction });
+    if (type !== "userControlModal") this.setState({ [type]: status, action: tempAction });
+    else this.setState({ [type]: status, selectedUser: action });
   };
 
   // Generate participants on the left (login user will be shown first)
   renderParticipants = () => {
     let onlineUserList = Object.assign([], this.state.selectedRoom.participantInRoomList);
-    let sharingScreenIcon = <Icon name="laptop" size="large" style={{ marginRight: "10px" }} />;
-    let cameraOnIcon = <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />;
-    let microphoneMutedIcon = <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />;
-    let raiseHandIcon = <Icon name="hand paper" size="large" style={{ marginRight: "10px" }} />;
+    let sharingScreenIcon = <Icon name="laptop" style={{ marginRight: "10px" }} />;
+    let cameraOnIcon = <Icon name="video camera" style={{ marginRight: "10px" }} />;
+    let microphoneMutedIcon = <Icon name="microphone slash" style={{ marginRight: "10px" }} />;
+    let raiseHandIcon = <Icon name="hand paper" style={{ marginRight: "10px" }} />;
+    let forcedMutedIcon = <Icon name="microphone slash" style={{ marginRight: "10px" }} color="red" />;
 
     let onlineUser = [];
     let otherUser = [];
 
-    // eslint-disable-next-line
-    onlineUserList.map((eachUser) => {
+    onlineUserList.forEach((eachUser) => {
+      let forceMuted = false;
+      this.state.selectedRoom.invitedParticipantList.forEach((invitedUser) => {
+        if (eachUser.id === invitedUser.id && invitedUser.muted) forceMuted = true;
+      });
+
+      let statusContainer = (
+        <StatusContainer>
+          {eachUser.shareScreen && sharingScreenIcon}
+          {eachUser.camera && cameraOnIcon}
+          {!eachUser.mic && !forceMuted && microphoneMutedIcon}
+          {forceMuted && forcedMutedIcon}
+          {eachUser.raiseHand && raiseHandIcon}
+        </StatusContainer>
+      );
+
+      let user = {
+        muted: forceMuted,
+        id: eachUser.id,
+      };
+
       if (eachUser.type !== "screenSharing") {
-        if (eachUser.id !== this.props.loginUser.email) {
-          otherUser.push(
+        if (eachUser.id === this.props.loginUser.email) {
+          onlineUser.push(
             <ParticipantContainer key={`loginUser${eachUser.id}`}>
               <ParticipantNameContainer>{eachUser.name}</ParticipantNameContainer>
-              <StatusContainer>
-                {eachUser.shareScreen && sharingScreenIcon}
-                {eachUser.camera && cameraOnIcon}
-                {!eachUser.mic && microphoneMutedIcon}
-                {eachUser.raiseHand && raiseHandIcon}
-              </StatusContainer>
+              {statusContainer}
             </ParticipantContainer>
           );
         } else {
-          onlineUser.push(
+          otherUser.push(
             <ParticipantContainer key={`otherUser${eachUser.id}`}>
               <ParticipantNameContainer>{eachUser.name}</ParticipantNameContainer>
-              <StatusContainer>
-                {eachUser.shareScreen && sharingScreenIcon}
-                {eachUser.camera && cameraOnIcon}
-                {!eachUser.mic && microphoneMutedIcon}
-                {eachUser.raiseHand && raiseHandIcon}
-              </StatusContainer>
+              {statusContainer}
+              {this.props.loginUser.email === this.state.selectedRoom.ownerId && (
+                <Button
+                  icon="ellipsis vertical"
+                  style={{ marginRight: "10px" }}
+                  onClick={() => this.handleModal("userControlModal", true, user)}
+                  size="mini"
+                />
+              )}
             </ParticipantContainer>
           );
         }
@@ -421,6 +442,18 @@ class VideoConferencingRoom extends Component {
     );
   };
 
+  renderUserControlModal = () => {
+    return (
+      <UserControlModal
+        userControlModal={this.state.userControlModal}
+        handleModal={() => this.handleModal("userControlModal", false)}
+        selectedUser={this.state.selectedUser}
+        userList={this.state.userList}
+        selectedRoom={this.state.selectedRoom}
+      />
+    );
+  };
+
   render = () => {
     if (this.state.selectedRoom && this.state.userList && this.props.loginUser) {
       return (
@@ -435,6 +468,8 @@ class VideoConferencingRoom extends Component {
             this.renderPollModal()}
 
           {this.renderRecordingModal()}
+
+          {this.state.selectedUser && this.renderUserControlModal()}
 
           <div>
             <ParticipantListContainer>{this.renderParticipants()}</ParticipantListContainer>
@@ -485,4 +520,5 @@ const StatusContainer = styled.div`
   width: 100px;
   display: flex;
   justify-content: right;
+  align-items: center;
 `;

@@ -18,14 +18,18 @@ const FunctionButtons = (props) => {
   const loginUser = props.loginUser;
 
   let tempUser = {};
-  // eslint-disable-next-line
-  selectedRoom.participantInRoomList.map((eachParticipant) => {
+  selectedRoom.participantInRoomList.forEach((eachParticipant) => {
     if (eachParticipant.id === loginUser.email) {
       tempUser = eachParticipant;
 
       if (eachParticipant.id === selectedRoom.ownerId) tempUser.owner = true;
       else tempUser.owner = false;
     }
+  });
+
+  let forceMuted = false;
+  selectedRoom.invitedParticipantList.forEach((eachParticipant) => {
+    if (eachParticipant.id === loginUser.email) forceMuted = eachParticipant.muted;
   });
 
   return (
@@ -71,7 +75,7 @@ const FunctionButtons = (props) => {
           />
         )}
 
-        {(selectedRoom.mic || tempUser.owner) && (
+        {(selectedRoom.mic || tempUser.owner) && !forceMuted && (
           <Button
             icon={props.audioFlag ? "microphone" : "microphone slash"}
             size="massive"
@@ -141,7 +145,7 @@ const Room = (props) => {
   useEffect(() => {
     socketRef.current = io.connect("/");
     createStream();
-    return socketRef.current.disconnect();
+    return () => socketRef.current.disconnect();
   }, []);
 
   function createStream() {

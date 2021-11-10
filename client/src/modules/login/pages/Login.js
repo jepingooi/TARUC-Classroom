@@ -10,23 +10,20 @@ const Login = (props) => {
   const history = useHistory();
 
   const authContext = useContext(AuthContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("ooijp-pm18@student.tarc.edu.my");
+  const [password, setPassword] = useState("ooijp123");
 
   const API_KEY = "AIzaSyA7sbTCrstTgUDyn3OmGxaI494sxwat26w";
 
   function handleSubmit(event) {
     event.preventDefault();
-    fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
-      {
-        method: "POST",
-        body: JSON.stringify({ email, password, returnSecureToken: true }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
+      method: "POST",
+      body: JSON.stringify({ email, password, returnSecureToken: true }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -51,22 +48,11 @@ const Login = (props) => {
       <Form noValidate onSubmit={handleSubmit}>
         <Form.Group className="mb-3" size="lg" controlId="email">
           <Form.Label>Email</Form.Label>
-          <Form.Control
-            autoFocus
-            type="email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <Form.Control autoFocus type="email" value={email} required onChange={(e) => setEmail(e.target.value)} />
         </Form.Group>
         <Form.Group className="mb-3" size="lg" controlId="password">
           <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <Form.Control type="password" value={password} required onChange={(e) => setPassword(e.target.value)} />
         </Form.Group>
         <Button block size="lg" type="submit">
           Login

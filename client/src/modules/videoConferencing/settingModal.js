@@ -118,7 +118,7 @@ export default class settingModal extends Component {
   // Invite participant to a room
   inviteParticipant = () => {
     this.clearError();
-    let tempParticipantIdList = JSON.parse(JSON.stringify(this.state.selectedRoom.participantIdList));
+    let tempParticipantList = JSON.parse(JSON.stringify(this.state.selectedRoom.invitedParticipantList));
     let loginUser = this.state.loginUser;
     let email = this.state.participantEmail;
     let emailError = "";
@@ -137,9 +137,9 @@ export default class settingModal extends Component {
     if (!exist) emailError = "The user is not exist.";
 
     // Check if user has been invited
-    if (tempParticipantIdList?.length > 0) {
+    if (tempParticipantList?.length > 0) {
       // eslint-disable-next-line
-      tempParticipantIdList.map((eachParticipant) => {
+      tempParticipantList.map((eachParticipant) => {
         if (eachParticipant === email) emailError = "The user has been invited.";
       });
     }
@@ -154,25 +154,25 @@ export default class settingModal extends Component {
     }
 
     // If no error occur
-    tempParticipantIdList.push(email);
+    tempParticipantList.push({ id: email, muted: false });
     let tempRoom = this.state.selectedRoom;
-    tempRoom.participantIdList = tempParticipantIdList;
+    tempRoom.invitedParticipantList = tempParticipantList;
     this.setState({ edited: true, selectedRoom: tempRoom, participantEmail: "" });
   };
 
   // Remove participant from a room
   removeParticipant = (id) => {
-    let tempParticipantIdList = [];
+    let tempParticipantList = [];
     let tempRoom = Object.assign({}, this.state.selectedRoom);
 
     // eslint-disable-next-line
-    tempRoom.participantIdList.map((eachParticipant) => {
+    tempRoom.invitedParticipantList.map((eachParticipant) => {
       if (eachParticipant !== id) {
-        tempParticipantIdList.push(eachParticipant);
+        tempParticipantList.push(eachParticipant);
       }
     });
 
-    tempRoom.participantIdList = tempParticipantIdList;
+    tempRoom.invitedParticipantList = tempParticipantList;
     this.setState({ edited: true, selectedRoom: tempRoom });
   };
 
@@ -180,14 +180,12 @@ export default class settingModal extends Component {
   generateParticipant = () => {
     let collectedParticipants = [];
     let tempParticipants = [];
-    let participantIdList = this.state.selectedRoom ? this.state.selectedRoom.participantIdList : [];
+    let invitedParticipantList = this.state.selectedRoom ? this.state.selectedRoom.invitedParticipantList : [];
     let userList = this.state.userList;
 
-    if (participantIdList?.length > 0 && userList?.length > 0) {
-      // eslint-disable-next-line
-      participantIdList.map((eachParticipantId, i) => {
-        // eslint-disable-next-line
-        userList.map((eachUser) => {
+    if (invitedParticipantList?.length > 0 && userList?.length > 0) {
+      invitedParticipantList.forEach((eachParticipantId, i) => {
+        userList.forEach((eachUser) => {
           if (eachParticipantId === eachUser.email) {
             tempParticipants.push(
               <StyledParticipantContainer key={eachUser.email}>
@@ -205,7 +203,7 @@ export default class settingModal extends Component {
             );
           }
         });
-        if (i % 2 !== 0 || participantIdList.length === i + 1) {
+        if (i % 2 !== 0 || invitedParticipantList.length === i + 1) {
           collectedParticipants.push(
             <Form.Group widths="equal" key={i}>
               {tempParticipants}
@@ -274,7 +272,7 @@ export default class settingModal extends Component {
         camera: selectedRoom.camera,
         shareScreen: selectedRoom.shareScreen,
         emoji: selectedRoom.emoji,
-        participantIdList: selectedRoom.participantIdList ? selectedRoom.participantIdList : [],
+        invitedParticipantList: selectedRoom.invitedParticipantList ? selectedRoom.invitedParticipantList : [],
       });
 
       toast(`Edited room ${selectedRoom.roomName}.`);
@@ -300,7 +298,7 @@ export default class settingModal extends Component {
         camera: selectedRoom.camera,
         shareScreen: selectedRoom.shareScreen,
         emoji: selectedRoom.emoji,
-        participantIdList: selectedRoom.participantIdList,
+        invitedParticipantList: selectedRoom.invitedParticipantList,
         pollIdList: selectedRoom.pollIdList,
         recordingIdList: selectedRoom.recordingIdList,
         participantInRoomList: [],
