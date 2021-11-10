@@ -1,8 +1,7 @@
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import Header from "../../components/new-header";
 
-const Exam = (props) => {
+const Login = (props) => {
   return (
     <Fragment>
       <Link to="/videoConferencing">Login</Link>
@@ -10,4 +9,4 @@ const Exam = (props) => {
   );
 };
 
-export default Exam;
+export default Login;

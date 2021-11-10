@@ -1,9 +1,15 @@
-import { Container, Nav, Navbar, Form, Button } from "react-bootstrap";
+import Button from "./Button";
+import { Container, Nav, Navbar, Form } from "react-bootstrap";
 import TarucLogo from "../resources/TARUCLogo.png";
 import classes from "./header.module.css";
 import { NavLink, Link } from "react-router-dom";
+import { useHistory } from "react-router";
 
 const Header = () => {
+  const history = useHistory();
+  const logoutHandler = () => {
+    history.push("/login");
+  };
   return (
     <Navbar className={classes.navbar} variant="dark">
       <Container>
@@ -32,9 +38,9 @@ const Header = () => {
           </NavLink>
         </Nav>
         <Form className="d-flex">
-          <Link class="btn btn-secondary" to="/login">
+          <Button variant="secondary" onClick={logoutHandler}>
             Logout
-          </Link>
+          </Button>
         </Form>
       </Container>
     </Navbar>
