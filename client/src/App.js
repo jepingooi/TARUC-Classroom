@@ -35,6 +35,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    console.log(loginUser.email);
     let pathName = window.location.pathname.trim();
     let firstParam = pathName.split("/")[1];
 

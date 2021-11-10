@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Icon } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 // Modals
 import SettingModal from "./settingModal";
@@ -23,6 +23,9 @@ const db = getFirestore();
 let unsubRoom;
 let unsubChatHistory;
 let unsubAttendance;
+
+let speech = new SpeechSynthesisUtterance();
+speech.lang = "en-UK";
 
 class VideoConferencingRoom extends Component {
   constructor(props) {
@@ -46,6 +49,7 @@ class VideoConferencingRoom extends Component {
   };
 
   async componentWillUnmount() {
+    toast.dismiss();
     // this.handleAttendance("leave");
 
     this.handleHangUp();
@@ -116,13 +120,26 @@ class VideoConferencingRoom extends Component {
     let tempChatMessageList = [];
 
     // eslint-disable-next-line
-    chatHistorySnapshot.data().messageList.map((eachMessage) => {
+    chatHistorySnapshot.data().messageList.map((eachMessage, i) => {
       let tempMessage = {
         id: eachMessage.id,
         message: eachMessage.message,
         sender: eachMessage.sender,
         time: new Date(eachMessage.time.seconds * 1000),
       };
+      if (
+        this.state.chatMessageList &&
+        JSON.stringify(this.state.chatMessageList[i]) !== JSON.stringify(tempMessage) &&
+        eachMessage.sender !== this.state.loginUser.name
+      ) {
+        let message = "";
+        if (eachMessage.message.substring(0, 2) === "**") message = `${eachMessage.message}`;
+        else message = `${eachMessage.sender} said ${eachMessage.message}.`;
+
+        toast(message);
+        speech.text = message;
+        window.speechSynthesis.speak(speech);
+      }
       tempChatMessageList.push(tempMessage);
     });
 
@@ -236,11 +253,11 @@ class VideoConferencingRoom extends Component {
     // eslint-disable-next-line
     onlineUserList.map((eachUser) => {
       if (eachUser.id === this.state.loginUser.email) {
+        if (!eachUser.raiseHand) this.inputNewMessage(`**${this.state.loginUser.name} raised hand.**`);
+
         eachUser.raiseHand = !eachUser.raiseHand;
       }
     });
-
-    this.inputNewMessage(`**${this.state.loginUser.name} raised hand.**`);
 
     let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
     await updateDoc(roomRef, { participantInRoomList: onlineUserList });
@@ -413,7 +430,9 @@ class VideoConferencingRoom extends Component {
     if (this.state.selectedRoom && this.state.userList && this.state.loginUser) {
       return (
         <StyledContent>
-          <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
+          {this.state.selectedRoom.popup && (
+            <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
+          )}
           {this.state.loginUser &&
             this.state.loginUser.email === this.state.selectedRoom.ownerId &&
             this.renderRoomSettingModal()}
