@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { Icon } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
+import { ToastContainer } from "react-toastify";
 
 // Modals
 import SettingModal from "./settingModal";
@@ -412,6 +413,7 @@ class VideoConferencingRoom extends Component {
     if (this.state.selectedRoom && this.state.userList && this.state.loginUser) {
       return (
         <StyledContent>
+          <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
           {this.state.loginUser &&
             this.state.loginUser.email === this.state.selectedRoom.ownerId &&
             this.renderRoomSettingModal()}

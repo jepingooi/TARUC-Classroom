@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { Button, Modal, Form, Checkbox, Message } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
+import { toast } from "react-toastify";
 
 // Firebase
 import { firebaseConfig } from "../../firebaseConfig.json";
@@ -275,6 +276,8 @@ export default class settingModal extends Component {
         emoji: selectedRoom.emoji,
         participantIdList: selectedRoom.participantIdList ? selectedRoom.participantIdList : [],
       });
+
+      toast(`Edited room ${selectedRoom.roomName}.`);
     } else if (this.props.action === "create") {
       let id = uuidv4();
       let selectedRoom = this.state.selectedRoom;
@@ -318,6 +321,8 @@ export default class settingModal extends Component {
         attendeeIdList: [],
         attendanceList: [],
       });
+
+      toast(`Successfully created room ${this.state.selectedRoom.roomName}!`);
     }
 
     this.props.handleModal(false, null, "close");
@@ -348,6 +353,7 @@ export default class settingModal extends Component {
     await deleteDoc(attendanceRef);
 
     this.handleConfirmDeleteModal(false);
+    toast(`Deleted room ${this.state.selectedRoom.roomName}.`);
   };
 
   handleConfirmDeleteModal = (status) => {
