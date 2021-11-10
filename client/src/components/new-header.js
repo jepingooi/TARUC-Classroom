@@ -1,6 +1,5 @@
 import { Container, Nav, Navbar, Form, Button } from "react-bootstrap";
 import TarucLogo from "../resources/TARUCLogo.png";
-import "bootstrap/dist/css/bootstrap.min.css";
 import classes from "./header.module.css";
 import { NavLink, Link } from "react-router-dom";
 
