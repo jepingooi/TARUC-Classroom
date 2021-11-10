@@ -56,6 +56,8 @@ export default class VideoConferencingHome extends Component {
   }
 
   async componentWillUnmount() {
+    toast.dismiss();
+
     if (unsubRoomRef) await unsubRoomRef();
     if (unSubAllRoomRef) await unSubAllRoomRef();
   }

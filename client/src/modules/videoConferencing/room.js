@@ -46,6 +46,7 @@ class VideoConferencingRoom extends Component {
   };
 
   async componentWillUnmount() {
+    toast.dismiss();
     // this.handleAttendance("leave");
 
     this.handleHangUp();
@@ -421,7 +422,9 @@ class VideoConferencingRoom extends Component {
     if (this.state.selectedRoom && this.state.userList && this.state.loginUser) {
       return (
         <StyledContent>
-          <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
+          {this.state.selectedRoom.popup && (
+            <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
+          )}
           {this.state.loginUser &&
             this.state.loginUser.email === this.state.selectedRoom.ownerId &&
             this.renderRoomSettingModal()}
