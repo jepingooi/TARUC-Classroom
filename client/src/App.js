@@ -1,10 +1,5 @@
 import React, { Component, Suspense } from "react";
-import {
-  Route,
-  Switch,
-  Redirect,
-  BrowserRouter as Router,
-} from "react-router-dom";
+import { Route, Switch, Redirect, BrowserRouter as Router } from "react-router-dom";
 import VideoConferencing from "./modules/videoConferencing/home";
 
 import Login from "./modules/login/pages/Login";
@@ -16,16 +11,10 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
-const SurveyDetails = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/SurveyDetails")
-);
-const VideoConferencingRoom = React.lazy(() =>
-  import("./modules/videoConferencing/room")
-);
+const SurveyDetails = React.lazy(() => import("./modules/onlineSurvey/pages/SurveyDetails"));
+const VideoConferencingRoom = React.lazy(() => import("./modules/videoConferencing/room"));
 const Exam = React.lazy(() => import("./modules/onlineExam/pages/Exam"));
-const ExamDetails = React.lazy(() =>
-  import("./modules/onlineExam/pages/ExamDetails")
-);
+const ExamDetails = React.lazy(() => import("./modules/onlineExam/pages/ExamDetails"));
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -79,12 +68,8 @@ export default class App extends Component {
       // If user didnt join the room before, update the participant in room data else skip
       if (!match) {
         let participantData = {
-          id: screenSharing
-            ? `shareScreen_${this.state.loginUser.email}`
-            : this.state.loginUser.email,
-          name: screenSharing
-            ? `${this.state.loginUser.name}'s screen`
-            : this.state.loginUser.name,
+          id: screenSharing ? `shareScreen_${this.state.loginUser.email}` : this.state.loginUser.email,
+          name: screenSharing ? `${this.state.loginUser.name}'s screen` : this.state.loginUser.name,
           mic: true,
           shareScreen: false,
           camera: false,
@@ -92,8 +77,7 @@ export default class App extends Component {
           type: screenSharing ? "screenSharing" : "default",
         };
 
-        let tempParticipantInRoomList =
-          roomSnapshot.data().participantInRoomList;
+        let tempParticipantInRoomList = roomSnapshot.data().participantInRoomList;
         tempParticipantInRoomList.push(participantData);
         await updateDoc(roomRef, {
           participantInRoomList: tempParticipantInRoomList,
@@ -108,8 +92,7 @@ export default class App extends Component {
   };
 
   handleNavigation = (tempPage, selectedRoomId) => {
-    if (this.state.page !== tempPage)
-      this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
+    if (this.state.page !== tempPage) this.setState({ page: tempPage, selectedRoomId: selectedRoomId });
   };
 
   renderVideoConferencingHome = () => {
@@ -129,9 +112,7 @@ export default class App extends Component {
           loginUser={this.state.loginUser}
           selectedRoomId={this.state.selectedRoomId}
           handleNavigation={(page) => this.handleNavigation(page, null)}
-          joinRoom={(selectedRoomId, screenSharing) =>
-            this.joinRoom(selectedRoomId, screenSharing)
-          }
+          joinRoom={(selectedRoomId, screenSharing) => this.joinRoom(selectedRoomId, screenSharing)}
         />
       );
     }
@@ -142,13 +123,7 @@ export default class App extends Component {
   };
 
   renderLogin = () => {
-    return (
-      <Login
-        handleNavigation={() =>
-          this.handleNavigation("videoConferencing", null)
-        }
-      />
-    );
+    return <Login handleNavigation={() => this.handleNavigation("videoConferencing", null)} />;
   };
 
   render = () => {
@@ -173,12 +148,11 @@ export default class App extends Component {
               <Route path={"/login"}>
                 <Login />
               </Route>
-              <Route exact path={"/videoConferencing"}>
+
+              <Route exact path={`/videoConferencing`}>
                 {this.renderVideoConferencingHome()}
               </Route>
-              <Route path={`/videoConferencing/:roomID`}>
-                {this.renderVideoConferencingRoom()}
-              </Route>
+              <Route path={`/videoConferencing/:roomID`}>{this.renderVideoConferencingRoom()}</Route>
 
               <Route path={"/surveys/new"}></Route>
               <Route path={"/surveys/:id/edit"}></Route>

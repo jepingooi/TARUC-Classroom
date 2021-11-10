@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { Button, Table, Modal, Form, Message, Radio } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
+import { toast } from "react-toastify";
 
 // Download to PDF
 import jsPDF from "jspdf";
@@ -245,6 +246,7 @@ export default class pollModal extends Component {
     });
 
     this.handleAction(this.state.action, false);
+    toast(`Successfully created new poll!`);
   };
 
   // Validation for creating new poll
@@ -316,6 +318,7 @@ export default class pollModal extends Component {
     await updateDoc(roomRef, {
       pollIdList: tempPollIdList,
     });
+    toast(`Deleted poll.`);
   };
 
   // Submit selected answer (participant)

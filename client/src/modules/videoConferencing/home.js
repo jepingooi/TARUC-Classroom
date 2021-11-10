@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Button, Table, Menu, Icon } from "semantic-ui-react";
+import { ToastContainer, toast } from "react-toastify";
 
 // Modals
 import SettingModal from "./settingModal";
@@ -330,6 +331,7 @@ export default class VideoConferencingHome extends Component {
   render = () => {
     return (
       <StyledContent>
+        <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
         {this.renderRoomSettingModal()}
         <StyledSubContent>
           {this.renderTopSide()}
