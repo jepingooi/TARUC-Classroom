@@ -35,7 +35,11 @@ const Login = (props) => {
         }
       })
       .then((data) => {
-        authContext.login(data.idToken);
+        console.log(data);
+        const expirationTime = new Date(
+          new Date().getTime() + +data.expiresIn * 1000
+        );
+        authContext.login(data.idToken, data.email, expirationTime.toISOString);
         history.replace("/videoConferencing");
       })
       .catch((e) => {
