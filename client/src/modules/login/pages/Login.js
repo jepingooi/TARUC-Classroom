@@ -3,6 +3,8 @@ import { Link, useHistory } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import classes from "./login.module.css";
 import AuthContext from "../../../store/auth-context";
+import * as yup from "yup";
+import { Formik } from "formik";
 
 const Login = (props) => {
   const history = useHistory();
@@ -10,10 +12,11 @@ const Login = (props) => {
   const authContext = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const API_KEY = "AIzaSyA7sbTCrstTgUDyn3OmGxaI494sxwat26w";
+
   function handleSubmit(event) {
     event.preventDefault();
-
     fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
       {
@@ -45,13 +48,14 @@ const Login = (props) => {
 
   return (
     <div className={classes.login}>
-      <Form onSubmit={handleSubmit}>
+      <Form noValidate onSubmit={handleSubmit}>
         <Form.Group className="mb-3" size="lg" controlId="email">
           <Form.Label>Email</Form.Label>
           <Form.Control
             autoFocus
             type="email"
             value={email}
+            required
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
@@ -60,6 +64,7 @@ const Login = (props) => {
           <Form.Control
             type="password"
             value={password}
+            required
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
