@@ -33,7 +33,9 @@ const Header = () => {
           </NavLink>
         </Nav>
         <Form className="d-flex">
-          <Button>Logout</Button>
+          <Link class="btn btn-secondary" to="/login">
+            Logout
+          </Link>
         </Form>
       </Container>
     </Navbar>

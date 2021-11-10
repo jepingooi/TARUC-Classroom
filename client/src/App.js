@@ -12,7 +12,7 @@ import SurveyDetails from "./modules/onlineSurvey/SurveyDetails";
 import ExamDetails from "./modules/onlineExam/ExamDetails";
 import Exam from "./modules/onlineExam/Exam";
 import Login from "./modules/login/Login";
-import Header from "./components/header";
+import Header from "./components/new-header";
 import Layout from "./layout/Layout";
 
 // Firebase

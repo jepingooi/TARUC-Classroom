@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import Header from "../../components/header copy";
+import Header from "../../components/new-header";
 
 const Exam = (props) => {
   return (

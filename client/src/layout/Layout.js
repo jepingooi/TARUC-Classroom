@@ -1,4 +1,4 @@
-import Header from "../components/header copy";
+import Header from "../components/new-header";
 import { Fragment } from "react";
 
 const Layout = (props) => {
