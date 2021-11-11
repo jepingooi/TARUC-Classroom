@@ -4,6 +4,16 @@ import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
 import classes from "./Login.module.css";
 import AuthContext from "../../../store/auth-context";
 import { firebaseConfig } from "../../../firebaseConfig.json";
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore/lite";
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const Login = (props) => {
   const history = useHistory();
@@ -41,7 +51,20 @@ const Login = (props) => {
         const expirationTime = new Date(
           new Date().getTime() + +data.expiresIn * 1000
         );
-        authContext.login(data.idToken, data.email, expirationTime.toISOString);
+
+        //fetch user from db where email = data.email
+        let user;
+        const fetchUser = async () => {
+          const usersRef = collection(db, "users");
+          const q = query(usersRef, where("email", "==", data.email));
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            user = doc.data();
+          });
+        };
+
+        fetchUser();
+        authContext.login(data.idToken, user, expirationTime.toISOString);
         history.replace("/videoConferencing");
       })
       .catch((e) => {
