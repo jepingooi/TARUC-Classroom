@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
@@ -11,36 +11,54 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const SurveyList = () => {
-  const [surveys, setSurveys] = useState([]);
+  const [surveys, setSurveys] = useState([
+    {
+      id: "",
+      title: "",
+      status: "",
+      responseNumber: 0,
+      startDate: null,
+    },
+  ]);
 
-  const fetchSurveys = async () => {
+  const fetchSurveys = useCallback(async () => {
     const surveyCollection = collection(db, "surveys");
     const surveySnapshot = await getDocs(surveyCollection);
-    const surveyList = surveySnapshot.docs.map((doc) => doc.data());
+    const surveyList = surveySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title,
+        status: data.status,
+        responseNumber: data.responses.length,
+        startDate: data.startDate.toDate().toDateString(),
+      };
+    });
 
-    console.log(surveySnapshot.docs);
+    // console.log(surveySnapshot.docs);
     console.log(surveyList);
     setSurveys(surveyList);
+
     return surveyList;
-  };
+  }, []);
 
   useEffect(() => {
     fetchSurveys();
-  }, []);
+  }, [fetchSurveys]);
 
   return (
     <tbody>
-      {surveys.map((data) => {
+      {surveys.map((doc) => {
         return (
-          <tr>
+          <tr key={doc.id}>
             <td className={classes.title}>
-              <Link>{data.title}</Link>
+              <Link to="/">{doc.title}</Link>
             </td>
-            <td>{data.status}</td>
-            <td>{data.responses.length}</td>
-            <td>{data.startDate.toDate().toDateString()}</td>
+            <td>{doc.status}</td>
+            <td>{doc.responseNumber}</td>
+            <td>{doc.startDate}</td>
             <td>
-              <TableActions isClosed={data.status == "closed"} />
+              <TableActions isClosed={doc.status == "Closed"} />
             </td>
           </tr>
         );

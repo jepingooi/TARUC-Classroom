@@ -1,10 +1,10 @@
 const SearchBar = (props) => {
   return (
-    <div class="form-outline">
+    <div className="form-outline">
       <input
         type="search"
         id="form1"
-        class="form-control"
+        className="form-control"
         placeholder={props.text}
         aria-label="Search"
       />
