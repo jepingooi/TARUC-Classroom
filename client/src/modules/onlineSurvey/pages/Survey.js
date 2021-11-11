@@ -6,6 +6,34 @@ import CustomTable from "../../../components/Table";
 import SearchBar from "../components/SearchBar";
 import SurveyList from "../components/SurveryList";
 
+const filterList = [
+  {
+    id: "f1",
+    filterText: "All",
+  },
+  {
+    id: "f2",
+    filterText: "Published",
+  },
+  ,
+  {
+    id: "f3",
+    filterText: "Closed",
+  },
+  ,
+  {
+    id: "f4",
+    filterText: "Drafted",
+  },
+];
+
+const headerList = [
+  { id: "h1", headerText: "Title" },
+  { id: "h2", headerText: "Status" },
+  { id: "h3", headerText: "Responses" },
+  { id: "h4", headerText: "Start Date" },
+  { id: "h5", headerText: "Actions" },
+];
 const Survey = (props) => {
   return (
     <Fragment>
@@ -19,9 +47,7 @@ const Survey = (props) => {
           <Col>
             <div className="d-flex align-items-center">
               <CustomButton>Add Survey</CustomButton>
-              <Filters
-                filters={["All", "Published", "Closed", "Drafted"]}
-              ></Filters>
+              <Filters filters={filterList}></Filters>
             </div>
           </Col>
           <Col className="d-flex justify-content-end">
@@ -30,15 +56,7 @@ const Survey = (props) => {
         </Row>
         <Row className="py-3">
           <Col>
-            <CustomTable
-              headers={[
-                "Title",
-                "Status",
-                "Responses",
-                "Created Date",
-                "Actions",
-              ]}
-            >
+            <CustomTable headers={headerList}>
               <SurveyList></SurveyList>
             </CustomTable>
           </Col>

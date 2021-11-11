@@ -7,7 +7,7 @@ const CustomTable = (props) => {
       <thead className={classes["table-header"]}>
         <tr>
           {props.headers.map((header) => {
-            return <th>{header}</th>;
+            return <th key={header.id}>{header.headerText}</th>;
           })}
         </tr>
       </thead>
