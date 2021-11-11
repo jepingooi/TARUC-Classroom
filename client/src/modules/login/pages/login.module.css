@@ -2,3 +2,17 @@
   display: flex;
   justify-content: center;
 }
+
+body {
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: left;
+  object-fit: cover;
+  background-image: url("../../../resources/background.jpg");
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

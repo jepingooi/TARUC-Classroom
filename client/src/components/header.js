@@ -1,6 +1,6 @@
 import { Container, Nav, Navbar, Button } from "react-bootstrap";
 import TarucLogo from "../resources/TARUCLogo.png";
-import classes from "./header.module.css";
+import classes from "./Header.module.css";
 import { NavLink, Link } from "react-router-dom";
 import { useHistory } from "react-router";
 import { useContext } from "react";
@@ -19,10 +19,23 @@ const Header = () => {
   const loginHandler = () => {};
 
   return (
-    <Navbar className={classes.navbar} variant="dark" style={{ height: "70px" }}>
+    <Navbar
+      className={classes.navbar}
+      variant="dark"
+      style={{ height: "70px" }}
+    >
       <Container>
-        <Link to="/videoConferencing" className={`${classes.navbar} navbar-brand mx-3`}>
-          <img alt="" src={TarucLogo} width="30" height="30" className={`${classes.img} d-inline-block align-center`} />{" "}
+        <Link
+          to="/videoConferencing"
+          className={`${classes.navbar} navbar-brand mx-3`}
+        >
+          <img
+            alt=""
+            src={TarucLogo}
+            width="30"
+            height="30"
+            className={`${classes.img} d-inline-block align-center`}
+          />{" "}
           TARUC Classroom
         </Link>
         {isLoggedIn && (
