@@ -1,10 +1,5 @@
 import React, { Suspense, useEffect, useState, useContext } from "react";
-import {
-  Route,
-  Switch,
-  Redirect,
-  BrowserRouter as Router,
-} from "react-router-dom";
+import { Route, Switch, Redirect, BrowserRouter as Router } from "react-router-dom";
 
 import VideoConferencing from "./modules/videoConferencing/home";
 
@@ -18,19 +13,11 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
-const NewSurvey = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/NewSurvey")
-);
-const SurveyDetails = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/SurveyDetails")
-);
-const VideoConferencingRoom = React.lazy(() =>
-  import("./modules/videoConferencing/room")
-);
+const NewSurvey = React.lazy(() => import("./modules/onlineSurvey/pages/NewSurvey"));
+const SurveyDetails = React.lazy(() => import("./modules/onlineSurvey/pages/SurveyDetails"));
+const VideoConferencingRoom = React.lazy(() => import("./modules/videoConferencing/room"));
 const Exam = React.lazy(() => import("./modules/onlineExam/pages/Exam"));
-const ExamDetails = React.lazy(() =>
-  import("./modules/onlineExam/pages/ExamDetails")
-);
+const ExamDetails = React.lazy(() => import("./modules/onlineExam/pages/ExamDetails"));
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -38,7 +25,7 @@ const db = getFirestore();
 let rand = Math.floor(Math.random() * 2) + 1;
 const tempLoginUser = {
   email: `dummy${rand}@gmail.com`,
-  name: `Dummy ${rand}`,
+  name: `dummy ${rand}`,
 };
 
 const App = (props) => {
@@ -78,9 +65,7 @@ const App = (props) => {
       // If user didnt join the room before, update the participant in room data else skip
       if (!match) {
         let participantData = {
-          id: screenSharing
-            ? `shareScreen_${loginUser.email}`
-            : loginUser.email,
+          id: screenSharing ? `shareScreen_${loginUser.email}` : loginUser.email,
           name: screenSharing ? `${loginUser.name}'s screen` : loginUser.name,
           mic: true,
           shareScreen: false,
@@ -89,8 +74,7 @@ const App = (props) => {
           type: screenSharing ? "screenSharing" : "default",
         };
 
-        let tempParticipantInRoomList =
-          roomSnapshot.data().participantInRoomList;
+        let tempParticipantInRoomList = roomSnapshot.data().participantInRoomList;
         tempParticipantInRoomList.push(participantData);
         await updateDoc(roomRef, {
           participantInRoomList: tempParticipantInRoomList,
@@ -112,12 +96,7 @@ const App = (props) => {
   }
 
   function renderVideoConferencingHome() {
-    return (
-      <VideoConferencing
-        loginUser={loginUser}
-        joinRoom={(roomID) => joinRoom(roomID, false)}
-      />
-    );
+    return <VideoConferencing loginUser={loginUser} joinRoom={(roomID) => joinRoom(roomID, false)} />;
   }
 
   function renderVideoConferencingRoom() {
@@ -142,9 +121,7 @@ const App = (props) => {
       <Route exact path={`/videoConferencing`}>
         {renderVideoConferencingHome()}
       </Route>
-      <Route path={`/videoConferencing/:roomID`}>
-        {renderVideoConferencingRoom()}
-      </Route>
+      <Route path={`/videoConferencing/:roomID`}>{renderVideoConferencingRoom()}</Route>
 
       <Route path={"/surveys/new"}>
         <NewSurvey />

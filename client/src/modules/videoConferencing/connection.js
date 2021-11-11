@@ -141,6 +141,8 @@ const Room = (props) => {
   const [cameraModal, setCameraModal] = useState(false);
   const [screenSharingModal, setScreenSharingModal] = useState(false);
   const [hangupModal, setHangupModal] = useState(false);
+  const [screenType, setScreenType] = useState("default");
+  const [focusScreen, setFocusScreen] = useState(null);
 
   useEffect(() => {
     socketRef.current = io.connect("/");
@@ -374,31 +376,54 @@ const Room = (props) => {
     );
   }
 
-  function renderSelfScreen() {
+  function renderSplitScreen(screens) {}
+
+  function renderDefaultScreen(userScreen, otherScreens) {
+    let screens = [];
+
+    otherScreens.forEach((screen, i) => {
+      screens.push(
+        // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
+        <ParticipantContainer key={i}>
+          <ScreenContainer>{screen}</ScreenContainer>
+          <ParticipantDetailContainer>{screen.name}</ParticipantDetailContainer>
+        </ParticipantContainer>
+      );
+    });
+
     return (
-      <ParticipantContainer key={loginUser.email}>
-        <ScreenContainer>
-          <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%" }} />
-        </ScreenContainer>
-        <ParticipantDetailContainer>
-          <div>{loginUser.name}</div>
-          {/* <div>
-            {videoFlag && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
-            {!audioFlag && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-          </div> */}
-        </ParticipantDetailContainer>
-      </ParticipantContainer>
+      <ParticipantScreenContainer>
+        <ParticipantContainer key={loginUser.email}>
+          <ScreenContainer>{userScreen}</ScreenContainer>
+          <ParticipantDetailContainer>{loginUser.name}</ParticipantDetailContainer>
+        </ParticipantContainer>
+        {screens}
+      </ParticipantScreenContainer>
     );
   }
 
-  return (
-    <MainScreenContainer>
-      {renderMicModal()}
-      {renderCameraModal()}
-      {renderScreenSharingModal()}
-      {renderHangUpModal()}
+  function renderScreens() {
+    let userScreen = <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%" }} />;
+    // let otherScreens = [];
+
+    // selectedRoom.participantInRoomList.forEach((user) => {
+    //   let tempPeer;
+    //   peers.forEach((peer) => {
+    //     if (peer.userID === user.id) tempPeer = peer;
+    //   });
+
+    //   if (tempPeer) otherScreens.push({ screen: <Video peer={tempPeer.peer} />, name: user.name });
+    // });
+
+    // return renderDefaultScreen(userScreen, otherScreens);
+    // return  {screenType === "defaut" ? renderDefaultScreen(allScreens) : renderSplitScreen(allScreens)}
+
+    return (
       <ParticipantScreenContainer>
-        {renderSelfScreen()}
+        <ParticipantContainer key={loginUser.email}>
+          <ScreenContainer>{userScreen}</ScreenContainer>
+          <ParticipantDetailContainer>{loginUser.name}</ParticipantDetailContainer>
+        </ParticipantContainer>
 
         {selectedRoom.participantInRoomList.map((eachUser) => {
           let tempPeer;
@@ -440,6 +465,17 @@ const Room = (props) => {
           }
         })}
       </ParticipantScreenContainer>
+    );
+  }
+
+  return (
+    <MainScreenContainer>
+      {renderMicModal()}
+      {renderCameraModal()}
+      {renderScreenSharingModal()}
+      {renderHangUpModal()}
+
+      {renderScreens()}
       {renderFunctionButtons()}
     </MainScreenContainer>
   );
