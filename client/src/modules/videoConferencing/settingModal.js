@@ -198,7 +198,7 @@ export default class settingModal extends Component {
     if (this.props.userList?.length > 0) {
       this.props.userList.forEach((user) => {
         let match = false;
-        this.state.selectedRoom.invitedParticipantList.forEach((participant) => {
+        this.props.selectedRoom?.invitedParticipantList.forEach((participant) => {
           if (participant.id === user.email) match = true;
         });
         if (user.email !== this.props.loginUser.email && !match)
