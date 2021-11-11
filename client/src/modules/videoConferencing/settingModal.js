@@ -70,7 +70,7 @@ export default class settingModal extends Component {
   handleChange = (e, data) => {
     let tempRoom = Object.assign({}, this.state.selectedRoom);
 
-    if (data.id === "participantEmailList") {
+    if (data?.id === "participantEmailList") {
       this.setState({ [data.id]: data.value });
     } else if (e.target.id === "startTime" || e.target.id === "endTime") {
       let year = e.target.value.substring(0, 4);
