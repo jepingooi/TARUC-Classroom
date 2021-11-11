@@ -96,10 +96,18 @@ class VideoConferencingRoom extends Component {
       this.setState({ selectedRoom: selectedRoom });
     }
 
+    // open recording modal on load according to room setting
     if (!this.state.firstJoin && selectedRoom.autoRecord && this.props.loginUser.email === selectedRoom.ownerId) {
       this.handleModal("recordingModal", true);
       this.setState({ firstJoin: false });
     }
+
+    let kicked = true;
+    selectedRoom.participantInRoomList.forEach((user) => {
+      if (user.id === this.props.loginUser.email || selectedRoom.ownerId === this.props.loginUser.email) kicked = false;
+    });
+
+    if (kicked) this.handleHangUp();
   };
 
   // Get all users from firebase

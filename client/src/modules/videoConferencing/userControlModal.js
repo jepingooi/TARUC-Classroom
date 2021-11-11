@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button, Modal } from "semantic-ui-react";
 import styled from "styled-components";
 
@@ -10,7 +10,7 @@ import { getFirestore, updateDoc, doc } from "firebase/firestore";
 initializeApp(firebaseConfig);
 const db = getFirestore();
 
-const ScreenSharingModal = (props) => {
+const UserControlModal = (props) => {
   async function toggleUserMuteInFirebase() {
     let invitedParticipantList = Object.assign([], props.selectedRoom.invitedParticipantList);
 
@@ -23,13 +23,26 @@ const ScreenSharingModal = (props) => {
     props.handleModal();
   }
 
+  async function kickUser() {
+    let newList = [];
+    let name = "";
+    props.selectedRoom.participantInRoomList.forEach((user) => {
+      if (user.id !== props.selectedUser.id) newList.push(user);
+      else name = user.name;
+    });
+
+    let roomRef = doc(db, "videoConferencingRooms", props.selectedRoom.id);
+    await updateDoc(roomRef, { participantInRoomList: newList });
+    props.handleModal();
+  }
+
   function renderSetting() {
     return (
       <UserControlContainer>
         <StyledButton onClick={() => toggleUserMuteInFirebase()}>
           {props.selectedUser.muted ? "Unmute" : "Mute"}
         </StyledButton>
-        <StyledButton>Kick</StyledButton>
+        <StyledButton onClick={() => kickUser()}>Kick</StyledButton>
         <StyledButton onClick={() => props.handleModal()}>Cancel</StyledButton>
       </UserControlContainer>
     );
@@ -42,7 +55,7 @@ const ScreenSharingModal = (props) => {
   );
 };
 
-export default ScreenSharingModal;
+export default UserControlModal;
 
 const UserControlContainer = styled.div`
   display: flex;
