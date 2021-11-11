@@ -2,8 +2,9 @@ import React, { Fragment } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Filters from "../components/Filters";
 import CustomButton from "../components/Button";
-import CustomTable from "../components/Table";
+import CustomTable from "../../../components/Table";
 import SearchBar from "../components/SearchBar";
+import SurveyList from "../components/SurveryList";
 
 const Survey = (props) => {
   return (
@@ -37,7 +38,9 @@ const Survey = (props) => {
                 "Created Date",
                 "Actions",
               ]}
-            />
+            >
+              <SurveyList></SurveyList>
+            </CustomTable>
           </Col>
         </Row>
       </Container>
