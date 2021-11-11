@@ -17,7 +17,6 @@ export default class settingModal extends Component {
     super(props);
     this.state = {
       roomList: this.props.roomList,
-      userList: this.props.userList,
       loginUser: this.props.loginUser,
       selectedRoom: this.props.selectedRoom,
       participantEmail: "",
@@ -33,10 +32,6 @@ export default class settingModal extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.userList !== this.props.userList && this.props.userList) {
-      this.setState({ userList: this.props.userList });
-    }
-
     if (this.state.selectedRoom !== this.props.selectedRoom && this.props.selectedRoom && !this.state.edited) {
       let tempSelectedRoom = this.props.selectedRoom;
 
@@ -72,11 +67,11 @@ export default class settingModal extends Component {
     });
   };
 
-  handleChange = (e) => {
+  handleChange = (e, data) => {
     let tempRoom = Object.assign({}, this.state.selectedRoom);
 
-    if (e.target.id === "participantEmail") {
-      this.setState({ [e.target.id]: e.target.value });
+    if (data.id === "participantEmailList") {
+      this.setState({ [data.id]: data.value });
     } else if (e.target.id === "startTime" || e.target.id === "endTime") {
       let year = e.target.value.substring(0, 4);
       let month = e.target.value.substring(5, 7);
@@ -119,45 +114,26 @@ export default class settingModal extends Component {
   inviteParticipant = () => {
     this.clearError();
     let tempParticipantList = JSON.parse(JSON.stringify(this.state.selectedRoom.invitedParticipantList));
-    let loginUser = this.state.loginUser;
-    let email = this.state.participantEmail;
     let emailError = "";
-    let exist = false;
 
-    // Validate email
-    if (!email || email.length === 0) emailError = "Email is invalid.";
-
-    // Check if user exist
-    if (this.state.userList?.length > 0) {
-      // eslint-disable-next-line
-      this.state.userList.map((eachUser) => {
-        if (eachUser.email === email) exist = true;
-      });
-    }
-    if (!exist) emailError = "The user is not exist.";
-
-    // Check if user has been invited
-    if (tempParticipantList?.length > 0) {
-      // eslint-disable-next-line
-      tempParticipantList.map((eachParticipant) => {
-        if (eachParticipant === email) emailError = "The user has been invited.";
-      });
+    if (!this.state.participantEmailList || this.state.participantEmailList.length < 1) {
+      emailError = "Please select at least 1 user.";
     }
 
-    // Check if the user is the owner
-    if (loginUser.email === email) emailError = "You cannot invite youself.";
-
-    // If error occur
     if (emailError.length > 0) {
+      // If error occur
       this.setState({ emailError: emailError });
       return;
     }
 
     // If no error occur
-    tempParticipantList.push({ id: email, muted: false });
+    this.state.participantEmailList.forEach((email) => {
+      tempParticipantList.push({ id: email, muted: false });
+    });
+
     let tempRoom = this.state.selectedRoom;
     tempRoom.invitedParticipantList = tempParticipantList;
-    this.setState({ edited: true, selectedRoom: tempRoom, participantEmail: "" });
+    this.setState({ edited: true, selectedRoom: tempRoom, participantEmailList: "" });
   };
 
   // Remove participant from a room
@@ -181,7 +157,7 @@ export default class settingModal extends Component {
     let collectedParticipants = [];
     let tempParticipants = [];
     let invitedParticipantList = this.state.selectedRoom ? this.state.selectedRoom.invitedParticipantList : [];
-    let userList = this.state.userList;
+    let userList = this.props.userList;
 
     if (invitedParticipantList?.length > 0 && userList?.length > 0) {
       invitedParticipantList.forEach((eachParticipant, i) => {
@@ -215,6 +191,22 @@ export default class settingModal extends Component {
     }
 
     return collectedParticipants;
+  };
+
+  generateUserOption = () => {
+    let options = [];
+    if (this.props.userList?.length > 0) {
+      this.props.userList.forEach((user) => {
+        let match = false;
+        this.state.selectedRoom.invitedParticipantList.forEach((participant) => {
+          if (participant.id === user.email) match = true;
+        });
+        if (user.email !== this.props.loginUser.email && !match)
+          options.push({ key: user.email, text: user.name, value: user.email });
+      });
+    }
+
+    return options;
   };
 
   // Validation for selected room
@@ -535,11 +527,16 @@ export default class settingModal extends Component {
       <Form>
         <Form.Group widths="equal">
           <Form.Field error={this.state.emailError.length > 0}>
-            <Form.Input
-              id="participantEmail"
+            <Form.Select
+              id="participantEmailList"
               placeholder="Participant's email"
-              value={this.state.participantEmail ? this.state.participantEmail : ""}
+              value={this.state.participantEmailList ? this.state.participantEmailList : []}
               onChange={this.handleChange}
+              fluid
+              multiple
+              search
+              selection
+              options={this.generateUserOption()}
             />
           </Form.Field>
           <Form.Field>
