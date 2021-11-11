@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import classes from "./filters.module.css";
+import classes from "./Filters.module.css";
 
 const Filters = (props) => {
   const location = useLocation();

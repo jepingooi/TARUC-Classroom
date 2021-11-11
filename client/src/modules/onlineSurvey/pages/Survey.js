@@ -5,6 +5,7 @@ import CustomButton from "../components/Button";
 import CustomTable from "../../../components/Table";
 import SearchBar from "../components/SearchBar";
 import SurveyList from "../components/SurveryList";
+import { useHistory } from "react-router-dom";
 
 const filterList = [
   {
@@ -34,7 +35,12 @@ const headerList = [
   { id: "h4", headerText: "Start Date" },
   { id: "h5", headerText: "Actions" },
 ];
-const Survey = (props) => {
+
+const Survey = () => {
+  const history = useHistory();
+  const clickHandler = () => {
+    history.push("/surveys/new");
+  };
   return (
     <Fragment>
       <Container className="my-3">
@@ -46,7 +52,7 @@ const Survey = (props) => {
         <Row className="d-flex align-items-center justify-content-center py-3">
           <Col>
             <div className="d-flex align-items-center">
-              <CustomButton>Add Survey</CustomButton>
+              <CustomButton onClick={clickHandler}>Add Survey</CustomButton>
               <Filters filters={filterList}></Filters>
             </div>
           </Col>

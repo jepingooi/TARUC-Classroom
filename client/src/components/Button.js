@@ -2,7 +2,7 @@ import { Button } from "react-bootstrap";
 
 const MyButton = (props) => {
   return (
-    <Button variant={props.variant} onClick={props.onClick}>
+    <Button size={props.size} variant={props.variant} onClick={props.onClick}>
       {props.children}
     </Button>
   );

@@ -1,7 +1,7 @@
 import Button from "./Button";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import TarucLogo from "../resources/TARUCLogo.png";
-import classes from "./header.module.css";
+import classes from "./Header.module.css";
 import { NavLink, Link } from "react-router-dom";
 import { useHistory } from "react-router";
 import { useContext } from "react";
@@ -54,7 +54,7 @@ const Header = () => {
         )}
 
         {isLoggedIn && (
-          <Button variant="light" onClick={logoutHandler}>
+          <Button size="lg" variant="light" onClick={logoutHandler}>
             Logout
           </Button>
         )}
