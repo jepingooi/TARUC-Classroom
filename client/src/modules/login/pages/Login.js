@@ -50,7 +50,7 @@ const Login = (props) => {
   }
 
   return (
-    <Container className="py-5">
+    <Container className={`py-5 ${classes.background}`}>
       <Row className="justify-content-md-center">
         <Col md={4}>
           <Card bg="light">
