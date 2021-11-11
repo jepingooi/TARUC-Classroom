@@ -360,7 +360,102 @@ export default class VideoConferencingHome extends Component {
     this.generatePollReport(room);
   };
 
-  markAttendance = () => {};
+  markAttendance = async (room) => {
+    let attendance = await this.getAttendanceFromFirebase(room.id);
+
+    let unit = "pt";
+    let size = "A4"; // Use A1, A2, A3 or A4
+    let orientation = "portrait"; // portrait or landscape
+
+    let marginLeft = 40;
+    let doc = new jsPDF(orientation, unit, size);
+    doc.setFontSize(15);
+
+    let today = new Date();
+    // Format date to DD/MM/YYYY
+    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+
+    let title = `Mark attendance simulation`;
+    let generateDate = `Date - ${formattedDate}`;
+    let generateClass = `Class - ${room.roomName}`;
+    let startTime = `Start time - ${this.getRoomDate(room.startTime)}`;
+    let endTime = `End time - ${this.getRoomDate(room.endTime)}`;
+    let headers = [["No.", "Participant ID", "Join time", "Leave time", "Action"]];
+
+    // Generate user data
+    let attendanceList = [];
+    let ownerAttendance = [{}];
+
+    attendance.attendanceList.forEach((attendance) => {
+      if (attendance.attendeeId === room.ownerId) {
+        ownerAttendance[0].id = attendance.attendeeId;
+        ownerAttendance[0].leaveTime = this.getRoomDate(attendance.time);
+        if (!ownerAttendance[0].joinTime) {
+          ownerAttendance[0].joinTime = this.getRoomDate(attendance.time);
+          if (attendance.notes === "Late") ownerAttendance[0].action = "Late";
+          else ownerAttendance[0].action = "attend";
+        }
+      }
+    });
+
+    if (!ownerAttendance[0].action)
+      ownerAttendance[0] = {
+        id: this.props.loginUser.email,
+        joinTime: "-",
+        leaveTime: "-",
+        action: "absent",
+      };
+
+    room.invitedParticipantList.forEach((user) => {
+      let userAttendance = {};
+      attendance.attendanceList.forEach((attendance) => {
+        if (attendance.attendeeId === user.id) {
+          userAttendance.id = attendance.attendeeId;
+          userAttendance.leaveTime = this.getRoomDate(attendance.time);
+          if (!userAttendance.joinTime) {
+            userAttendance.joinTime = this.getRoomDate(attendance.time);
+            if (attendance.notes === "Late") userAttendance.action = "Late";
+            else userAttendance.action = "attend";
+          }
+        }
+      });
+
+      if (!userAttendance.action)
+        userAttendance = {
+          id: user.id,
+          joinTime: "-",
+          leaveTime: "-",
+          action: "absent",
+        };
+
+      attendanceList.push(userAttendance);
+    });
+
+    attendanceList = ownerAttendance.concat(attendanceList);
+
+    let data = attendanceList.map((attendance, i) => [
+      i + 1,
+      attendance.id,
+      attendance.joinTime,
+      attendance.leaveTime,
+      attendance.action,
+    ]);
+
+    let content = {
+      startY: 140,
+      head: headers,
+      body: data,
+    };
+
+    doc.text(title, marginLeft, 40);
+    doc.setFontSize(12);
+    doc.text(generateDate, marginLeft, 60);
+    doc.text(generateClass, marginLeft, 80);
+    doc.text(startTime, marginLeft, 100);
+    doc.text(endTime, marginLeft, 120);
+    doc.autoTable(content);
+    doc.save(`Mark attendance simulation.pdf`);
+  };
 
   // Generate room for room list table
   generateRoomList = (roomList) => {
@@ -398,7 +493,7 @@ export default class VideoConferencingHome extends Component {
                       basic
                     />
                     <Button onClick={() => this.generateReport(eachRoom)} icon="download" basic />
-                    <Button onClick={() => this.martkAttendance(eachRoom)} icon="checkmark box" basic />
+                    <Button onClick={() => this.markAttendance(eachRoom)} icon="checkmark box" basic />
                   </>
                 )}
                 <Link to={`/videoConferencing/${eachRoom.id}`}>
