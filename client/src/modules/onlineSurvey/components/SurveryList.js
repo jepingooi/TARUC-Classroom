@@ -14,7 +14,10 @@ const SurveyList = () => {
   const [surveys, setSurveys] = useState([
     {
       id: "",
-      data: {},
+      title: "",
+      status: "",
+      responseNumber: 0,
+      startDate: null,
     },
   ]);
 
@@ -22,15 +25,20 @@ const SurveyList = () => {
     const surveyCollection = collection(db, "surveys");
     const surveySnapshot = await getDocs(surveyCollection);
     const surveyList = surveySnapshot.docs.map((doc) => {
+      const data = doc.data();
       return {
         id: doc.id,
-        data: doc.data(),
+        title: data.title,
+        status: data.status,
+        responseNumber: data.responses.length,
+        startDate: data.startDate.toDate().toDateString(),
       };
     });
 
-    console.log(surveySnapshot.docs);
+    // console.log(surveySnapshot.docs);
     console.log(surveyList);
     setSurveys(surveyList);
+
     return surveyList;
   }, []);
 
@@ -43,15 +51,15 @@ const SurveyList = () => {
       {surveys.map((doc) => {
         return (
           <tr key={doc.id}>
-            {/* <td className={classes.title}>
-              <Link to="/">{doc.data.title}</Link>
+            <td className={classes.title}>
+              <Link to="/">{doc.title}</Link>
             </td>
-            <td>{doc.data.status}</td>
-            <td>{doc.data.responses.length}</td>
-            <td>{doc.data.startDate.toDate().toDateString()}</td>
+            <td>{doc.status}</td>
+            <td>{doc.responseNumber}</td>
+            <td>{doc.startDate}</td>
             <td>
-              <TableActions isClosed={doc.data.status == "closed"} />
-            </td> */}
+              <TableActions isClosed={doc.status == "closed"} />
+            </td>
           </tr>
         );
       })}
