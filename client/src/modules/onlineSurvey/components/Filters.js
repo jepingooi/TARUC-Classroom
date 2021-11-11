@@ -1,17 +1,27 @@
 import React from "react";
-import { Nav } from "react-bootstrap";
+import { NavLink, useLocation } from "react-router-dom";
+import classes from "./filters.module.css";
 
 const Filters = (props) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
   return (
-    <Nav>
-      {props.filters.map((filter) => {
+    <div>
+      {props.filters.map((f) => {
+        const isActive = queryParams.get("filter") == f ? "dark" : "";
         return (
-          <Nav.Item>
-            <Nav.Link>{filter}</Nav.Link>
-          </Nav.Item>
+          <NavLink
+            to={`/surveys?filter=${f}`}
+            className={`mx-3 ${
+              isActive ? classes.dark : classes.link
+            } ${isActive}`}
+          >
+            {f}
+          </NavLink>
         );
       })}
-    </Nav>
+    </div>
   );
 };
 

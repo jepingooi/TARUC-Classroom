@@ -54,7 +54,7 @@ const Header = () => {
         )}
 
         {isLoggedIn && (
-          <Button variant="secondary" onClick={logoutHandler}>
+          <Button variant="light" onClick={logoutHandler}>
             Logout
           </Button>
         )}

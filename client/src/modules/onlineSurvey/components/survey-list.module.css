@@ -1,0 +1,12 @@
+.title {
+  font-weight: bold;
+}
+
+tr a {
+  text-decoration: none;
+  color: #337ab7;
+}
+
+tr {
+  height: 3.5em;
+}

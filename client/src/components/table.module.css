@@ -1,0 +1,16 @@
+.table-header {
+  background-color: #337ab7;
+  color: white;
+  height: 4em;
+}
+
+th,
+td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+th {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
