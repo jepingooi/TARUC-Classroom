@@ -3,35 +3,41 @@ import { Button, Modal } from "semantic-ui-react";
 import styled from "styled-components";
 import { useReactMediaRecorder } from "react-media-recorder";
 import emailjs, { init } from "emailjs-com";
+import { toast } from "react-toastify";
 
-// // Firebase
-// import { firebaseConfig } from "../../firebaseConfig.json";
-// import { initializeApp } from "firebase/app";
-// import { getFirestore, collection, getDoc, getDocs, updateDoc, doc } from "firebase/firestore";
-// import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+// Firebase
+import { firebaseConfig } from "../../firebaseConfig.json";
+import { initializeApp } from "firebase/app";
+import { getFirestore, updateDoc, doc } from "firebase/firestore";
+import { getStorage, ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { async } from "@firebase/util";
 
-// initializeApp(firebaseConfig);
-// const db = getFirestore();
-// const storage = getStorage();
+initializeApp(firebaseConfig);
+const db = getFirestore();
+const storage = getStorage();
 
 const templateId = "template_njyqjpe";
 const serviceId = "service_2j0wuvr";
 init("user_sX4pbznpHOIlHhAofPGDe");
 
+const email = "ngwl-pm18@student.tarc.edu.my";
+
 const ScreenRecordingModal = (props) => {
   const [videoId, setVideoId] = useState("");
+  const [alreadyMail, setAlreadyMail] = useState(false);
   const {
     status,
     startRecording: startRecord,
     stopRecording: stopRecord,
     mediaBlobUrl,
-  } = useReactMediaRecorder({ screen: true });
+  } = useReactMediaRecorder({ screen: true, type: "video/mp4" });
 
   useEffect(() => {
-    return () => stopRecord();
+    return () => stopRecording();
   }, []);
 
-  function startRecording() {
+  async function startRecording() {
+    setAlreadyMail(false);
     let today = new Date();
     let tempVideoId = `${props.selectedRoom.id}$${getRoomDate(today)}`;
     setVideoId(tempVideoId);
@@ -46,33 +52,44 @@ const ScreenRecordingModal = (props) => {
     return stopRecord();
   }
 
-  // function uploadToFirebase() {
-  //   const file = new File([mediaBlobUrl], `${mediaBlobUrl}.mp4`, {
-  //     type: "mp4",
-  //   });
-  //   let storageRef = ref(storage, `recorded_videos/${videoId}.mp4`);
+  async function mailRecording() {
+    setAlreadyMail(true);
+    let file = new File([mediaBlobUrl], `${videoId}.mp4`, { type: "video/mp4", lastModified: Date.now() });
 
-  //   uploadBytes(storageRef, mediaBlobUrl);
-  //   // const uploadTask = uploadBytesResumable(storageRef, file);
+    // Upload to firebase storage
+    let storageRef = ref(storage, `recorded_videos/${videoId}.mp4`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on("state_changed", (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      // console.log("Upload is " + progress + "% done");
+      // switch (snapshot.state) {
+      //   case "paused":
+      //     console.log("Upload is paused");
+      //     break;
+      //   case "running":
+      //     console.log("Upload is running");
+      //     break;
+      // }
+      if (progress === 100) {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          sendFeedback({
+            name: props.loginUser.name,
+            email: email,
+            room_name: props.selectedRoom.roomName,
+            reply_to: props.loginUser.email,
+            message: downloadURL,
+          });
+        });
+      }
+    });
 
-  //   // uploadTask.on("state_changed", (snapshot) => {
-  //   //   const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //   //   console.log("Upload is " + progress + "% done");
-  //   //   switch (snapshot.state) {
-  //   //     case "paused":
-  //   //       console.log("Upload is paused");
-  //   //       break;
-  //   //     case "running":
-  //   //       console.log("Upload is running");
-  //   //       break;
-  //   //   }
-  //   //   if (progress === 100) {
-  //   //     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-  //   //       console.log("File available at", downloadURL);
-  //   //     });
-  //   //   }
-  //   // });
-  // }
+    // Update room data in firebase
+    let recordingList = props.selectedRoom.recordingIdList;
+    recordingList.push(videoId);
+
+    let roomRef = doc(db, "videoConferencingRooms", props.selectedRoom.id);
+    await updateDoc(roomRef, { recordingIdList: recordingList });
+  }
 
   // Convert Date to string (DDMMYYYYHHMM)
   function getRoomDate(dateTime) {
@@ -91,25 +108,15 @@ const ScreenRecordingModal = (props) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }
-
-  function mailRecording() {
-    // uploadToFirebase();
-    sendFeedback({
-      name: props.loginUser.name,
-      room_name: props.selectedRoom.name,
-      reply_to: props.loginUser.email,
-      message: mediaBlobUrl,
-    });
+    toast(`Successfully download recorded video.`);
   }
 
   function sendFeedback(variables) {
-    emailjs
-      .send(serviceId, templateId, variables)
-      .then((res) => {
-        console.log("Email successfully sent!");
-      })
-      .catch((err) => console.error("Oh well, you failed. Here some thoughts on the error that occured:", err));
+    emailjs.send(serviceId, templateId, variables).then((res) => {
+      // console.log("Email successfully sent!");
+      toast(`Email successfully sent!`);
+    });
+    // .catch((err) => console.error("Oh well, you failed. Here some thoughts on the error that occured:", err));
   }
 
   function renderRecordedVideo() {
@@ -143,7 +150,7 @@ const ScreenRecordingModal = (props) => {
           </Button>
         )}
 
-        {mediaBlobUrl && status && status === "stopped" && (
+        {mediaBlobUrl && status && status === "stopped" && !alreadyMail && (
           <Button positive onClick={() => mailRecording()}>
             Send this recording to your email
           </Button>

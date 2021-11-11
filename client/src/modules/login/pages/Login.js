@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
-import classes from "./Login.module.css";
+import classes from "./login.module.css";
 import AuthContext from "../../../store/auth-context";
 
 const Login = (props) => {
@@ -15,16 +15,13 @@ const Login = (props) => {
 
   function handleSubmit(event) {
     event.preventDefault();
-    fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
-      {
-        method: "POST",
-        body: JSON.stringify({ email, password, returnSecureToken: true }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
+      method: "POST",
+      body: JSON.stringify({ email, password, returnSecureToken: true }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -37,9 +34,7 @@ const Login = (props) => {
       })
       .then((data) => {
         console.log(data);
-        const expirationTime = new Date(
-          new Date().getTime() + +data.expiresIn * 1000
-        );
+        const expirationTime = new Date(new Date().getTime() + +data.expiresIn * 1000);
         authContext.login(data.idToken, data.email, expirationTime.toISOString);
         history.replace("/videoConferencing");
       })
