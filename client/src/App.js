@@ -5,6 +5,7 @@ import {
   Redirect,
   BrowserRouter as Router,
 } from "react-router-dom";
+
 import VideoConferencing from "./modules/videoConferencing/home";
 
 import Login from "./modules/login/pages/Login";
@@ -17,6 +18,9 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
+const NewSurvey = React.lazy(() =>
+  import("./modules/onlineSurvey/pages/NewSurvey")
+);
 const SurveyDetails = React.lazy(() =>
   import("./modules/onlineSurvey/pages/SurveyDetails")
 );
@@ -131,11 +135,9 @@ const App = (props) => {
   const loggedInRoutes = (
     <Switch>
       <Route exact path="/">
-        <Redirect to="/login" />
+        <Redirect to="/videoConferencing" />
       </Route>
-      <Route path={"/login"}>
-        <Login />
-      </Route>
+      <Route path={"/login"}>{renderVideoConferencingHome()}</Route>
 
       <Route exact path={`/videoConferencing`}>
         {renderVideoConferencingHome()}
@@ -144,7 +146,9 @@ const App = (props) => {
         {renderVideoConferencingRoom()}
       </Route>
 
-      <Route path={"/surveys/new"}></Route>
+      <Route path={"/surveys/new"}>
+        <NewSurvey />
+      </Route>
       <Route path={"/surveys/:id/edit"}></Route>
       <Route path={"/surveys/:id"}>
         <SurveyDetails />

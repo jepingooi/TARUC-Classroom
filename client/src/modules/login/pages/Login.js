@@ -1,10 +1,8 @@
 import React, { useState, useContext } from "react";
-import { Link, useHistory } from "react-router-dom";
-import { Form, Button, Modal } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import { Form, Button } from "react-bootstrap";
 import classes from "./login.module.css";
 import AuthContext from "../../../store/auth-context";
-import * as yup from "yup";
-import { Formik } from "formik";
 
 const Login = (props) => {
   const history = useHistory();
