@@ -10,7 +10,6 @@ import { firebaseConfig } from "../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, updateDoc, doc } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { async } from "@firebase/util";
 
 initializeApp(firebaseConfig);
 const db = getFirestore();

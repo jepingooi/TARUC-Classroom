@@ -8,9 +8,11 @@ import { toast } from "react-toastify";
 import { firebaseConfig } from "../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, setDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
+const storage = getStorage();
 
 export default class settingModal extends Component {
   constructor(props) {
@@ -322,6 +324,12 @@ export default class settingModal extends Component {
     // Change status to inactive (amend the code in home.js)
     // let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
     // await updateDoc(roomRef, { status: "inactive" });
+
+    // Delete recorded video in firebase storage
+    this.state.selectedRoom.recordingIdList.forEach((recordingID) => {
+      const fileRef = ref(storage, `recorded_videos/${recordingID}.mp4`);
+      deleteObject(fileRef);
+    });
 
     // Delete room data
     let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
