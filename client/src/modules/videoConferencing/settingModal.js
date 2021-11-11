@@ -8,18 +8,18 @@ import { toast } from "react-toastify";
 import { firebaseConfig } from "../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, setDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
+const storage = getStorage();
 
 export default class settingModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      roomList: this.props.roomList,
-      loginUser: this.props.loginUser,
       selectedRoom: this.props.selectedRoom,
-      participantEmail: "",
+      participantEmailList: [],
       edited: false,
       confirmDeleteModal: false,
 
@@ -44,7 +44,7 @@ export default class settingModal extends Component {
     }
 
     if (this.state.edited && !this.props.settingModal) {
-      this.setState({ edited: false, participantEmail: "", confirmDeleteModal: false });
+      this.setState({ edited: false, participantEmailList: [], confirmDeleteModal: false });
     }
 
     if (
@@ -133,7 +133,7 @@ export default class settingModal extends Component {
 
     let tempRoom = this.state.selectedRoom;
     tempRoom.invitedParticipantList = tempParticipantList;
-    this.setState({ edited: true, selectedRoom: tempRoom, participantEmailList: "" });
+    this.setState({ edited: true, selectedRoom: tempRoom, participantEmailList: [] });
   };
 
   // Remove participant from a room
@@ -277,7 +277,7 @@ export default class settingModal extends Component {
         id: id,
         roomName: this.state.selectedRoom.roomName,
         status: "active",
-        ownerId: this.state.loginUser.email,
+        ownerId: this.props.loginUser.email,
         startTime: selectedRoom.startTime,
         endTime: selectedRoom.endTime,
         chatTimeout: selectedRoom.chatTimeout,
@@ -322,6 +322,12 @@ export default class settingModal extends Component {
     // Change status to inactive (amend the code in home.js)
     // let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
     // await updateDoc(roomRef, { status: "inactive" });
+
+    // Delete recorded video in firebase storage
+    this.state.selectedRoom.recordingIdList.forEach((recordingID) => {
+      const fileRef = ref(storage, `recorded_videos/${recordingID}.mp4`);
+      deleteObject(fileRef);
+    });
 
     // Delete room data
     let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
