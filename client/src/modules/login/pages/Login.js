@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
-import classes from "./login.module.css";
+import classes from "./Login.module.css";
 import AuthContext from "../../../store/auth-context";
 
 const Login = (props) => {

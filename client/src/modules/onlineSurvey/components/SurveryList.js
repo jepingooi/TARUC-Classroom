@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
-import classes from "./survey-list.module.css";
+import classes from "./SurveyList.module.css";
 import TableActions from "./TableActions";
 import { Link } from "react-router-dom";
 
