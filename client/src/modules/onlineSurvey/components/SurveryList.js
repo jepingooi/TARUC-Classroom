@@ -4,7 +4,8 @@ import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
 import classes from "./survey-list.module.css";
-import TableActions from "../../../components/TableActions";
+import TableActions from "./TableActions";
+import { Link } from "react-router-dom";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -32,12 +33,14 @@ const SurveyList = () => {
       {surveys.map((data) => {
         return (
           <tr>
-            <td className={classes.title}>{data.title}</td>
+            <td className={classes.title}>
+              <Link>{data.title}</Link>
+            </td>
             <td>{data.status}</td>
             <td>{data.responses.length}</td>
             <td>{data.startDate.toDate().toDateString()}</td>
             <td>
-              <TableActions />
+              <TableActions isClosed={data.status == "closed"} />
             </td>
           </tr>
         );

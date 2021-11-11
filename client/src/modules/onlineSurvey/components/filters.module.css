@@ -1,0 +1,15 @@
+.link {
+  color: rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link:hover {
+  color: black;
+}
+
+.dark {
+  color: black;
+  text-decoration: none;
+  font-weight: 600;
+}
