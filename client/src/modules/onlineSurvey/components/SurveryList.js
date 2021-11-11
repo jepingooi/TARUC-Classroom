@@ -4,7 +4,7 @@ import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
 import classes from "./SurveyList.module.css";
-import TableActions from "./TableActions";
+import TableActions from "./Actions";
 import { Link } from "react-router-dom";
 
 const app = initializeApp(firebaseConfig);

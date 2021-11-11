@@ -1,8 +1,19 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
-import classes from "./login.module.css";
+import classes from "./Login.module.css";
 import AuthContext from "../../../store/auth-context";
+import { firebaseConfig } from "../../../firebaseConfig.json";
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore/lite";
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const Login = (props) => {
   const history = useHistory();
@@ -11,17 +22,20 @@ const Login = (props) => {
   const [email, setEmail] = useState("ooijp-pm18@student.tarc.edu.my");
   const [password, setPassword] = useState("ooijp123");
 
-  const API_KEY = "AIzaSyA7sbTCrstTgUDyn3OmGxaI494sxwat26w";
+  const API_KEY = firebaseConfig.apiKey;
 
   function handleSubmit(event) {
     event.preventDefault();
-    fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
-      method: "POST",
-      body: JSON.stringify({ email, password, returnSecureToken: true }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+      {
+        method: "POST",
+        body: JSON.stringify({ email, password, returnSecureToken: true }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -34,8 +48,23 @@ const Login = (props) => {
       })
       .then((data) => {
         console.log(data);
-        const expirationTime = new Date(new Date().getTime() + +data.expiresIn * 1000);
-        authContext.login(data.idToken, data.email, expirationTime.toISOString);
+        const expirationTime = new Date(
+          new Date().getTime() + +data.expiresIn * 1000
+        );
+
+        //fetch user from db where email = data.email
+        let user;
+        const fetchUser = async () => {
+          const usersRef = collection(db, "users");
+          const q = query(usersRef, where("email", "==", data.email));
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            user = doc.data();
+          });
+        };
+
+        fetchUser();
+        authContext.login(data.idToken, user, expirationTime.toISOString);
         history.replace("/videoConferencing");
       })
       .catch((e) => {
@@ -44,7 +73,7 @@ const Login = (props) => {
   }
 
   return (
-    <Container className="py-5">
+    <Container className={`py-5 ${classes.background}`}>
       <Row className="justify-content-md-center">
         <Col md={4}>
           <Card bg="light">
