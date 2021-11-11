@@ -18,10 +18,8 @@ export default class settingModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      roomList: this.props.roomList,
-      loginUser: this.props.loginUser,
       selectedRoom: this.props.selectedRoom,
-      participantEmail: "",
+      participantEmailList: [],
       edited: false,
       confirmDeleteModal: false,
 
@@ -46,7 +44,7 @@ export default class settingModal extends Component {
     }
 
     if (this.state.edited && !this.props.settingModal) {
-      this.setState({ edited: false, participantEmail: "", confirmDeleteModal: false });
+      this.setState({ edited: false, participantEmailList: [], confirmDeleteModal: false });
     }
 
     if (
@@ -135,7 +133,7 @@ export default class settingModal extends Component {
 
     let tempRoom = this.state.selectedRoom;
     tempRoom.invitedParticipantList = tempParticipantList;
-    this.setState({ edited: true, selectedRoom: tempRoom, participantEmailList: "" });
+    this.setState({ edited: true, selectedRoom: tempRoom, participantEmailList: [] });
   };
 
   // Remove participant from a room
@@ -279,7 +277,7 @@ export default class settingModal extends Component {
         id: id,
         roomName: this.state.selectedRoom.roomName,
         status: "active",
-        ownerId: this.state.loginUser.email,
+        ownerId: this.props.loginUser.email,
         startTime: selectedRoom.startTime,
         endTime: selectedRoom.endTime,
         chatTimeout: selectedRoom.chatTimeout,
