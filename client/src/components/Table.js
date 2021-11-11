@@ -3,7 +3,7 @@ import classes from "./table.module.css";
 
 const CustomTable = (props) => {
   return (
-    <Table borderless striped hover>
+    <Table striped hover>
       <thead className={classes["table-header"]}>
         <tr>
           {props.headers.map((header) => {
