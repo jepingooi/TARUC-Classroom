@@ -52,9 +52,9 @@ class VideoConferencingRoom extends Component {
 
   async componentWillUnmount() {
     toast.dismiss();
-    // this.handleAttendance("leave");
+    this.handleAttendance("leave");
 
-    this.handleHangUp();
+    this.handleHangUp(true);
 
     if (unsubRoom) await unsubRoom();
     if (unsubChatHistory) await unsubChatHistory();
@@ -77,10 +77,10 @@ class VideoConferencingRoom extends Component {
       this.getChatHistoryFromFirebases();
     });
 
-    // let attendanceRef = doc(db, "attendance", this.props.selectedRoomId);
-    // unsubAttendance = onSnapshot(attendanceRef, () => {
-    //   this.getAttendanceFromFirebase();
-    // });
+    let attendanceRef = doc(db, "attendance", this.props.selectedRoomId);
+    unsubAttendance = onSnapshot(attendanceRef, () => {
+      this.getAttendanceFromFirebase();
+    });
   }
 
   // Get selected room from firebase
@@ -276,7 +276,7 @@ class VideoConferencingRoom extends Component {
   };
 
   // Hang up function
-  handleHangUp = async () => {
+  handleHangUp = async (notButton) => {
     if (!this.state.selectedRoom) return;
 
     let tempParticipantInRoomList = [];
@@ -294,8 +294,10 @@ class VideoConferencingRoom extends Component {
     let roomRef = doc(db, "videoConferencingRooms", this.state.selectedRoom.id);
     await updateDoc(roomRef, { participantInRoomList: tempParticipantInRoomList });
 
-    this.props.handleNavigation("videoConferencing", null);
-    this.props.history.push(`/videoConferencing`);
+    if (!notButton) {
+      this.props.handleNavigation("videoConferencing", null);
+      this.props.history.push(`/videoConferencing`);
+    }
   };
 
   // Handle open or close modal
