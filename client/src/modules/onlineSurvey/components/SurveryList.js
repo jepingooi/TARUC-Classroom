@@ -58,7 +58,7 @@ const SurveyList = () => {
             <td>{doc.responseNumber}</td>
             <td>{doc.startDate}</td>
             <td>
-              <TableActions isClosed={doc.status == "closed"} />
+              <TableActions isClosed={doc.status == "Closed"} />
             </td>
           </tr>
         );
