@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
 import classes from "./Login.module.css";
 import AuthContext from "../../../store/auth-context";
+import { firebaseConfig } from "../../../firebaseConfig.json";
 
 const Login = (props) => {
   const history = useHistory();
@@ -11,7 +12,7 @@ const Login = (props) => {
   const [email, setEmail] = useState("ooijp-pm18@student.tarc.edu.my");
   const [password, setPassword] = useState("ooijp123");
 
-  const API_KEY = "AIzaSyA7sbTCrstTgUDyn3OmGxaI494sxwat26w";
+  const API_KEY = firebaseConfig.apiKey;
 
   function handleSubmit(event) {
     event.preventDefault();
