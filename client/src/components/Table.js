@@ -1,5 +1,5 @@
 import { Table } from "react-bootstrap";
-import classes from "./table.module.css";
+import classes from "./Table.module.css";
 
 const CustomTable = (props) => {
   return (
