@@ -25,10 +25,8 @@ const UserControlModal = (props) => {
 
   async function kickUser() {
     let newList = [];
-    let name = "";
     props.selectedRoom.participantInRoomList.forEach((user) => {
       if (user.id !== props.selectedUser.id) newList.push(user);
-      else name = user.name;
     });
 
     let roomRef = doc(db, "videoConferencingRooms", props.selectedRoom.id);

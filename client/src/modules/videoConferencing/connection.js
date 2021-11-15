@@ -121,7 +121,7 @@ const Video = (props) => {
   useEffect(() => {
     props.peer.on("stream", (stream) => {
       ref.current.srcObject = stream;
-    });
+    }); // eslint-disable-next-line
   }, []);
 
   return <video playsInline autoPlay ref={ref} style={{ maxHeight: "100%" }} />;
@@ -145,7 +145,7 @@ const Room = (props) => {
   useEffect(() => {
     socketRef.current = io.connect("/");
     createStream();
-    return () => socketRef.current.disconnect();
+    return () => socketRef.current.disconnect(); // eslint-disable-next-line
   }, []);
 
   function createStream() {
@@ -383,9 +383,9 @@ const Room = (props) => {
           <ParticipantDetailContainer>{loginUser.name}</ParticipantDetailContainer>
         </ParticipantContainer>
 
-        {selectedRoom.participantInRoomList.map((eachUser) => {
+        {selectedRoom.participantInRoomList.forEach((eachUser) => {
           let tempPeer;
-          peers.map((eachPeer) => {
+          peers.forEach((eachPeer) => {
             if (eachPeer.userID === eachUser.id) {
               tempPeer = eachPeer;
             }

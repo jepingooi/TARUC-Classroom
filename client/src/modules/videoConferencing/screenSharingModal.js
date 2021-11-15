@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { Button, Modal } from "semantic-ui-react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
@@ -18,7 +18,7 @@ const ScreenSharingModal = (props) => {
   const peersRef = useRef([]);
 
   useEffect(() => {
-    if (props.screenSharing) return () => toggleScreenSharing();
+    if (props.screenSharing) return () => toggleScreenSharing(); // eslint-disable-next-line
   }, []);
 
   function createStream() {
