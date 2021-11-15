@@ -469,7 +469,13 @@ class VideoConferencingRoom extends Component {
       return (
         <StyledContent>
           {this.state.selectedRoom.popup && (
-            <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
+            <ToastContainer
+              position="bottom-right"
+              closeOnClick
+              newestOnTop={false}
+              pauseOnFocusLoss={false}
+              pauseOnHover={false}
+            />
           )}
           {this.props.loginUser?.email === this.state.selectedRoom.ownerId && this.renderRoomSettingModal()}
 

@@ -53,22 +53,14 @@ const ScreenRecordingModal = (props) => {
 
   async function mailRecording() {
     setAlreadyMail(true);
-    let file = new File([mediaBlobUrl], `${videoId}.mp4`, { mimeType: "video/mp4", lastModified: Date.now() });
+    let file = new File([mediaBlobUrl], `${videoId}.mp4`, { type: "video/mp4", lastModified: Date.now() });
 
     // Upload to firebase storage
     let storageRef = ref(storage, `recorded_videos/${videoId}.mp4`);
     const uploadTask = uploadBytesResumable(storageRef, file);
     uploadTask.on("state_changed", (snapshot) => {
       const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      // console.log("Upload is " + progress + "% done");
-      // switch (snapshot.state) {
-      //   case "paused":
-      //     console.log("Upload is paused");
-      //     break;
-      //   case "running":
-      //     console.log("Upload is running");
-      //     break;
-      // }
+
       if (progress === 100) {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           sendFeedback({
@@ -154,11 +146,11 @@ const ScreenRecordingModal = (props) => {
           </Button>
         )}
 
-        {mediaBlobUrl && status && status === "stopped" && !alreadyMail && (
+        {/* {mediaBlobUrl && status && status === "stopped" && !alreadyMail && (
           <Button positive onClick={() => mailRecording()}>
             Send this recording to your email
           </Button>
-        )}
+        )} */}
 
         {status && status === "recording" && (
           <Button positive onClick={() => stopRecording()}>

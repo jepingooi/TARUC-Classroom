@@ -652,7 +652,13 @@ export default class VideoConferencingHome extends Component {
   render = () => {
     return (
       <StyledContent>
-        <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
+        <ToastContainer
+          position="bottom-right"
+          closeOnClick
+          newestOnTop={false}
+          pauseOnFocusLoss={false}
+          pauseOnHover={false}
+        />
         {this.renderRoomSettingModal()}
         <StyledSubContent>
           {this.renderTopSide()}
