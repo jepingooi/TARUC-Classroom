@@ -127,7 +127,12 @@ const ScreenRecordingModal = (props) => {
   }
 
   return (
-    <Modal closeIcon open={props.recordingModal} onClose={() => props.handleModal(false)}>
+    <Modal
+      closeIcon
+      open={props.recordingModal}
+      onClose={() => props.handleModal(false)}
+      size={mediaBlobUrl ? "large" : "tiny"}
+    >
       <Modal.Header>Screen recording</Modal.Header>
 
       {mediaBlobUrl && (
