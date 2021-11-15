@@ -14,16 +14,7 @@ import SettingModal from "./settingModal";
 // Firebase
 import { firebaseConfig } from "../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-  getDoc,
-  doc,
-} from "firebase/firestore";
+import { getFirestore, collection, getDocs, onSnapshot, query, where, getDoc, doc } from "firebase/firestore";
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -75,12 +66,9 @@ export default class VideoConferencingHome extends Component {
   }
 
   componentDidMount() {
-    unSubAllRoomRef = onSnapshot(
-      collection(db, "videoConferencingRooms"),
-      () => {
-        this.getRoomFromFirebase();
-      }
-    );
+    unSubAllRoomRef = onSnapshot(collection(db, "videoConferencingRooms"), () => {
+      this.getRoomFromFirebase();
+    });
 
     this.getUserFromFirebases();
   }
@@ -147,8 +135,7 @@ export default class VideoConferencingHome extends Component {
         time: new Date(eachMessage.time.seconds * 1000),
       };
 
-      if (eachMessage.message.substring(0, 2) !== "**")
-        chatMessageList.push(tempMessage);
+      if (eachMessage.message.substring(0, 2) !== "**") chatMessageList.push(tempMessage);
     });
 
     return chatMessageList;
@@ -176,13 +163,11 @@ export default class VideoConferencingHome extends Component {
       // eslint-disable-next-line
       this.state.roomList.map((eachRoom) => {
         if (eachRoom.status === "active") {
-          let filterRoom = eachRoom.invitedParticipantList.filter(
-            (list) => list.id === this.props.loginUser.email
-          );
+          let filterRoom = eachRoom.invitedParticipantList.filter((list) => list.id === this.props.loginUser.email);
+          let today = new Date();
 
-          if (eachRoom.ownerId === this.props.loginUser.email)
-            tempRoomList.push(eachRoom);
-          else if (filterRoom.length > 0) participantRoom.push(eachRoom);
+          if (eachRoom.ownerId === this.props.loginUser.email) tempRoomList.push(eachRoom);
+          else if (filterRoom.length > 0 && today < eachRoom.endTime) participantRoom.push(eachRoom);
         }
       });
       tempRoomList = tempRoomList.concat(participantRoom);
@@ -216,14 +201,8 @@ export default class VideoConferencingHome extends Component {
 
   // Convert Date to string (DD/MM/YYYY HH/MM)
   getRoomDate = (dateTime) => {
-    let date =
-      dateTime.getDate() +
-      "/" +
-      (dateTime.getMonth() + 1) +
-      "/" +
-      dateTime.getFullYear();
-    let time =
-      dateTime.getHours() + ":" + ("0" + dateTime.getMinutes()).slice(-2);
+    let date = dateTime.getDate() + "/" + (dateTime.getMonth() + 1) + "/" + dateTime.getFullYear();
+    let time = dateTime.getHours() + ":" + ("0" + dateTime.getMinutes()).slice(-2);
     let result = date + " " + time;
     return result;
   };
@@ -252,8 +231,7 @@ export default class VideoConferencingHome extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate =
-      today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
 
     let title = `Attendance report`;
     let generateDate = `Date - ${formattedDate}`;
@@ -262,9 +240,7 @@ export default class VideoConferencingHome extends Component {
     let totalAttendees = `Total attendees - ${attendance.attendeeIdList.length} `;
     let startTime = `Start time - ${this.getRoomDate(room.startTime)}`;
     let endTime = `End time - ${this.getRoomDate(room.endTime)}`;
-    let headers = [
-      ["No.", "Attendee name", "Join/ Leave time", "Action", "Notes"],
-    ];
+    let headers = [["No.", "Attendee name", "Join/ Leave time", "Action", "Notes"]];
 
     let data = attendance.attendanceList.map((attendance, i) => [
       i + 1,
@@ -305,8 +281,7 @@ export default class VideoConferencingHome extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate =
-      today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
 
     let title = `Chat messages report`;
     let generateDate = `Date - ${formattedDate}`;
@@ -351,8 +326,7 @@ export default class VideoConferencingHome extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate =
-      today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
 
     let title = `Poll report`;
     let generateDate = `Date - ${formattedDate}`;
@@ -370,27 +344,15 @@ export default class VideoConferencingHome extends Component {
       let totalRespondent = `Total respondent - ${poll.respondentIdList.length} `;
       let question = `Question - ${poll.question}`;
       let headers = [["No.", "Option", "Total respondent"]];
-      let data = poll.options.map((option, i) => [
-        i + 1,
-        option.option,
-        option.amountSelected,
-      ]);
+      let data = poll.options.map((option, i) => [i + 1, option.option, option.amountSelected]);
       let content = {
         startY: i === 0 ? 180 : doc.lastAutoTable.finalY + 60,
         head: headers,
         body: data,
       };
 
-      doc.text(
-        totalRespondent,
-        marginLeft,
-        i === 0 ? 150 : doc.lastAutoTable.finalY + 30
-      );
-      doc.text(
-        question,
-        marginLeft,
-        i === 0 ? 170 : doc.lastAutoTable.finalY + 50
-      );
+      doc.text(totalRespondent, marginLeft, i === 0 ? 150 : doc.lastAutoTable.finalY + 30);
+      doc.text(question, marginLeft, i === 0 ? 170 : doc.lastAutoTable.finalY + 50);
       doc.autoTable(content);
     });
 
@@ -416,17 +378,14 @@ export default class VideoConferencingHome extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate =
-      today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
 
     let title = `Mark attendance simulation`;
     let generateDate = `Date - ${formattedDate}`;
     let generateClass = `Class - ${room.roomName}`;
     let startTime = `Start time - ${this.getRoomDate(room.startTime)}`;
     let endTime = `End time - ${this.getRoomDate(room.endTime)}`;
-    let headers = [
-      ["No.", "Participant ID", "Join time", "Leave time", "Action"],
-    ];
+    let headers = [["No.", "Participant ID", "Join time", "Leave time", "Action"]];
 
     // Generate user data
     let attendanceList = [];
@@ -526,9 +485,7 @@ export default class VideoConferencingHome extends Component {
               <StyledCell>{endTime}</StyledCell>
               <StyledCell>
                 {this.getParticipantInRoomNumber(eachRoom)} /{" "}
-                {eachRoom.invitedParticipantList
-                  ? eachRoom.invitedParticipantList.length + 1
-                  : 0 + 1}
+                {eachRoom.invitedParticipantList ? eachRoom.invitedParticipantList.length + 1 : 0 + 1}
               </StyledCell>
               <StyledCell
                 style={{
@@ -546,24 +503,12 @@ export default class VideoConferencingHome extends Component {
                       icon="setting"
                       basic
                     />
-                    <Button
-                      onClick={() => this.generateReport(eachRoom)}
-                      icon="download"
-                      basic
-                    />
-                    <Button
-                      onClick={() => this.markAttendance(eachRoom)}
-                      icon="checkmark box"
-                      basic
-                    />
+                    <Button onClick={() => this.generateReport(eachRoom)} icon="download" basic />
+                    <Button onClick={() => this.markAttendance(eachRoom)} icon="checkmark box" basic />
                   </>
                 )}
                 <Link to={`/videoConferencing/${eachRoom.id}`}>
-                  <Button
-                    onClick={() => this.props.joinRoom(eachRoom.id)}
-                    icon="arrow right"
-                    basic
-                  />
+                  <Button onClick={() => this.props.joinRoom(eachRoom.id)} icon="arrow right" basic />
                 </Link>
               </StyledCell>
             </StyledRow>
@@ -595,10 +540,7 @@ export default class VideoConferencingHome extends Component {
   handleModal = (status, room, action) => {
     // If delete room, automatically close the modal
     if (room && room.id.length > 0) {
-      const queryRoom = query(
-        collection(db, "videoConferencingRooms"),
-        where("id", "==", room.id)
-      );
+      const queryRoom = query(collection(db, "videoConferencingRooms"), where("id", "==", room.id));
       unsubRoomRef = onSnapshot(queryRoom, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
           // if (change.type === "added") {
@@ -657,11 +599,7 @@ export default class VideoConferencingHome extends Component {
                 <Table.HeaderCell>Start Time</Table.HeaderCell>
                 <Table.HeaderCell>End Time</Table.HeaderCell>
                 <Table.HeaderCell>Participants</Table.HeaderCell>
-                <Table.HeaderCell
-                  style={{ width: "100px", justifyContent: "center" }}
-                >
-                  Actions
-                </Table.HeaderCell>
+                <Table.HeaderCell style={{ width: "100px", justifyContent: "center" }}>Actions</Table.HeaderCell>
               </StyledRow>
             </Table.Header>
 
@@ -689,10 +627,7 @@ export default class VideoConferencingHome extends Component {
       <StyledHeader>
         <LeftFont>Video Conferencing</LeftFont>
         <div style={{ flex: 1 }} />
-        <RightButton
-          positive
-          onClick={() => this.handleModal(true, defaultRoom, "create")}
-        >
+        <RightButton positive onClick={() => this.handleModal(true, defaultRoom, "create")}>
           Create Room
         </RightButton>
       </StyledHeader>
@@ -717,12 +652,7 @@ export default class VideoConferencingHome extends Component {
   render = () => {
     return (
       <StyledContent>
-        <ToastContainer
-          position="bottom-right"
-          closeOnClick
-          newestOnTop={false}
-          pauseOnHover
-        />
+        <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
         {this.renderRoomSettingModal()}
         <StyledSubContent>
           {this.renderTopSide()}
