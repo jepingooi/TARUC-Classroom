@@ -9,13 +9,12 @@ import { Button, ButtonGroup } from "react-bootstrap";
 const TableActions = (props) => {
   return (
     <div className="d-flex justify-content-evenly">
-      <ButtonGroup>
-        <Button variant="light" className={classes["bg-none"]}>
+      <ButtonGroup className={classes["bg-none"]}>
+        <Button variant="light">
           <ViewSVG className={classes.hover} onClick={props.onView} />
         </Button>
         <Button
           variant="light"
-          className={classes["bg-none"]}
           disabled={props.isClosed}
           style={props.isClosed ? { backgroundColor: "transparent" } : {}}
         >
@@ -25,7 +24,7 @@ const TableActions = (props) => {
           )}
         </Button>
 
-        <Button variant="light" className={classes["bg-none"]}>
+        <Button variant="light">
           <DeleteSVG className={classes.hover} onClick={props.onView} />
         </Button>
       </ButtonGroup>
