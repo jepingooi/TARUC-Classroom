@@ -1,11 +1,13 @@
-import React, { Fragment } from "react";
+import React, { useEffect, useState, Fragment, useCallback } from "react";
+import { firebaseConfig } from "../../../firebaseConfig.json";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { Container, Row, Col } from "react-bootstrap";
-import Filters from "../components/Filters";
-import CustomButton from "../components/Button";
-import CustomTable from "../../../components/Table";
-import SearchBar from "../components/SearchBar";
-import SurveyList from "../components/SurveryList";
+import SurveyTable from "../../../components/Table";
+
+import SurveyRow from "../components/SurveyRow";
 import { useHistory } from "react-router-dom";
+import ActionBar from "../../../components/ActionBar";
 
 const filterList = [
   {
@@ -16,12 +18,12 @@ const filterList = [
     id: "f2",
     filterText: "Published",
   },
-  ,
+
   {
     id: "f3",
     filterText: "Closed",
   },
-  ,
+
   {
     id: "f4",
     filterText: "Drafted",
@@ -36,11 +38,42 @@ const headerList = [
   { id: "h5", headerText: "Actions" },
 ];
 
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const Survey = () => {
+  const [surveys, setSurveys] = useState([
+    {
+      id: "",
+      title: "",
+      status: "",
+      responseNumber: 0,
+      startDate: null,
+    },
+  ]);
+
+  useEffect(async () => {
+    const surveyCollection = collection(db, "surveys");
+    const surveySnapshot = await getDocs(surveyCollection);
+    const surveyList = surveySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title,
+        status: data.status,
+        responseNumber: data.responses.length,
+        startDate: data.startDate.toDate().toDateString(),
+      };
+    });
+
+    setSurveys(surveyList);
+  }, []);
+
   const history = useHistory();
-  const clickHandler = () => {
+  const addSurveyHandler = () => {
     history.push("/surveys/new");
   };
+
   return (
     <Fragment>
       <Container className="my-3">
@@ -49,22 +82,16 @@ const Survey = () => {
             <h1 className="display-5">Your Survey</h1>
           </Col>
         </Row>
-        <Row className="d-flex align-items-center justify-content-center py-3">
-          <Col>
-            <div className="d-flex align-items-center">
-              <CustomButton onClick={clickHandler}>Add Survey</CustomButton>
-              <Filters filters={filterList}></Filters>
-            </div>
-          </Col>
-          <Col className="d-flex justify-content-end">
-            <SearchBar text={"Search Survey..."} />
-          </Col>
-        </Row>
+        <ActionBar
+          filterList={filterList}
+          onClick={addSurveyHandler}
+          buttonText={"Add Survey"}
+        />
         <Row className="py-3">
           <Col>
-            <CustomTable headers={headerList}>
-              <SurveyList></SurveyList>
-            </CustomTable>
+            <SurveyTable headers={headerList}>
+              <SurveyRow surveys={surveys}></SurveyRow>
+            </SurveyTable>
           </Col>
         </Row>
       </Container>
