@@ -29,7 +29,7 @@ const ScreenRecordingModal = (props) => {
     startRecording: startRecord,
     stopRecording: stopRecord,
     mediaBlobUrl,
-  } = useReactMediaRecorder({ screen: true, type: "video/mp4" });
+  } = useReactMediaRecorder({ screen: true, mimeType: "video/mp4" });
 
   useEffect(() => {
     return () => stopRecording();
@@ -53,7 +53,7 @@ const ScreenRecordingModal = (props) => {
 
   async function mailRecording() {
     setAlreadyMail(true);
-    let file = new File([mediaBlobUrl], `${videoId}.mp4`, { type: "video/mp4", lastModified: Date.now() });
+    let file = new File([mediaBlobUrl], `${videoId}.mp4`, { mimeType: "video/mp4", lastModified: Date.now() });
 
     // Upload to firebase storage
     let storageRef = ref(storage, `recorded_videos/${videoId}.mp4`);

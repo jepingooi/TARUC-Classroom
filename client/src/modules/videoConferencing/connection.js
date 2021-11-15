@@ -141,8 +141,6 @@ const Room = (props) => {
   const [cameraModal, setCameraModal] = useState(false);
   const [screenSharingModal, setScreenSharingModal] = useState(false);
   const [hangupModal, setHangupModal] = useState(false);
-  const [screenType, setScreenType] = useState("default");
-  const [focusScreen, setFocusScreen] = useState(null);
 
   useEffect(() => {
     socketRef.current = io.connect("/");
@@ -376,48 +374,8 @@ const Room = (props) => {
     );
   }
 
-  function renderSplitScreen(screens) {}
-
-  function renderDefaultScreen(userScreen, otherScreens) {
-    let screens = [];
-
-    otherScreens.forEach((screen, i) => {
-      screens.push(
-        // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
-        <ParticipantContainer key={i}>
-          <ScreenContainer>{screen}</ScreenContainer>
-          <ParticipantDetailContainer>{screen.name}</ParticipantDetailContainer>
-        </ParticipantContainer>
-      );
-    });
-
-    return (
-      <ParticipantScreenContainer>
-        <ParticipantContainer key={loginUser.email}>
-          <ScreenContainer>{userScreen}</ScreenContainer>
-          <ParticipantDetailContainer>{loginUser.name}</ParticipantDetailContainer>
-        </ParticipantContainer>
-        {screens}
-      </ParticipantScreenContainer>
-    );
-  }
-
   function renderScreens() {
     let userScreen = <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%" }} />;
-    // let otherScreens = [];
-
-    // selectedRoom.participantInRoomList.forEach((user) => {
-    //   let tempPeer;
-    //   peers.forEach((peer) => {
-    //     if (peer.userID === user.id) tempPeer = peer;
-    //   });
-
-    //   if (tempPeer) otherScreens.push({ screen: <Video peer={tempPeer.peer} />, name: user.name });
-    // });
-
-    // return renderDefaultScreen(userScreen, otherScreens);
-    // return  {screenType === "defaut" ? renderDefaultScreen(allScreens) : renderSplitScreen(allScreens)}
-
     return (
       <ParticipantScreenContainer>
         <ParticipantContainer key={loginUser.email}>
@@ -434,31 +392,13 @@ const Room = (props) => {
           });
 
           if (tempPeer) {
-            // Check audio and video status
-            // let audioFlagTemp = true;
-            // let videoFlagTemp = true;
-            // if (userUpdate) {
-            //   userUpdate.forEach((entry) => {
-            //     if (tempPeer.peerID && tempPeer.peerID === entry.id) {
-            //       audioFlagTemp = entry.audioFlag;
-            //       videoFlagTemp = entry.videoFlag;
-            //     }
-            //   });
-            // }
-
-            // Collect all screen
             return (
-              // <ParticipantContainer key={peer.peerID} onClick={() => this.handleScreen("focus", eachUser)}>
               <ParticipantContainer key={eachUser.id}>
                 <ScreenContainer>
                   <Video peer={tempPeer.peer} />
                 </ScreenContainer>
                 <ParticipantDetailContainer>
                   <div>{eachUser.name}</div>
-                  {/* <div>
-                    {videoFlagTemp && <Icon name="video camera" size="large" style={{ marginRight: "10px" }} />}
-                    {audioFlagTemp && <Icon name="microphone slash" size="large" style={{ marginRight: "10px" }} />}
-                  </div> */}
                 </ParticipantDetailContainer>
               </ParticipantContainer>
             );
@@ -491,6 +431,7 @@ const ParticipantScreenContainer = styled.div`
   display: flex;
   flex-direction: row;
   overflow-y: auto;
+  flex-wrap: wrap;
 `;
 
 const MainScreenContainer = styled.div`
@@ -506,7 +447,7 @@ const ParticipantContainer = styled.div`
   height: 240px;
   background-color: #e0e1e2;
   border-radius: 20px;
-  margin: 0px 15px;
+  margin: 0px 15px 30px;
   padding: 20px 10px;
 
   :hover {
@@ -529,10 +470,4 @@ const ParticipantDetailContainer = styled.div`
   width: 100%;
   justify-content: center;
   align-items: center;
-`;
-
-const ParticipantContainerRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 30px;
 `;
