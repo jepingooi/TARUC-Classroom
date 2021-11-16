@@ -1,0 +1,14 @@
+.title::placeholder {
+  color: black;
+  opacity: 1; /* Firefox */
+}
+
+.title {
+  font-weight: bold;
+  border: none;
+  font-size: 2rem;
+}
+
+.title:focus::placeholder {
+  color: transparent;
+}

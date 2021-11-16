@@ -9,8 +9,9 @@ import {
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { useState } from "react";
-import Heading from "../../../components/Heading";
 import Buttons from "../../../components/Buttons";
+import classes from "./NewSurvey.module.css";
+import NewQuestion from "../components/NewQuestion";
 
 // const DUMMY_SURVEY = {
 //   title: "New Survey!",
@@ -29,22 +30,42 @@ import Buttons from "../../../components/Buttons";
 //   student: "DQxxcLrncF0efqNlzO0g",
 // };
 
+const INITIAL_QUESTIONS = [
+  { isRequired: false, question: "", type: "Paragraph" },
+  { isRequired: false, question: "", type: "Paragraph" },
+];
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const NewSurvey = (props) => {
-  const [questions, setQuestions] = useState({});
+  const [questions, setQuestions] = useState(INITIAL_QUESTIONS);
 
   return (
     <Container className="mt-2">
       <Form>
-        <Heading
-          buttons={
+        <Row className="d-flex align-items-center py-3">
+          <Col md={3}>
+            <Form.Control
+              size="lg"
+              type="text"
+              placeholder="Survey Title"
+              className={classes.title}
+            />
+          </Col>
+          <Col>
             <Buttons isDefault={true} primary="Save" secondary="Cancel" />
-          }
-        >
-          Survey Title
-        </Heading>
+          </Col>
+        </Row>
+        {questions.map((question) => {
+          return (
+            <Row className="mt-3">
+              <Col>
+                <NewQuestion type={question.type} />
+              </Col>
+            </Row>
+          );
+        })}
       </Form>
     </Container>
   );
