@@ -1,9 +1,9 @@
-import { ReactComponent as ViewSVG } from "../../../resources/icon-view.svg";
-import { ReactComponent as EditSVG } from "../../../resources/icon-edit.svg";
-import { ReactComponent as DeleteSVG } from "../../../resources/icon-delete.svg";
-import { ReactComponent as DisabledEditSVG } from "../../../resources/icon-edit-disabled.svg";
+import { ReactComponent as ViewSVG } from "../resources/icon-view.svg";
+import { ReactComponent as EditSVG } from "../resources/icon-edit.svg";
+import { ReactComponent as DeleteSVG } from "../resources/icon-delete.svg";
+import { ReactComponent as DisabledEditSVG } from "../resources/icon-edit-disabled.svg";
 
-import classes from "./Actions.module.css";
+import classes from "./TableActions.module.css";
 import { Button, ButtonGroup } from "react-bootstrap";
 
 const TableActions = (props) => {

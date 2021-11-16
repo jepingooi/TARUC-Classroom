@@ -13,6 +13,7 @@ import SurveyTable from "../../../components/Table";
 import SurveyRow from "../components/SurveyRow";
 import { useHistory } from "react-router-dom";
 import ActionBar from "../../../components/ActionBar";
+import Heading from "../../../components/Heading";
 
 const filterList = [
   {
@@ -77,11 +78,7 @@ const Survey = () => {
   return (
     <Fragment>
       <Container className="my-3">
-        <Row className="d-flex align-items-center py-3">
-          <Col>
-            <h1 className="display-5">Your Survey</h1>
-          </Col>
-        </Row>
+        <Heading text="Your Surveys" />
         <ActionBar
           filterList={filterList}
           onClick={addSurveyHandler}

@@ -1,5 +1,5 @@
 import classes from "./SurveyRow.module.css";
-import TableActions from "./Actions";
+import TableActions from "../../../components/TableActions";
 import { Link } from "react-router-dom";
 
 const SurveyRow = (props) => {
