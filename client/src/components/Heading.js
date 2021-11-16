@@ -4,9 +4,9 @@ const Heading = (props) => {
   return (
     <Row className="d-flex align-items-center py-3">
       <Col md={3}>
-        <h1 className={`display-5`}>{props.text}</h1>
+        <h1 className={`display-5`}>{props.children}</h1>
       </Col>
-      <Col>{props.children}</Col>
+      <Col>{props.buttons}</Col>
     </Row>
   );
 };

@@ -38,8 +38,12 @@ const NewSurvey = (props) => {
   return (
     <Container className="mt-2">
       <Form>
-        <Heading text="Survey Title">
-          <Buttons isDefault={true} primary="Save" secondary="Cancel" />
+        <Heading
+          buttons={
+            <Buttons isDefault={true} primary="Save" secondary="Cancel" />
+          }
+        >
+          Survey Title
         </Heading>
       </Form>
     </Container>
