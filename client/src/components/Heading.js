@@ -4,7 +4,12 @@ const Heading = (props) => {
   return (
     <Row className="d-flex align-items-center py-3">
       <Col>
-        <h1 className="display-5">{props.text}</h1>
+        <h1
+          contenteditable={props.editable}
+          className={`display-5 ${props.editable ? "px-3 py-2" : ""}`}
+        >
+          {props.children}
+        </h1>
       </Col>
     </Row>
   );

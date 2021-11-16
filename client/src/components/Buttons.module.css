@@ -1,0 +1,18 @@
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited,
+.btn-primary:focus {
+  background-color: #337ab7;
+  border-color: #337ab7;
+}
+
+.btn-outline-primary {
+  color: #337ab7;
+  border-color: #337ab7;
+}
+
+.btn-outline-primary:hover {
+  background-color: #337ab7;
+  color: white;
+}

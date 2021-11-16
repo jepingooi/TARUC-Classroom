@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState } from "react";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import {
@@ -76,23 +76,21 @@ const Survey = () => {
   };
 
   return (
-    <Fragment>
-      <Container className="my-3">
-        <Heading text="Your Surveys" />
-        <ActionBar
-          filterList={filterList}
-          onClick={addSurveyHandler}
-          buttonText={"Add Survey"}
-        />
-        <Row className="py-3">
-          <Col>
-            <SurveyTable headers={headerList}>
-              <SurveyRow surveys={surveys}></SurveyRow>
-            </SurveyTable>
-          </Col>
-        </Row>
-      </Container>
-    </Fragment>
+    <Container className="mt-2">
+      <Heading>Your Surveys</Heading>
+      <ActionBar
+        filterList={filterList}
+        onClick={addSurveyHandler}
+        buttonText={"Add Survey"}
+      />
+      <Row className="py-3">
+        <Col>
+          <SurveyTable headers={headerList}>
+            <SurveyRow surveys={surveys}></SurveyRow>
+          </SurveyTable>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
