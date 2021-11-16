@@ -47,11 +47,6 @@ const Login = (props) => {
         }
       })
       .then((data) => {
-        console.log(data);
-        const expirationTime = new Date(
-          new Date().getTime() + +data.expiresIn * 1000
-        );
-
         //fetch user from db where email = data.email
         let user;
         const fetchUser = async () => {
@@ -64,7 +59,11 @@ const Login = (props) => {
         };
 
         fetchUser();
-        authContext.login(data.idToken, user, expirationTime.toISOString);
+        const expirationTime = new Date(
+          new Date().getTime() + +data.expiresIn * 1000
+        );
+
+        authContext.login(data.idToken, user, expirationTime.toISOString());
         history.replace("/videoConferencing");
       })
       .catch((e) => {

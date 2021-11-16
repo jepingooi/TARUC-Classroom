@@ -1,7 +1,12 @@
-import React, { useEffect, useState, Fragment, useCallback } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  query,
+  onSnapshot,
+} from "firebase/firestore";
 import { Container, Row, Col } from "react-bootstrap";
 import SurveyTable from "../../../components/Table";
 
@@ -42,31 +47,26 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const Survey = () => {
-  const [surveys, setSurveys] = useState([
-    {
-      id: "",
-      title: "",
-      status: "",
-      responseNumber: 0,
-      startDate: null,
-    },
-  ]);
+  const [surveys, setSurveys] = useState([{}]);
 
   useEffect(async () => {
-    const surveyCollection = collection(db, "surveys");
-    const surveySnapshot = await getDocs(surveyCollection);
-    const surveyList = surveySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        title: data.title,
-        status: data.status,
-        responseNumber: data.responses.length,
-        startDate: data.startDate.toDate().toDateString(),
-      };
+    const q = query(collection(db, "surveys"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const surveyList = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        surveyList.push({
+          id: doc.id,
+          title: data.title,
+          status: data.status,
+          responseNumber: data.responses.length,
+          startDate: data.startDate.toDate().toDateString(),
+        });
+      });
+      setSurveys(surveyList);
     });
 
-    setSurveys(surveyList);
+    return () => unsubscribe();
   }, []);
 
   const history = useHistory();

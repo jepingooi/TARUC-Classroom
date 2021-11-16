@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { firebaseConfig } from "../firebaseConfig.json";
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 const AuthContext = React.createContext({
   token: "",
@@ -15,6 +12,8 @@ const calcRemainingTime = (expirationTime) => {
   const currentTime = new Date().getTime();
   const adjExpirationTime = new Date(expirationTime).getTime();
   const remainingTime = adjExpirationTime - currentTime;
+
+  return remainingTime;
 };
 
 export const AuthContextProvider = (props) => {
@@ -24,18 +23,19 @@ export const AuthContextProvider = (props) => {
 
   const userIsLoggedIn = !!token;
 
+  const logoutHandler = () => {
+    console.log("out");
+    setToken(null);
+    localStorage.clear();
+  };
+
   const loginHandler = (token, user, expirationTime) => {
     setToken(token);
     setUser(user);
     localStorage.setItem("token", token);
-    // const remainingTime = calcRemainingTime(expirationTime);
+    const remainingTime = calcRemainingTime(expirationTime);
 
-    // setTimeout(logoutHandler, remainingTime);
-  };
-
-  const logoutHandler = () => {
-    setToken(null);
-    localStorage.clear();
+    setTimeout(logoutHandler, remainingTime);
   };
 
   const contextValue = {
