@@ -35,7 +35,7 @@ class VideoConferencingRoom extends Component {
       recording: false,
       attendanceMarked: false,
       screenSharing: false,
-      firstJoin: false,
+      firstJoin: true,
 
       // Modal
       shareScreenModal: false,
@@ -97,7 +97,7 @@ class VideoConferencingRoom extends Component {
     }
 
     // open recording modal on load according to room setting
-    if (!this.state.firstJoin && selectedRoom.autoRecord && this.props.loginUser.email === selectedRoom.ownerId) {
+    if (this.state.firstJoin && selectedRoom.autoRecord && this.props.loginUser.email === selectedRoom.ownerId) {
       this.handleModal("recordingModal", true);
       this.setState({ firstJoin: false });
     }
@@ -469,7 +469,13 @@ class VideoConferencingRoom extends Component {
       return (
         <StyledContent>
           {this.state.selectedRoom.popup && (
-            <ToastContainer position="bottom-right" closeOnClick newestOnTop={false} pauseOnHover />
+            <ToastContainer
+              position="bottom-right"
+              closeOnClick
+              newestOnTop={false}
+              pauseOnFocusLoss={false}
+              pauseOnHover={false}
+            />
           )}
           {this.props.loginUser?.email === this.state.selectedRoom.ownerId && this.renderRoomSettingModal()}
 
