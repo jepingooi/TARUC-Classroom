@@ -38,12 +38,9 @@ const NewSurvey = (props) => {
   return (
     <Container className="mt-2">
       <Form>
-        <Row className="align-items-center">
-          <Col md={3}>
-            <Heading editable="true">Survey Title</Heading>
-          </Col>
-          <Buttons primary="Save" secondary="Cancel" />
-        </Row>
+        <Heading text="Survey Title">
+          <Buttons isDefault={true} primary="Save" secondary="Cancel" />
+        </Heading>
       </Form>
     </Container>
   );

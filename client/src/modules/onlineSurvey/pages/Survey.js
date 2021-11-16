@@ -77,7 +77,7 @@ const Survey = () => {
 
   return (
     <Container className="mt-2">
-      <Heading>Your Surveys</Heading>
+      <Heading text="Your Surveys" />
       <ActionBar
         filterList={filterList}
         onClick={addSurveyHandler}
