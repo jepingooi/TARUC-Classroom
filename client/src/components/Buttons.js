@@ -2,7 +2,7 @@ import { Button, Col } from "react-bootstrap";
 import classes from "./Buttons.module.css";
 const Buttons = (props) => {
   return (
-    <Col className="text-end">
+    <Col>
       <Button
         variant="secondary"
         className={`mx-1 ${!props.isDefault && classes["btn-primary"]}`}

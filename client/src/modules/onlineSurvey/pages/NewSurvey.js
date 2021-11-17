@@ -41,10 +41,12 @@ const db = getFirestore(app);
 const NewSurvey = (props) => {
   const [questions, setQuestions] = useState([{}]);
 
+  const handleChange = () => {};
+
   return (
     <Container className="mt-2">
-      <Form>
-        <Row className="d-flex align-items-center py-3">
+      <Form className="pt-3">
+        <Row className="align-items-center position-sticky">
           <Col md={3}>
             <Form.Control
               size="lg"
@@ -53,7 +55,7 @@ const NewSurvey = (props) => {
               className={classes.title}
             />
           </Col>
-          <Col>
+          <Col className="text-end">
             <Buttons isDefault={true} primary="Save" secondary="Cancel" />
           </Col>
         </Row>
@@ -61,7 +63,7 @@ const NewSurvey = (props) => {
           return (
             <Row className="mt-3">
               <Col>
-                <NewQuestion type={question.type} />
+                <NewQuestion onChange={handleChange} />
               </Col>
             </Row>
           );
