@@ -12,6 +12,7 @@ import { useState } from "react";
 import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
 import NewQuestion from "../components/NewQuestion";
+import PrimaryButton from "../../../components/PrimaryButton";
 
 // const DUMMY_SURVEY = {
 //   title: "New Survey!",
@@ -43,6 +44,8 @@ const NewSurvey = (props) => {
 
   const handleChange = () => {};
 
+  const addQuestionHandler = () => {};
+
   return (
     <Container className="mt-2">
       <Form className="pt-3">
@@ -68,6 +71,13 @@ const NewSurvey = (props) => {
             </Row>
           );
         })}
+        <Row className="mt-5">
+          <Col className="text-center">
+            <PrimaryButton onClick={addQuestionHandler}>
+              Add Question
+            </PrimaryButton>
+          </Col>
+        </Row>
       </Form>
     </Container>
   );
