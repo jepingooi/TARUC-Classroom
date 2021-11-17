@@ -6,7 +6,7 @@ const SearchBar = (props) => {
       <input
         type="search"
         id="form1"
-        className={`${classes["search-bar"]} form-control`}
+        className={`${classes["search-bar"]} form-control shadow-sm`}
         placeholder={props.text}
         aria-label="Search"
       ></input>

@@ -6,15 +6,18 @@ const PrimaryButton = (props) => {
   return (
     <Button
       variant="outline-primary"
-      className={`${classes["btn-outline-primary"]} d-flex align-items-center py-2`}
+      className={`${classes["btn-outline-primary"]}  py-2 shadow-sm`}
       onClick={props.onClick}
     >
-      <AddItemSVG
-        className={`${classes["add-item-icon"]} me-2`}
-        width="20px"
-        height="21px"
-      />
-      {props.buttonText || props.children}
+      <div className="d-flex align-items-center">
+        {" "}
+        <AddItemSVG
+          className={`${classes["add-item-icon"]} me-2`}
+          width="20px"
+          height="21px"
+        />
+        {props.buttonText || props.children}
+      </div>
     </Button>
   );
 };

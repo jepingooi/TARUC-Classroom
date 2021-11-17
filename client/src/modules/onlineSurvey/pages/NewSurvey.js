@@ -13,7 +13,7 @@ import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
 import NewQuestion from "../components/NewQuestion";
 import PrimaryButton from "../../../components/AddItemButton";
-import { ReactComponent as SaveSVG } from "../../../resources/icon-save.svg";
+
 // const DUMMY_SURVEY = {
 //   title: "New Survey!",
 //   questions: [
@@ -72,7 +72,7 @@ const NewSurvey = (props) => {
           );
         })}
         <Row className="mt-5">
-          <Col className="text-center justify-content-center d-flex">
+          <Col className="text-center">
             <PrimaryButton onClick={addQuestionHandler}>
               Add Question
             </PrimaryButton>
