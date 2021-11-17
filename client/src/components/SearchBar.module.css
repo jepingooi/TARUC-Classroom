@@ -1,0 +1,8 @@
+.search-bar::placeholder {
+  color: #337ab7;
+}
+
+.search-bar {
+  border-color: #337ab7;
+  height: 3em;
+}

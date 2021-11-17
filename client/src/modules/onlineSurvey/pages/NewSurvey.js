@@ -12,7 +12,7 @@ import { useState } from "react";
 import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
 import NewQuestion from "../components/NewQuestion";
-import PrimaryButton from "../../../components/PrimaryButton";
+import PrimaryButton from "../../../components/AddItemButton";
 
 // const DUMMY_SURVEY = {
 //   title: "New Survey!",
@@ -72,7 +72,7 @@ const NewSurvey = (props) => {
           );
         })}
         <Row className="mt-5">
-          <Col className="text-center">
+          <Col className="text-center justify-content-center d-flex">
             <PrimaryButton onClick={addQuestionHandler}>
               Add Question
             </PrimaryButton>

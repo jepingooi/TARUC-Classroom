@@ -12,7 +12,9 @@
   border-color: #337ab7;
 }
 
-.btn-outline-primary:hover {
+.btn-outline-primary:hover,
+.btn-outline-primary:hover .add-item-icon path {
   background-color: #337ab7;
   color: white;
+  fill: white;
 }

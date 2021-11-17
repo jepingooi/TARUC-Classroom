@@ -5,7 +5,7 @@ const CustomTable = (props) => {
   return (
     <div className={`${classes.scroll} shadow-md`}>
       <Table striped hover>
-        <thead className={classes["table-header"]}>
+        <thead className={`${classes["table-header"]} sticky-top`}>
           <tr>
             {props.headers.map((header) => {
               return <th key={header.id}>{header.headerText}</th>;

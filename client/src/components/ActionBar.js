@@ -1,6 +1,6 @@
 import { Row, Col } from "react-bootstrap";
 import Filters from "./Filters";
-import PrimaryButton from "./PrimaryButton";
+import PrimaryButton from "./AddItemButton";
 import SearchBar from "./SearchBar";
 
 const ActionBar = (props) => {

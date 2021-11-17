@@ -20,3 +20,7 @@ th {
   max-height: 350px;
   overflow-y: auto; /* Trigger vertical scroll    */
 }
+
+tbody {
+  border-top: none !important;
+}
