@@ -13,9 +13,10 @@ td {
 th {
   font-size: 1.2rem;
   font-weight: 600;
+  position: sticky;
 }
 
 .scroll {
   max-height: 350px;
-  overflow: auto;
+  overflow-y: auto; /* Trigger vertical scroll    */
 }

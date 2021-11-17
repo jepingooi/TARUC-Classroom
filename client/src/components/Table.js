@@ -3,7 +3,7 @@ import classes from "./Table.module.css";
 
 const CustomTable = (props) => {
   return (
-    <div className={classes.scroll}>
+    <div className={`${classes.scroll} shadow-md`}>
       <Table striped hover>
         <thead className={classes["table-header"]}>
           <tr>

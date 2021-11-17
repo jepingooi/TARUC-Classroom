@@ -39,7 +39,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const NewSurvey = (props) => {
-  const [questions, setQuestions] = useState(INITIAL_QUESTIONS);
+  const [questions, setQuestions] = useState([{}]);
 
   return (
     <Container className="mt-2">
