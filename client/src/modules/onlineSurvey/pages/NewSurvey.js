@@ -13,7 +13,7 @@ import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
 import NewQuestion from "../components/NewQuestion";
 import PrimaryButton from "../../../components/AddItemButton";
-
+import { ReactComponent as SaveSVG } from "../../../resources/icon-save.svg";
 // const DUMMY_SURVEY = {
 //   title: "New Survey!",
 //   questions: [

@@ -18,7 +18,11 @@ const NewQuestion = (props) => {
         </Col>
 
         <Col className="text-right" md={{ span: 3, offset: 4 }}>
-          <Form.Select size="lg" aria-label="Question select">
+          <Form.Select
+            className={classes.font}
+            size="lg"
+            aria-label="Question select"
+          >
             <option value="paragraph">Paragraph</option>
             <option value="multiple-choice">Multiple Choice</option>
             <option value="checkbox">Checkbox</option>
@@ -76,7 +80,7 @@ const NewQuestion = (props) => {
       <Row>
         <Col className="d-flex justify-content-end">
           <Form.Check
-            className="pt-1"
+            className={`${classes.font} pt-1`}
             type="switch"
             id="custom-switch"
             label="Required"

@@ -1,6 +1,6 @@
 import classes from "./Buttons.module.css";
 import { Button } from "react-bootstrap";
-import { ReactComponent as AddItemSVG } from "../resources/add-item.svg";
+import { ReactComponent as AddItemSVG } from "../resources/icon-add.svg";
 
 const PrimaryButton = (props) => {
   return (

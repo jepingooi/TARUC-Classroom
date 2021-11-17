@@ -28,3 +28,7 @@ input[type="text"].question {
   background-color: transparent;
   border: none;
 }
+
+.font {
+  color: rgba(0, 0, 0, 0.8) !important;
+}

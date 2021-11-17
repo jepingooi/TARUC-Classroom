@@ -1,5 +1,4 @@
 import classes from "./SearchBar.module.css";
-import { ReactComponent as SearchSVG } from "../resources/search-icon.svg";
 
 const SearchBar = (props) => {
   return (
