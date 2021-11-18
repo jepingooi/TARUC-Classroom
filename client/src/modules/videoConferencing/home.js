@@ -176,6 +176,8 @@ export default class VideoConferencingHome extends Component {
           else if (filterRoom.length > 0 && today < eachRoom.endTime) participantRoom.push(eachRoom);
         }
       });
+      tempRoomList.sort((a, b) => a.roomName.localeCompare(b.roomName));
+      participantRoom.sort((a, b) => a.roomName.localeCompare(b.roomName));
       tempRoomList = tempRoomList.concat(participantRoom);
     }
 
