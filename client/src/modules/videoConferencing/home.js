@@ -669,8 +669,8 @@ export default class VideoConferencingHome extends Component {
         <StyledSubContent>
           {this.renderTopSide()}
           {this.renderBottomTable()}
+          {this.renderPagination()}
         </StyledSubContent>
-        {this.renderPagination()}
       </StyledContent>
     );
   };
@@ -683,7 +683,7 @@ const StyledContent = styled.div`
 `;
 
 const StyledSubContent = styled.div`
-  margin-top: 20px;
+  margin-top: 10px;
   margin-right: 50px;
   margin-left: 50px;
   height: calc(100vh - 170px);
@@ -707,7 +707,7 @@ const RightButton = styled(Button)`
 `;
 
 const StyledTable = styled.div`
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 const StyledMenuContainer = styled.div`
