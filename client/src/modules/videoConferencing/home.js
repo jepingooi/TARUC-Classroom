@@ -533,7 +533,7 @@ export default class VideoConferencingHome extends Component {
 
     for (let i = 0; i <= tempNum; i++) {
       collectedPagination.push(
-        <Menu.Item key={i + 1} as="a" onClick={() => this.paging(i + 1)}>
+        <Menu.Item key={i + 1} as="a" onClick={() => this.paging(i + 1)} active={this.state.page === i + 1}>
           {i + 1}
         </Menu.Item>
       );
