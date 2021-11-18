@@ -383,7 +383,7 @@ const Room = (props) => {
           <ParticipantDetailContainer>{loginUser.name}</ParticipantDetailContainer>
         </ParticipantContainer>
 
-        {selectedRoom.participantInRoomList.forEach((eachUser) => {
+        {selectedRoom.participantInRoomList.map((eachUser) => {
           let tempPeer;
           peers.forEach((eachPeer) => {
             if (eachPeer.userID === eachUser.id) {
