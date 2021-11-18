@@ -47,24 +47,31 @@ const Login = (props) => {
         }
       })
       .then((data) => {
-        //fetch user from db where email = data.email
         let user;
         const fetchUser = async () => {
-          const usersRef = collection(db, "users");
+          const emailDomain = data.email.split("@")[1];
+          let userCollection;
+          if (emailDomain.startsWith("student")) {
+            userCollection = "students";
+          } else {
+            userCollection = "staff";
+          }
+
+          const usersRef = collection(db, userCollection);
           const q = query(usersRef, where("email", "==", data.email));
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach((doc) => {
             user = doc.data();
+            const expirationTime = new Date(
+              new Date().getTime() + +data.expiresIn * 1000
+            );
+
+            authContext.login(data.idToken, user, expirationTime.toISOString());
+            history.replace("/videoConferencing");
           });
         };
 
         fetchUser();
-        const expirationTime = new Date(
-          new Date().getTime() + +data.expiresIn * 1000
-        );
-
-        authContext.login(data.idToken, user, expirationTime.toISOString());
-        history.replace("/videoConferencing");
       })
       .catch((e) => {
         alert(e.message);
