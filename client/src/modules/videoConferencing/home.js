@@ -76,9 +76,15 @@ export default class VideoConferencingHome extends Component {
   // Get all users from firebase
   getUserFromFirebases = async () => {
     let tempUserList = [];
-    let userRef = collection(db, "users");
-    let userQuerySnapshot = await getDocs(userRef);
-    userQuerySnapshot.forEach((doc) => {
+    let staffRef = collection(db, "staff");
+    let staffQuerySnapshot = await getDocs(staffRef);
+    staffQuerySnapshot.forEach((doc) => {
+      tempUserList.push(doc.data());
+    });
+
+    let studentsRef = collection(db, "students");
+    let studentsQuerySnapshot = await getDocs(studentsRef);
+    studentsQuerySnapshot.forEach((doc) => {
       tempUserList.push(doc.data());
     });
 
