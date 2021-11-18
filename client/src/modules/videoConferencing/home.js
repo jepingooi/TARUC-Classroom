@@ -529,9 +529,9 @@ export default class VideoConferencingHome extends Component {
   };
 
   // Generate 10 max room per page
-  generatePagination = () => {
+  generatePagination = (roomList) => {
     let collectedPagination = [];
-    let tempNum = Math.floor(this.state.roomList?.length / 10);
+    let tempNum = Math.floor(roomList?.length / 10);
 
     for (let i = 0; i <= tempNum; i++) {
       collectedPagination.push(
@@ -568,8 +568,8 @@ export default class VideoConferencingHome extends Component {
   };
 
   // Pagination for room list table
-  renderPagination = () => {
-    if (this.state.roomList?.length > 10)
+  renderPagination = (roomList) => {
+    if (roomList?.length > 10)
       return (
         <StyledMenuContainer>
           <Menu pagination>
@@ -579,9 +579,9 @@ export default class VideoConferencingHome extends Component {
               </Menu.Item>
             )}
 
-            {this.generatePagination()}
+            {this.generatePagination(roomList)}
 
-            {this.state.page <= Math.floor(this.state.roomList.length / 10) && (
+            {this.state.page <= Math.floor(roomList.length / 10) && (
               <Menu.Item as="a" icon onClick={() => this.paging("next")}>
                 <Icon name="chevron right" />
               </Menu.Item>
@@ -592,10 +592,8 @@ export default class VideoConferencingHome extends Component {
   };
 
   // Room list table
-  renderBottomTable = () => {
-    let tempRoom = this.sortRoom();
-
-    if (tempRoom.length > 0) {
+  renderBottomTable = (roomList) => {
+    if (roomList.length > 0) {
       return (
         <StyledTable>
           <Table celled>
@@ -611,7 +609,7 @@ export default class VideoConferencingHome extends Component {
               </StyledRow>
             </Table.Header>
 
-            <Table.Body>{this.generateRoomList(tempRoom)}</Table.Body>
+            <Table.Body>{this.generateRoomList(roomList)}</Table.Body>
           </Table>
         </StyledTable>
       );
@@ -658,6 +656,8 @@ export default class VideoConferencingHome extends Component {
 
   // Main
   render = () => {
+    let tempRoomList = this.sortRoom();
+
     return (
       <StyledContent>
         <ToastContainer
@@ -670,8 +670,8 @@ export default class VideoConferencingHome extends Component {
         {this.renderRoomSettingModal()}
         <StyledSubContent>
           {this.renderTopSide()}
-          {this.renderBottomTable()}
-          {this.renderPagination()}
+          {this.renderBottomTable(tempRoomList)}
+          {this.renderPagination(tempRoomList)}
         </StyledSubContent>
       </StyledContent>
     );
