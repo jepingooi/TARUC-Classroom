@@ -226,10 +226,12 @@ export default class settingModal extends Component {
     if (!roomName) roomNameError = "Room name is invalid.";
 
     // Validate start time not less than today
-    if (startTime <= today) startTimeError = `Start time must be after ${this.getDisplayDate(today)}`;
+    if (startTime <= today && this.props.action !== "edit")
+      startTimeError = `Start time must be after ${this.getDisplayDate(today)}`;
 
     // Validate end time not less than start time
-    if (endTime <= startTime) endTimeError = `End time must be after ${this.getDisplayDate(startTime)}`;
+    if (endTime <= startTime && this.props.action !== "edit")
+      endTimeError = `End time must be after ${this.getDisplayDate(startTime)}`;
 
     if (roomNameError.length > 0 || startTimeError.length > 0 || endTimeError.length > 0) {
       this.setState({
