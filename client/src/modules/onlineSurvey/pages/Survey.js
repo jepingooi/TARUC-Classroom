@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import {
@@ -6,6 +6,8 @@ import {
   collection,
   query,
   onSnapshot,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import { Container, Row, Col } from "react-bootstrap";
 import SurveyTable from "../../../components/Table";
@@ -14,6 +16,7 @@ import SurveyRow from "../components/SurveyRow";
 import { useHistory } from "react-router-dom";
 import ActionBar from "../../../components/ActionBar";
 import Heading from "../../../components/Heading";
+import AuthContext from "../../../store/auth-context";
 
 const filterList = [
   {
@@ -48,12 +51,19 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const Survey = () => {
-  const [surveys, setSurveys] = useState([{}]);
+  const authContext = useContext(AuthContext);
+  const [surveys, setSurveys] = useState([]);
+  const { user } = authContext;
 
-  useEffect(async () => {
-    const q = query(collection(db, "surveys"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+  const getStaffSurveys = () => {
+    let surveyQuery = query(
+      collection(db, "surveys"),
+      where("owner", "==", user.email)
+    );
+
+    const unsubscribe = onSnapshot(surveyQuery, (querySnapshot) => {
       const surveyList = [];
+
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         surveyList.push({
@@ -64,10 +74,51 @@ const Survey = () => {
           startDate: data.startDate.toDate().toDateString(),
         });
       });
+
       setSurveys(surveyList);
     });
+  };
 
-    return () => unsubscribe();
+  const getStudentSurveys = async () => {
+    //get all survey id for the student
+    let studentSurveys = [[]];
+    //go to survey databse and find all matching data
+    let q = query(collection(db, "students"), where("email", "==", user.email));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      studentSurveys = doc.data().surveys;
+      const surveyId = studentSurveys.map((survey) => survey.id);
+      console.log(surveyId);
+      const surveyQuery = query(collection(db, "surveys"));
+
+      const unsubscribe = onSnapshot(surveyQuery, (querySnapshot) => {
+        const surveyList = [];
+
+        querySnapshot.forEach((doc) => {
+          if (surveyId.includes(doc.id)) {
+            const data = doc.data();
+            surveyList.push({
+              id: doc.id,
+              title: data.title,
+              status: data.status,
+              responseNumber: data.responses.length,
+              startDate: data.startDate.toDate().toDateString(),
+            });
+          }
+        });
+
+        setSurveys(surveyList);
+      });
+    });
+  };
+
+  //fetch user's survey
+  useEffect(() => {
+    if (user.isStudent) {
+      getStudentSurveys();
+    } else {
+      getStaffSurveys();
+    }
   }, []);
 
   const history = useHistory();

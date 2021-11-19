@@ -10,7 +10,7 @@ const Filters = (props) => {
     <div>
       {props.filters.map((filter) => {
         const isActive =
-          queryParams.get("filter") == filter.filterText ? "dark" : "";
+          queryParams.get("filter") === filter.filterText ? "dark" : "";
         return (
           <NavLink
             key={filter.id}

@@ -62,6 +62,13 @@ const Login = (props) => {
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach((doc) => {
             user = doc.data();
+            switch (userCollection) {
+              case "students":
+                user.isStudent = true;
+                break;
+              default:
+                user.isStudent = false;
+            }
             const expirationTime = new Date(
               new Date().getTime() + +data.expiresIn * 1000
             );
