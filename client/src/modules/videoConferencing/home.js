@@ -564,6 +564,9 @@ export default class VideoConferencingHome extends Component {
       });
     }
 
+    defaultRoom.startTime = new Date();
+    defaultRoom.endTime = new Date();
+
     this.setState({ settingModal: status, selectedRoom: room, action: action });
   };
 
