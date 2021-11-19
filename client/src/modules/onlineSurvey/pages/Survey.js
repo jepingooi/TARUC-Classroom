@@ -55,7 +55,7 @@ const Survey = () => {
   const [surveys, setSurveys] = useState([]);
   const { user } = authContext;
 
-  const getStaffSurveys = () => {
+  const getStaffSurveys = async () => {
     let surveyQuery = query(
       collection(db, "surveys"),
       where("owner", "==", user.email)
@@ -77,6 +77,8 @@ const Survey = () => {
 
       setSurveys(surveyList);
     });
+
+    return unsubscribe;
   };
 
   const getStudentSurveys = async () => {
@@ -109,15 +111,22 @@ const Survey = () => {
 
         setSurveys(surveyList);
       });
+
+      return unsubscribe;
     });
   };
 
   //fetch user's survey
   useEffect(() => {
+    let unsubscribe;
     if (user.isStudent) {
-      getStudentSurveys();
+      getStudentSurveys().then(() => {
+        return () => unsubscribe();
+      });
     } else {
-      getStaffSurveys();
+      getStaffSurveys().then(() => {
+        return () => unsubscribe();
+      });
     }
   }, []);
 
