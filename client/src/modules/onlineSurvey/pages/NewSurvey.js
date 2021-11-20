@@ -31,18 +31,17 @@ import PrimaryButton from "../../../components/AddItemButton";
 //   student: "DQxxcLrncF0efqNlzO0g",
 // };
 
-const INITIAL_QUESTIONS = [
-  { isRequired: false, question: "", type: "Paragraph" },
-  { isRequired: false, question: "", type: "Paragraph" },
-];
+const INITIAL_QUESTIONS = {
+  isRequired: false,
+  question: "",
+  type: "Paragraph",
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const NewSurvey = (props) => {
-  const [questions, setQuestions] = useState([{}]);
-
-  const handleChange = () => {};
+  const [questions, setQuestions] = useState([INITIAL_QUESTIONS]);
 
   const addQuestionHandler = () => {};
 
@@ -63,10 +62,11 @@ const NewSurvey = (props) => {
           </Col>
         </Row>
         {questions.map((question) => {
+          console.log(question);
           return (
             <Row className="mt-3">
               <Col>
-                <NewQuestion onChange={handleChange} />
+                <NewQuestion question={question} />
               </Col>
             </Row>
           );

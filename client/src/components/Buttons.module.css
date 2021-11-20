@@ -10,9 +10,13 @@
 .btn-outline-primary {
   color: #337ab7;
   border-color: #337ab7;
+  background-color: transparent;
 }
 
 .btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-outline-primary:focus,
+.btn-outline-primary:visited,
 .btn-outline-primary:hover .add-item-icon path {
   background-color: #337ab7;
   color: white;
