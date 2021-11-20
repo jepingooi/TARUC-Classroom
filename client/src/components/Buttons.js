@@ -8,12 +8,17 @@ const Buttons = (props) => {
     <Col>
       {props.isDefault && (
         <Fragment>
-          <Button variant="secondary" className={`mx-1 shadow-sm`}>
+          <Button
+            variant="secondary"
+            className={`mx-1 shadow-sm`}
+            onClick={props.onCancel}
+          >
             {props.secondary}
           </Button>
           <Button
             variant={props.variant}
             className={`shadow-sm ${classes["btn-primary"]} `}
+            onClick={props.onSave}
           >
             <div className="align-items-center d-flex">
               <SaveSVG width="15px" height="16px" className="me-2" />

@@ -9,6 +9,7 @@ import {
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { useState } from "react";
+import { useHistory } from "react-router-dom";
 import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
 import NewQuestion from "../components/NewQuestion";
@@ -42,7 +43,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const NewSurvey = (props) => {
+  const history = useHistory();
   const [questions, setQuestions] = useState([BASE_QUESTION]);
+
+  const handleCancel = () => {
+    history.goBack();
+  };
+  const handleSave = () => {
+    //TODO - WRITE UPLOAD TO DB LOGIC HERE!!!!!!!!!!!!!!!!!!!!!!
+    console.log("Survey saved");
+  };
 
   const handleAddQuestion = () => {
     setQuestions((prevState) => {
@@ -74,7 +84,13 @@ const NewSurvey = (props) => {
             />
           </Col>
           <Col className="text-end">
-            <Buttons isDefault={true} primary="Save" secondary="Cancel" />
+            <Buttons
+              isDefault={true}
+              primary="Save"
+              secondary="Cancel"
+              onCancel={handleCancel}
+              onSave={handleSave}
+            />
           </Col>
         </Row>
         {questions.map((question) => {

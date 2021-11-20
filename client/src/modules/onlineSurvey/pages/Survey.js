@@ -145,7 +145,7 @@ const Survey = () => {
   }, []);
 
   const history = useHistory();
-  const addSurveyHandler = () => {
+  const handleAddSurvey = () => {
     history.push("/surveys/new");
   };
 
@@ -154,7 +154,7 @@ const Survey = () => {
       <Heading>Your Surveys</Heading>
       <ActionBar
         filterList={filterList}
-        onClick={addSurveyHandler}
+        onClick={handleAddSurvey}
         buttonText={"Add Survey"}
       />
       <Row className="py-3">
