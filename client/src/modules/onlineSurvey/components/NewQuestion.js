@@ -8,7 +8,6 @@ import {
   FormControl,
 } from "react-bootstrap";
 import classes from "./NewQuestion.module.css";
-import buttonClass from "../../../components/Buttons.module.css";
 import { ReactComponent as DeleteSVG } from "../../../resources/icon-delete.svg";
 import { ReactComponent as CloseSVG } from "../../../resources/icon-close.svg";
 import { useState, useRef } from "react";
@@ -45,7 +44,7 @@ const NewQuestion = (props) => {
 
   const renderOptions = (optionType) => {
     return (
-      <div key={`default-radio`} className="mb-3">
+      <Col key={`default-radio`} className="my-3" md={3}>
         {options.map((option, index) => {
           console.log(index);
           return (
@@ -76,14 +75,14 @@ const NewQuestion = (props) => {
             ref={optionRef}
           />
           <Button
-            className={buttonClass["btn-outline-primary"]}
+            className={classes["btn-outline-primary"]}
             id="button-add"
             onClick={handleAddOptions}
           >
             Add
           </Button>
         </InputGroup>
-      </div>
+      </Col>
     );
   };
 
@@ -116,8 +115,8 @@ const NewQuestion = (props) => {
         </Col>
       </Row>
       <Row className="mt-3">
-        <Col md={3}>
-          {question.type === "Paragraph" && (
+        {question.type === "Paragraph" && (
+          <Col md={5}>
             <Form.Control
               size="lg"
               type="text"
@@ -125,10 +124,10 @@ const NewQuestion = (props) => {
               readOnly
               className={classes.paragraph}
             />
-          )}
-          {question.type === "Multiple Choice" && renderOptions("radio")}
-          {question.type === "Checkbox" && renderOptions("checkbox")}
-        </Col>
+          </Col>
+        )}
+        {question.type === "Multiple Choice" && renderOptions("radio")}
+        {question.type === "Checkbox" && renderOptions("checkbox")}
       </Row>
       <hr className="mt-5 mb-3" />
       <Row>
@@ -143,6 +142,7 @@ const NewQuestion = (props) => {
             size="lg"
             variant="light"
             className={`${classes.delete} mx-2 pt-0`}
+            onClick={props.onDelete}
           >
             <DeleteSVG />
           </Button>

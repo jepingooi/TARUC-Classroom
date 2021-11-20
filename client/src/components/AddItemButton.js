@@ -10,7 +10,6 @@ const PrimaryButton = (props) => {
       onClick={props.onClick}
     >
       <div className="d-flex align-items-center">
-        {" "}
         <AddItemSVG
           className={`${classes["add-item-icon"]} me-2`}
           width="20px"

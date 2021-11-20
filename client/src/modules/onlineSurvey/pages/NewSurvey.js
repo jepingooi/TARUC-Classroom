@@ -31,7 +31,8 @@ import PrimaryButton from "../../../components/AddItemButton";
 //   student: "DQxxcLrncF0efqNlzO0g",
 // };
 
-const INITIAL_QUESTIONS = {
+const BASE_QUESTION = {
+  id: 0,
   isRequired: false,
   question: "",
   type: "Paragraph",
@@ -41,9 +42,24 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const NewSurvey = (props) => {
-  const [questions, setQuestions] = useState([INITIAL_QUESTIONS]);
+  const [questions, setQuestions] = useState([BASE_QUESTION]);
 
-  const addQuestionHandler = () => {};
+  const handleAddQuestion = () => {
+    setQuestions((prevState) => {
+      return [...prevState, { ...BASE_QUESTION, id: prevState.length + 1 }];
+    });
+  };
+
+  const handleDeleteQuestion = (deleteQuestion) => {
+    setQuestions((prevState) => {
+      for (const q of questions) {
+        console.log(q);
+      }
+      return prevState.filter((question) => {
+        return question !== deleteQuestion;
+      });
+    });
+  };
 
   return (
     <Container className="mt-2">
@@ -66,14 +82,17 @@ const NewSurvey = (props) => {
           return (
             <Row className="mt-3">
               <Col>
-                <NewQuestion question={question} />
+                <NewQuestion
+                  question={question}
+                  onDelete={handleDeleteQuestion.bind(null, question)}
+                />
               </Col>
             </Row>
           );
         })}
-        <Row className="mt-5">
-          <Col className="text-center">
-            <PrimaryButton onClick={addQuestionHandler}>
+        <Row>
+          <Col className="text-center my-5">
+            <PrimaryButton onClick={handleAddQuestion}>
               Add Question
             </PrimaryButton>
           </Col>

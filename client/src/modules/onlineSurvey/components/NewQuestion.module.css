@@ -31,3 +31,18 @@ input[type="text"].question {
 .font {
   color: rgba(0, 0, 0, 0.8) !important;
 }
+
+.btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-outline-primary:focus,
+.btn-outline-primary:visited {
+  background-color: #337ab7;
+  color: white;
+  fill: white;
+}
+
+.btn-outline-primary {
+  color: #337ab7;
+  border-color: #337ab7;
+  background-color: transparent;
+}

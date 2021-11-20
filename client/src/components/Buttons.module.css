@@ -14,9 +14,6 @@
 }
 
 .btn-outline-primary:hover,
-.btn-outline-primary:active,
-.btn-outline-primary:focus,
-.btn-outline-primary:visited,
 .btn-outline-primary:hover .add-item-icon path {
   background-color: #337ab7;
   color: white;
