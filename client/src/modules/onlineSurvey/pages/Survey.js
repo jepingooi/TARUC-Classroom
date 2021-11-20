@@ -47,6 +47,12 @@ const headerList = [
   { id: "h5", headerText: "Actions" },
 ];
 
+const studentHeaderList = [
+  { id: "h1", headerText: "Title" },
+  { id: "h2", headerText: "Status" },
+  { id: "h3", headerText: "Deadline" },
+  { id: "h4", headerText: "Action" },
+];
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -91,7 +97,10 @@ const Survey = () => {
       studentSurveys = doc.data().surveys;
       const surveyId = studentSurveys.map((survey) => survey.id);
       console.log(surveyId);
-      const surveyQuery = query(collection(db, "surveys"));
+      const surveyQuery = query(
+        collection(db, "surveys"),
+        where("status", "!=", "Drafted")
+      );
 
       const unsubscribe = onSnapshot(surveyQuery, (querySnapshot) => {
         const surveyList = [];
@@ -99,12 +108,17 @@ const Survey = () => {
         querySnapshot.forEach((doc) => {
           if (surveyId.includes(doc.id)) {
             const data = doc.data();
+            let status;
+            for (const survey of studentSurveys) {
+              if (survey.id === doc.id) {
+                status = survey.status;
+              }
+            }
             surveyList.push({
               id: doc.id,
               title: data.title,
-              status: data.status,
-              responseNumber: data.responses.length,
-              startDate: data.startDate.toDate().toDateString(),
+              status: status,
+              endDate: data.endDate.toDate().toDateString(),
             });
           }
         });
@@ -145,7 +159,9 @@ const Survey = () => {
       />
       <Row className="py-3">
         <Col>
-          <SurveyTable headers={headerList}>
+          <SurveyTable
+            headers={user.isStudent ? studentHeaderList : headerList}
+          >
             <SurveyRow surveys={surveys}></SurveyRow>
           </SurveyTable>
         </Col>

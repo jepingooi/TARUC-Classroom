@@ -4,29 +4,50 @@ import { ReactComponent as DeleteSVG } from "../resources/icon-delete.svg";
 import { ReactComponent as DisabledEditSVG } from "../resources/icon-edit-disabled.svg";
 import classes from "./TableActions.module.css";
 import { Button, ButtonGroup } from "react-bootstrap";
+import AuthContext from "../store/auth-context";
+import { useContext } from "react";
 
 const TableActions = (props) => {
+  const authContext = useContext(AuthContext);
+  const { user } = authContext;
   return (
     <div className="d-flex justify-content-evenly">
-      <ButtonGroup className={classes["bg-none"]}>
-        <Button variant="light">
-          <ViewSVG className={classes.hover} onClick={props.onView} />
-        </Button>
-        <Button
-          variant="light"
-          disabled={props.isClosed}
-          style={props.isClosed ? { backgroundColor: "transparent" } : {}}
-        >
-          {props.isClosed && <DisabledEditSVG />}
-          {!props.isClosed && (
-            <EditSVG className={classes.hover} onClick={props.onView} />
-          )}
-        </Button>
+      {!user.isStudent && (
+        <ButtonGroup className={classes["bg-none"]}>
+          <Button variant="light">
+            <ViewSVG className={classes.hover} onClick={props.onView} />
+          </Button>
+          <Button
+            variant="light"
+            disabled={props.isClosed}
+            style={props.isClosed ? { backgroundColor: "transparent" } : {}}
+          >
+            {props.isClosed && <DisabledEditSVG />}
+            {!props.isClosed && (
+              <EditSVG className={classes.hover} onClick={props.onView} />
+            )}
+          </Button>
 
-        <Button variant="light">
-          <DeleteSVG className={classes.hover} onClick={props.onView} />
-        </Button>
-      </ButtonGroup>
+          <Button variant="light">
+            <DeleteSVG className={classes.hover} onClick={props.onView} />
+          </Button>
+        </ButtonGroup>
+      )}
+
+      {user.isStudent && (
+        <ButtonGroup className={classes["bg-none"]}>
+          <Button
+            variant="light"
+            disabled={props.isAnswered}
+            style={props.isAnswered ? { backgroundColor: "transparent" } : {}}
+          >
+            {props.isAnswered && <DisabledEditSVG />}
+            {!props.isAnswered && (
+              <EditSVG className={classes.hover} onClick={props.onView} />
+            )}
+          </Button>
+        </ButtonGroup>
+      )}
     </div>
   );
 };
