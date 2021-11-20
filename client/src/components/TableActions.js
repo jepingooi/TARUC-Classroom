@@ -19,11 +19,11 @@ const TableActions = (props) => {
           </Button>
           <Button
             variant="light"
-            disabled={props.isClosed}
-            style={props.isClosed ? { backgroundColor: "transparent" } : {}}
+            disabled={props.isDisabled}
+            style={props.isDisabled ? { backgroundColor: "transparent" } : {}}
           >
-            {props.isClosed && <DisabledEditSVG />}
-            {!props.isClosed && (
+            {props.isDisabled && <DisabledEditSVG />}
+            {!props.isDisabled && (
               <EditSVG className={classes.hover} onClick={props.onView} />
             )}
           </Button>
