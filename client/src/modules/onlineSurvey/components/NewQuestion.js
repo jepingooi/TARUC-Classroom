@@ -103,7 +103,6 @@ const NewQuestion = (props) => {
         <Col className="text-right" md={{ span: 3, offset: 4 }}>
           <Form.Select
             onChange={handleTypeChange}
-            className={classes.font}
             size="lg"
             aria-label="Question select"
             ref={questionRef}
@@ -132,12 +131,7 @@ const NewQuestion = (props) => {
       <hr className="mt-5 mb-3" />
       <Row>
         <Col className="d-flex justify-content-end align-items-center">
-          <Form.Check
-            className={`${classes.font} pt-1`}
-            type="switch"
-            id="custom-switch"
-            label="Required"
-          />
+          <Form.Check type="switch" id="custom-switch" label="Required" />
           <Button
             size="lg"
             variant="light"
