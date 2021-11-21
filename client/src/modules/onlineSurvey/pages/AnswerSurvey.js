@@ -8,6 +8,7 @@ import {
   where,
   getDocs,
   collection,
+  increment,
 } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
@@ -31,10 +32,15 @@ const AnswerSurvey = () => {
   const [show, setShow] = useState(false);
   const [questions, setQuestions] = useState([]);
 
-  const updateStudent = useCallback(async (surveys, id) => {
-    const studentRef = doc(db, "students", id);
+  const updateStatus = useCallback(async (surveys, studentId) => {
+    const studentRef = doc(db, "students", studentId);
     await updateDoc(studentRef, {
       surveys,
+    });
+
+    const surveyRef = doc(db, "surveys", id);
+    await updateDoc(surveyRef, {
+      response: increment(1),
     });
   }, []);
 
@@ -126,7 +132,7 @@ const AnswerSurvey = () => {
         }
       }
 
-      updateStudent(surveys, doc.id);
+      updateStatus(surveys, doc.id);
     });
 
     setShow(true);
