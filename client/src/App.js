@@ -22,7 +22,7 @@ const ExamDetails = React.lazy(() => import("./modules/onlineExam/pages/ExamDeta
 initializeApp(firebaseConfig);
 const db = getFirestore();
 
-const rand = Math.floor(Math.random() * 2) + 1;
+const rand = Math.floor(Math.random() * 4) + 1;
 const user1 = {
   email: `ooijp-pm18@student.tarc.edu.my`,
   name: `Ooi Je Ping`,
@@ -31,8 +31,16 @@ const user2 = {
   email: `keesimee@tarc.edu.my`,
   name: `Kee Sim Ee`,
 };
+const user3 = {
+  email: `william@tarc.edu.my`,
+  name: `William`,
+};
+const user4 = {
+  email: `ngwl-pm18@student.tarc.edu.my`,
+  name: `Ng Wei Lun`,
+};
 
-const tempLoginUser = rand === 1 ? user1 : user2;
+const tempLoginUser = rand >= 3 ? (rand === 3 ? user3 : user4) : rand === 1 ? user1 : user2;
 
 const App = (props) => {
   const authContext = useContext(AuthContext);
