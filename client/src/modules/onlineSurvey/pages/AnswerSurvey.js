@@ -1,23 +1,42 @@
 import { Container, Col, Row, Button, Alert } from "react-bootstrap";
-import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  updateDoc,
+  query,
+  where,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment, useContext, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import Buttons from "../../../components/Buttons";
 import { useParams } from "react-router";
 import Heading from "../../../components/Heading";
 import AnswerQuestion from "../components/AnswerQuestion";
+import AuthContext from "../../../store/auth-context";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const AnswerSurvey = () => {
+  const authContext = useContext(AuthContext);
+  const { user } = authContext;
   const { id } = useParams();
   const history = useHistory();
   const [survey, setSurvey] = useState({});
   const [show, setShow] = useState(false);
   const [questions, setQuestions] = useState([]);
+
+  const updateStudent = useCallback(async (surveys, id) => {
+    const studentRef = doc(db, "students", id);
+    await updateDoc(studentRef, {
+      surveys,
+    });
+  }, []);
 
   useEffect(async () => {
     if (questions.length > 0) {
@@ -89,6 +108,26 @@ const AnswerSurvey = () => {
         });
       }
     }
+
+    const q = query(
+      collection(db, "students"),
+      where("email", "==", user.email)
+    );
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(async (doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+      const surveys = doc.data().surveys;
+
+      for (const s of surveys) {
+        if (s.id == id) {
+          s.status = "Answered";
+        }
+      }
+
+      updateStudent(surveys, doc.id);
+    });
 
     setShow(true);
   };
