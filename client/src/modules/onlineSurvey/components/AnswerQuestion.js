@@ -28,8 +28,12 @@ const AnswerQuestion = (props) => {
               id={`${question.question}-${index}`}
               className={index == 0 ? "" : "mt-2"}
               onChange={(e) => {
-                console.log(e.target.parentNode.lastChild.innerText);
-                setOption(e.target.parentNode.lastChild.innerText);
+                // console.log(e.target.parentNode.lastChild.innerText);
+                // setOption(e.target.parentNode.lastChild.innerText);
+                props.onAnswer(
+                  question,
+                  e.target.parentNode.lastChild.innerText
+                );
               }}
             />
           );
@@ -55,6 +59,9 @@ const AnswerQuestion = (props) => {
               type="text"
               placeholder="Text Answer"
               className={`mt-3 ${classes.paragraph}`}
+              onBlur={(e) => {
+                props.onAnswer(question, e.target.value);
+              }}
             />
           </Col>
         )}

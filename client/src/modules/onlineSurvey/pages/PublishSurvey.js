@@ -79,10 +79,10 @@ const PublishSurvey = () => {
   const handlePublish = async (e) => {
     e.preventDefault();
 
-    const cityRef = doc(db, "surveys", id);
+    const surveyRef = doc(db, "surveys", id);
 
     if (startDateRef.current.value && endDateRef.current.value) {
-      await updateDoc(cityRef, {
+      await updateDoc(surveyRef, {
         startDate: Timestamp.fromDate(
           new Date(`${startDateRef.current.value} 12:00:00 AM`)
         ),
