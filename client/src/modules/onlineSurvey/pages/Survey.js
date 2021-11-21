@@ -13,7 +13,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import SurveyTable from "../../../components/Table";
 
 import SurveyRow from "../components/SurveyRow";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import ActionBar from "../../../components/ActionBar";
 import Heading from "../../../components/Heading";
 import AuthContext from "../../../store/auth-context";
@@ -56,10 +56,30 @@ const studentHeaderList = [
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+function useQuery() {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
 const Survey = () => {
+  const history = useHistory();
+  let myQuery = useQuery();
+
   const authContext = useContext(AuthContext);
   const [surveys, setSurveys] = useState([]);
+  const [search, setSearch] = useState([]);
   const { user } = authContext;
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (query) {
+      params.append("search", search);
+    } else {
+      params.delete("search");
+    }
+    history.push({ search: params.toString() });
+  }, [search, history]);
 
   const getStaffSurveys = async () => {
     let surveyQuery = query(
@@ -144,7 +164,9 @@ const Survey = () => {
     }
   }, []);
 
-  const history = useHistory();
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
 
   return (
     <Container className="mt-3">
@@ -154,13 +176,18 @@ const Survey = () => {
         onClick={() => history.push("/surveys/new")}
         buttonText={"Add Survey"}
         isStudent={user.isStudent}
+        onSearch={handleSearch}
       />
       <Row className="py-3">
         <Col>
           <SurveyTable
             headers={user.isStudent ? studentHeaderList : headerList}
           >
-            <SurveyRow surveys={surveys}></SurveyRow>
+            <SurveyRow
+              search={myQuery.get("search")}
+              filter={myQuery.get("filter")}
+              surveys={surveys}
+            ></SurveyRow>
           </SurveyTable>
         </Col>
       </Row>

@@ -18,7 +18,7 @@ const ActionBar = (props) => {
         </div>
       </Col>
       <Col className="d-flex justify-content-end">
-        <SearchBar text={"Search Survey..."} />
+        <SearchBar text={"Search Survey..."} onChange={props.onSearch} />
       </Col>
     </Row>
   );

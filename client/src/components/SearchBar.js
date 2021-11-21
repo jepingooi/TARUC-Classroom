@@ -9,6 +9,7 @@ const SearchBar = (props) => {
         className={`${classes["search-bar"]} form-control shadow-sm`}
         placeholder={props.text}
         aria-label="Search"
+        onChange={props.onChange}
       ></input>
     </div>
   );

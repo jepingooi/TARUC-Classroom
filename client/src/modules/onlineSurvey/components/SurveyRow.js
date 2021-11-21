@@ -6,12 +6,17 @@ import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 const SurveyRow = (props) => {
+  console.log(props.search);
   const authContext = useContext(AuthContext);
   const history = useHistory();
   const { user } = authContext;
 
   const handleEdit = (id) => {
     history.push(`/surveys/${id}/edit`);
+  };
+
+  const handleView = (id) => {
+    history.push(`/surveys/${id}`);
   };
 
   const handleAnswer = (id) => {
@@ -24,32 +29,38 @@ const SurveyRow = (props) => {
         props.surveys.map((survey) => {
           const { title, status, responseNumber, createdDate, endDate, id } =
             survey;
-
-          return (
-            <tr key={id}>
-              <td className={classes.title}>
-                <Link to="/">{title}</Link>
-              </td>
-              <td>{status}</td>
-              {responseNumber != undefined && <td>{responseNumber}</td>}
-              {createdDate && <td>{createdDate}</td>}
-              {endDate && <td>{endDate}</td>}
-              <td>
-                {!user.isStudent && (
-                  <TableActions
-                    isDisabled={status === "Closed" || status === "Published"}
-                    onEdit={handleEdit.bind(null, id)}
-                  />
-                )}
-                {user.isStudent && (
-                  <TableActions
-                    isAnswered={status === "Answered"}
-                    onAnswer={handleAnswer.bind(null, id)}
-                  />
-                )}
-              </td>
-            </tr>
-          );
+          if (
+            (props.filter && status == props.filter) ||
+            (props.search && title.startsWith(props.search)) ||
+            props.search == ""
+          ) {
+            return (
+              <tr key={id}>
+                <td className={classes.title}>
+                  <Link to="/">{title}</Link>
+                </td>
+                <td>{status}</td>
+                {responseNumber != undefined && <td>{responseNumber}</td>}
+                {createdDate && <td>{createdDate}</td>}
+                {endDate && <td>{endDate}</td>}
+                <td>
+                  {!user.isStudent && (
+                    <TableActions
+                      onView={handleView.bind(null, id)}
+                      isDisabled={status === "Closed" || status === "Published"}
+                      onEdit={handleEdit.bind(null, id)}
+                    />
+                  )}
+                  {user.isStudent && (
+                    <TableActions
+                      isAnswered={status === "Answered"}
+                      onAnswer={handleAnswer.bind(null, id)}
+                    />
+                  )}
+                </td>
+              </tr>
+            );
+          }
         })}
     </tbody>
   );

@@ -40,7 +40,7 @@ const AnswerSurvey = () => {
 
     const surveyRef = doc(db, "surveys", id);
     await updateDoc(surveyRef, {
-      response: increment(1),
+      responses: increment(1),
     });
   }, []);
 
