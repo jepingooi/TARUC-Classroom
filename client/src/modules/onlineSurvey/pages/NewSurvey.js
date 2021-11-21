@@ -84,7 +84,7 @@ const NewSurvey = () => {
       questions,
       status: "Drafted",
       title,
-      responses: [],
+      responses: 0,
     });
 
     setShow(true);

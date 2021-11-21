@@ -77,6 +77,7 @@ const NewQuestion = (props) => {
         return [...prevState, text.value];
       });
     }
+    optionRef.current.value = "";
   };
 
   const renderOptions = (optionType) => {
