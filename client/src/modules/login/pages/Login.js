@@ -113,7 +113,7 @@ const Login = (props) => {
                   />
                 </Form.Group>
                 <div className="d-grid gap-2">
-                  <Button size="md" type="submit">
+                  <Button className={classes.button} size="md" type="submit">
                     Login
                   </Button>
                 </div>
