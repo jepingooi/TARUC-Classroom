@@ -153,6 +153,7 @@ const Survey = () => {
         filterList={filterList}
         onClick={() => history.push("/surveys/new")}
         buttonText={"Add Survey"}
+        isStudent={user.isStudent}
       />
       <Row className="py-3">
         <Col>

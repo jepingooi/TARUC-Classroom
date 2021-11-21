@@ -8,10 +8,12 @@ const ActionBar = (props) => {
     <Row className="d-flex align-items-center justify-content-center py-3">
       <Col>
         <div className="d-flex align-items-center">
-          <PrimaryButton
-            buttonText={props.buttonText}
-            onClick={props.onClick}
-          />
+          {!props.isStudent && (
+            <PrimaryButton
+              buttonText={props.buttonText}
+              onClick={props.onClick}
+            />
+          )}
           <Filters filters={props.filterList}></Filters>
         </div>
       </Col>

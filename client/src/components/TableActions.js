@@ -25,12 +25,12 @@ const TableActions = (props) => {
             >
               {props.isDisabled && <DisabledEditSVG />}
               {!props.isDisabled && (
-                <EditSVG className={classes.hover} onClick={props.onView} />
+                <EditSVG className={classes.hover} onClick={props.onEdit} />
               )}
             </Button>
 
             <Button variant="light">
-              <DeleteSVG className={classes.hover} onClick={props.onView} />
+              <DeleteSVG className={classes.hover} onClick={props.onDelete} />
             </Button>
           </Fragment>
         )}

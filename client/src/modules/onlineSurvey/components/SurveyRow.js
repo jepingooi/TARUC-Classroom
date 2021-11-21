@@ -3,10 +3,16 @@ import TableActions from "../../../components/TableActions";
 import { Link } from "react-router-dom";
 import AuthContext from "../../../store/auth-context";
 import { useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 const SurveyRow = (props) => {
   const authContext = useContext(AuthContext);
+  const history = useHistory();
   const { user } = authContext;
+
+  const handleEdit = (id) => {
+    history.push(`/surveys/${id}/edit`);
+  };
 
   return (
     <tbody>
@@ -14,7 +20,7 @@ const SurveyRow = (props) => {
         props.surveys.map((survey) => {
           const { title, status, responseNumber, createdDate, endDate, id } =
             survey;
-
+          console.log(id);
           return (
             <tr key={id}>
               <td className={classes.title}>
@@ -27,7 +33,8 @@ const SurveyRow = (props) => {
               <td>
                 {!user.isStudent && (
                   <TableActions
-                    isDisabled={status === "Closed" || status === "Published"}
+                    isDisabled={status === "Closed"}
+                    onEdit={handleEdit.bind(null, id)}
                   />
                 )}
                 {user.isStudent && (
