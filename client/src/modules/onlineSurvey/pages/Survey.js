@@ -145,16 +145,13 @@ const Survey = () => {
   }, []);
 
   const history = useHistory();
-  const handleAddSurvey = () => {
-    history.push("/surveys/new");
-  };
 
   return (
     <Container className="mt-2">
       <Heading>Your Surveys</Heading>
       <ActionBar
         filterList={filterList}
-        onClick={handleAddSurvey}
+        onClick={() => history.push("/surveys/new")}
         buttonText={"Add Survey"}
       />
       <Row className="py-3">

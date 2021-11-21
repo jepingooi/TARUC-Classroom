@@ -1,5 +1,4 @@
 import {
-  Container,
   Row,
   Col,
   Form,
@@ -24,9 +23,11 @@ const NewQuestion = (props) => {
   }, [question]);
 
   useEffect(() => {
-    setQuestion((prevState) => {
-      return { ...prevState, options };
-    });
+    if (question.type !== "Paragraph") {
+      setQuestion((prevState) => {
+        return { ...prevState, options };
+      });
+    }
   }, [options]);
 
   const handleTypeChange = () => {
