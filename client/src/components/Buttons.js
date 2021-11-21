@@ -21,7 +21,9 @@ const Buttons = (props) => {
             onClick={props.onSave}
           >
             <div className="align-items-center d-flex">
-              <SaveSVG width="15px" height="16px" className="me-2" />
+              {!props.isPublish && (
+                <SaveSVG width="15px" height="16px" className="me-2" />
+              )}
               {props.primary}
             </div>
           </Button>

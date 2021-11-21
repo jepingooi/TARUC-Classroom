@@ -1,0 +1,13 @@
+.header {
+  background-color: #337ab7;
+  color: white;
+  height: 3em;
+}
+
+.form-group {
+  width: 50%;
+}
+
+.card {
+  height: 100%;
+}

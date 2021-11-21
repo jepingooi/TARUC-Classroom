@@ -147,7 +147,7 @@ const Survey = () => {
   const history = useHistory();
 
   return (
-    <Container className="mt-2">
+    <Container className="mt-3">
       <Heading>Your Surveys</Heading>
       <ActionBar
         filterList={filterList}

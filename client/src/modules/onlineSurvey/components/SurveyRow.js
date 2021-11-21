@@ -20,7 +20,7 @@ const SurveyRow = (props) => {
         props.surveys.map((survey) => {
           const { title, status, responseNumber, createdDate, endDate, id } =
             survey;
-          console.log(id);
+
           return (
             <tr key={id}>
               <td className={classes.title}>
@@ -33,7 +33,7 @@ const SurveyRow = (props) => {
               <td>
                 {!user.isStudent && (
                   <TableActions
-                    isDisabled={status === "Closed"}
+                    isDisabled={status === "Closed" || status === "Published"}
                     onEdit={handleEdit.bind(null, id)}
                   />
                 )}

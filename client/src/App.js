@@ -22,7 +22,10 @@ const NewSurvey = React.lazy(() =>
   import("./modules/onlineSurvey/pages/NewSurvey")
 );
 const EditSurvey = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/EditSurvey")
+  import("./modules/onlineSurvey/pages/PublishSurvey.js")
+);
+const PublishSurvey = React.lazy(() =>
+  import("./modules/onlineSurvey/pages/PublishSurvey.js")
 );
 const SurveyDetails = React.lazy(() =>
   import("./modules/onlineSurvey/pages/SurveyDetails")
@@ -170,6 +173,9 @@ const App = (props) => {
       </Route>
       <Route path={"/surveys/:id/edit"}>
         <EditSurvey />
+      </Route>
+      <Route path={"/surveys/:id/publish"}>
+        <PublishSurvey />
       </Route>
       <Route path={"/surveys/:id"}>
         <SurveyDetails />
