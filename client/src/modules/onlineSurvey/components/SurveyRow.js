@@ -2,8 +2,23 @@ import classes from "./SurveyRow.module.css";
 import TableActions from "../../../components/TableActions";
 import { Link } from "react-router-dom";
 import AuthContext from "../../../store/auth-context";
-import { useContext } from "react";
+import { useContext, useCallback } from "react";
 import { useHistory } from "react-router-dom";
+import { firebaseConfig } from "../../../firebaseConfig.json";
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  query,
+  updateDoc,
+  where,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const SurveyRow = (props) => {
   console.log(props.search);
@@ -21,6 +36,33 @@ const SurveyRow = (props) => {
 
   const handleAnswer = (id) => {
     history.push(`/surveys/${id}/answer`);
+  };
+
+  const updateStudent = useCallback(async (studentId, surveyId, surveys) => {
+    const studentRef = doc(db, "students", studentId);
+    const newSurveys = surveys.filter((survey) => {
+      return survey.id != surveyId;
+    });
+
+    console.log(newSurveys);
+
+    await updateDoc(studentRef, {
+      surveys: newSurveys,
+    });
+  }, []);
+  const handleDelete = async (id) => {
+    await deleteDoc(doc(db, "surveys", id));
+
+    const q = query(collection(db, "students"));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(async (doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+      const surveys = doc.data().surveys;
+
+      updateStudent(doc.id, id, surveys);
+    });
   };
 
   return (
@@ -62,6 +104,7 @@ const SurveyRow = (props) => {
                       onView={handleView.bind(null, id)}
                       isDisabled={status === "Closed" || status === "Published"}
                       onEdit={handleEdit.bind(null, id)}
+                      onDelete={handleDelete.bind(null, id)}
                     />
                   )}
                   {user.isStudent && (

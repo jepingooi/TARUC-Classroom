@@ -18,6 +18,9 @@ import ActionBar from "../../../components/ActionBar";
 import Heading from "../../../components/Heading";
 import AuthContext from "../../../store/auth-context";
 
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const filterList = [
   {
     id: "f1",
@@ -69,8 +72,6 @@ const studentHeaderList = [
   { id: "h3", headerText: "Deadline" },
   { id: "h4", headerText: "Action" },
 ];
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
 function useQuery() {
   const { search } = useLocation();
