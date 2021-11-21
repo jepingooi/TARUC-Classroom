@@ -10,7 +10,7 @@ import {
 import classes from "./NewQuestion.module.css";
 import { ReactComponent as DeleteSVG } from "../../../resources/icon-delete.svg";
 import { ReactComponent as CloseSVG } from "../../../resources/icon-close.svg";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const NewQuestion = (props) => {
   const [question, setQuestion] = useState(props.question);
@@ -18,18 +18,46 @@ const NewQuestion = (props) => {
   const questionRef = useRef(null);
   const optionRef = useRef(null);
 
-  console.log(question);
+  useEffect(() => {
+    console.log(question);
+    props.onChange(question.id, question);
+  }, [question]);
+
+  useEffect(() => {
+    setQuestion((prevState) => {
+      return { ...prevState, options };
+    });
+  }, [options]);
+
   const handleTypeChange = () => {
     setQuestion((prevState) => {
-      let { options, ...newQuestion } = prevState;
+      let { options: oldOptions, ...newQuestion } = prevState;
 
       if (questionRef.current.value === "Paragraph") {
-        console.log("removing options.");
         return { ...newQuestion, type: questionRef.current.value };
       } else {
-        console.log("adding options.");
-        return { ...prevState, options, type: questionRef.current.value };
+        if (oldOptions === undefined) {
+          return { ...prevState, options, type: questionRef.current.value };
+        } else {
+          return {
+            ...prevState,
+            options: oldOptions,
+            type: questionRef.current.value,
+          };
+        }
       }
+    });
+  };
+
+  const handleQuestionChange = (e) => {
+    setQuestion((prevState) => {
+      return { ...prevState, question: e.target.value };
+    });
+  };
+
+  const handleRequiredChange = (e) => {
+    setQuestion((prevState) => {
+      return { ...prevState, isRequired: e.target.checked };
     });
   };
 
@@ -38,9 +66,6 @@ const NewQuestion = (props) => {
       return prevState.filter((option) => {
         return option != removeOption;
       });
-    });
-    setQuestion((prevState) => {
-      return { ...prevState, options };
     });
   };
 
@@ -107,6 +132,7 @@ const NewQuestion = (props) => {
             size="lg"
             type="text"
             className={`${classes.question}`}
+            onBlur={handleQuestionChange}
           />
         </Col>
 
@@ -141,7 +167,12 @@ const NewQuestion = (props) => {
       <hr className="mt-5 mb-3" />
       <Row>
         <Col className="d-flex justify-content-end align-items-center">
-          <Form.Check type="switch" id="custom-switch" label="Required" />
+          <Form.Check
+            onChange={handleRequiredChange}
+            type="switch"
+            id="custom-switch"
+            label="Required"
+          />
           <Button
             size="lg"
             variant="light"

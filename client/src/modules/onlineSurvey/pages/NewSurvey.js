@@ -68,14 +68,17 @@ const NewSurvey = (props) => {
 
   const handleAddQuestion = () => {
     setQuestions((prevState) => {
-      return [...prevState, { ...BASE_QUESTION, id: prevState.length + 1 }];
+      return [...prevState, { ...BASE_QUESTION, id: prevState.length }];
     });
   };
 
-  const handleQuestionChange = (q) => {
-    const index = questions.map((e) => e.id).indexOf(q.id);
+  const handleQuestionChange = (id, question) => {
     setQuestions((prevState) => {
-      return (prevState[index] = q);
+      const newQuestions = prevState.filter((q) => {
+        return q.id != id;
+      });
+
+      return [...newQuestions, question];
     });
   };
 
