@@ -16,6 +16,7 @@ import AuthContext from "./store/auth-context";
 import { firebaseConfig } from "./firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
+import AnswerSurvey from "./modules/onlineSurvey/pages/AnswerSurvey";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
 const NewSurvey = React.lazy(() =>
@@ -173,6 +174,9 @@ const App = (props) => {
       </Route>
       <Route path={"/surveys/:id/edit"}>
         <EditSurvey />
+      </Route>
+      <Route path={"/surveys/:id/answer"}>
+        <AnswerSurvey />
       </Route>
       <Route path={"/surveys/:id/publish"}>
         <PublishSurvey />

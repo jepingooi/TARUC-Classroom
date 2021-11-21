@@ -14,6 +14,10 @@ const SurveyRow = (props) => {
     history.push(`/surveys/${id}/edit`);
   };
 
+  const handleAnswer = (id) => {
+    history.push(`/surveys/${id}/answer`);
+  };
+
   return (
     <tbody>
       {props.surveys.length > 0 &&
@@ -38,7 +42,10 @@ const SurveyRow = (props) => {
                   />
                 )}
                 {user.isStudent && (
-                  <TableActions isAnswered={status === "Answered"} />
+                  <TableActions
+                    isAnswered={status === "Answered"}
+                    onAnswer={handleAnswer.bind(null, id)}
+                  />
                 )}
               </td>
             </tr>

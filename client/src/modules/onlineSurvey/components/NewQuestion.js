@@ -90,6 +90,7 @@ const NewQuestion = (props) => {
                 label={option}
                 name="group"
                 id={`option-${index}`}
+                className={index == 0 ? "" : "mt-2"}
               />
               <Button
                 size="lg"

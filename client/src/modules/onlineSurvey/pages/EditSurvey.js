@@ -28,7 +28,7 @@ const BASE_QUESTION = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const ExistingSurvey = () => {
+const EditSurvey = () => {
   const { id } = useParams();
   const authContext = useContext(AuthContext);
   const history = useHistory();
@@ -158,4 +158,4 @@ const ExistingSurvey = () => {
   );
 };
 
-export default ExistingSurvey;
+export default EditSurvey;

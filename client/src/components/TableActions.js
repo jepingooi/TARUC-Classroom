@@ -44,7 +44,7 @@ const TableActions = (props) => {
             >
               {props.isAnswered && <DisabledEditSVG />}
               {!props.isAnswered && (
-                <EditSVG className={classes.hover} onClick={props.onView} />
+                <EditSVG className={classes.hover} onClick={props.onAnswer} />
               )}
             </Button>
           </Fragment>
