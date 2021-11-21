@@ -32,12 +32,25 @@ const SurveyRow = (props) => {
           if (
             (props.filter && status == props.filter) ||
             (props.search && title.startsWith(props.search)) ||
-            props.search == ""
+            props.search == "" ||
+            props.filter == "All"
           ) {
             return (
               <tr key={id}>
                 <td className={classes.title}>
-                  <Link to="/">{title}</Link>
+                  {!user.isStudent && (
+                    <Link to={`/surveys/${id}`}>{title}</Link>
+                  )}
+                  {user.isStudent && (
+                    <Link
+                      style={
+                        status == "Answered" ? { pointerEvents: "none" } : {}
+                      }
+                      to={`/surveys/${id}/answer`}
+                    >
+                      {title}
+                    </Link>
+                  )}
                 </td>
                 <td>{status}</td>
                 {responseNumber != undefined && <td>{responseNumber}</td>}

@@ -39,6 +39,22 @@ const filterList = [
   },
 ];
 
+const studentFilter = [
+  {
+    id: "f1",
+    filterText: "All",
+  },
+  {
+    id: "f2",
+    filterText: "Answered",
+  },
+
+  {
+    id: "f3",
+    filterText: "Pending",
+  },
+];
+
 const headerList = [
   { id: "h1", headerText: "Title" },
   { id: "h2", headerText: "Status" },
@@ -172,6 +188,7 @@ const Survey = () => {
     <Container className="mt-3">
       <Heading>Your Surveys</Heading>
       <ActionBar
+        studentFilter={studentFilter}
         filterList={filterList}
         onClick={() => history.push("/surveys/new")}
         buttonText={"Add Survey"}

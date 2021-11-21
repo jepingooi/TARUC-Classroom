@@ -2,8 +2,11 @@ import { Row, Col } from "react-bootstrap";
 import Filters from "./Filters";
 import PrimaryButton from "./AddItemButton";
 import SearchBar from "./SearchBar";
-
+import AuthContext from "../store/auth-context";
+import { useContext } from "react";
 const ActionBar = (props) => {
+  const authContext = useContext(AuthContext);
+  const { user } = authContext;
   return (
     <Row className="d-flex align-items-center justify-content-center py-3">
       <Col>
@@ -14,7 +17,8 @@ const ActionBar = (props) => {
               onClick={props.onClick}
             />
           )}
-          <Filters filters={props.filterList}></Filters>
+          {!user.isStudent && <Filters filters={props.filterList}></Filters>}
+          {user.isStudent && <Filters filters={props.studentFilter}></Filters>}
         </div>
       </Col>
       <Col className="d-flex justify-content-end">
