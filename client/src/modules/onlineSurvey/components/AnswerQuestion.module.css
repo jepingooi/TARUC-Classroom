@@ -1,0 +1,13 @@
+.question {
+  border-bottom: 2px solid #5090c1;
+}
+
+.paragraph,
+input[type="text"].question {
+  border: none;
+  border-radius: 0%;
+}
+.paragraph {
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}

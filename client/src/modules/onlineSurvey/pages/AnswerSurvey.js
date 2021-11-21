@@ -43,7 +43,7 @@ const AnswerSurvey = () => {
     history.goBack();
   };
 
-  const handleSave = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // const result = await addDoc(collection(db, "surveys"), {
@@ -62,7 +62,7 @@ const AnswerSurvey = () => {
     <Container className="mt-4">
       <Alert show={show} variant="success">
         <Alert.Heading>Success</Alert.Heading>
-        <p>Your survey has been created successfully!</p>
+        <p>You have submitted the survey!</p>
         <hr />
         <div className="d-flex justify-content-end">
           <Button onClick={() => history.goBack()} variant="outline-success">
@@ -73,18 +73,9 @@ const AnswerSurvey = () => {
 
       {!show && (
         <Fragment>
-          <Row className="align-items-center position-sticky mb-5">
+          <Row className="align-items-center position-sticky mb-4">
             <Col>
               <Heading>{survey.title}</Heading>
-            </Col>
-            <Col className="text-end">
-              <Buttons
-                isDefault={true}
-                primary="Save"
-                secondary="Cancel"
-                onCancel={handleCancel}
-                onSave={handleSave}
-              />
             </Col>
           </Row>
           {survey.questions &&
@@ -99,6 +90,18 @@ const AnswerSurvey = () => {
             })}
         </Fragment>
       )}
+      <Row>
+        <Col className="text-center my-4">
+          <Buttons
+            isDefault={true}
+            primary="Submit"
+            secondary="Cancel"
+            isPublish={true}
+            onCancel={handleCancel}
+            onSave={handleSubmit}
+          />
+        </Col>
+      </Row>
     </Container>
   );
 };

@@ -81,16 +81,15 @@ const NewQuestion = (props) => {
 
   const renderOptions = (optionType) => {
     return (
-      <Col key={`default-radio`} className="my-3" md={3}>
+      <Col key={`default-radio`} className="" md={3}>
         {options.map((option, index) => {
           return (
             <div key={index} className="d-flex align-items-center">
               <Form.Check
                 type={optionType}
                 label={option}
-                name="group"
-                id={`option-${index}`}
-                className={index == 0 ? "" : "mt-2"}
+                name={question.question}
+                id={`${question.question}-${index}`}
               />
               <Button
                 size="lg"
@@ -104,7 +103,7 @@ const NewQuestion = (props) => {
           );
         })}
 
-        <InputGroup>
+        <InputGroup className="mt-2">
           <FormControl
             placeholder="Add Option"
             aria-label="Add Option"

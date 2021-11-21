@@ -49,6 +49,10 @@ const NewSurvey = () => {
         return q.id != id;
       });
 
+      if (question.type == "Paragraph") {
+        question = { ...question, answers: [] };
+      }
+
       return [...newQuestions, question];
     });
   };
@@ -67,7 +71,14 @@ const NewSurvey = () => {
   const handleSave = async (e) => {
     e.preventDefault();
 
-    const result = await addDoc(collection(db, "surveys"), {
+    for (const q of questions) {
+      if (q.type !== "Paragraph") {
+        for (const index of q.options.keys()) {
+          q.options[index] = { option: q.options[index], answers: 0 };
+        }
+      }
+    }
+    await addDoc(collection(db, "surveys"), {
       createdDate: Timestamp.fromDate(new Date()),
       owner: user.email,
       questions,
