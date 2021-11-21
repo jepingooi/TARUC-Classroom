@@ -18,11 +18,19 @@ const NewQuestion = (props) => {
   const questionRef = useRef(null);
   const optionRef = useRef(null);
 
+  console.log(question);
   const handleTypeChange = () => {
     setQuestion((prevState) => {
-      return { ...prevState, type: questionRef.current.value };
+      let { options, ...newQuestion } = prevState;
+
+      if (questionRef.current.value === "Paragraph") {
+        console.log("removing options.");
+        return { ...newQuestion, type: questionRef.current.value };
+      } else {
+        console.log("adding options.");
+        return { ...prevState, options, type: questionRef.current.value };
+      }
     });
-    console.log(question);
   };
 
   const handleRemoveOption = (removeOption) => {
@@ -30,6 +38,9 @@ const NewQuestion = (props) => {
       return prevState.filter((option) => {
         return option != removeOption;
       });
+    });
+    setQuestion((prevState) => {
+      return { ...prevState, options };
     });
   };
 
@@ -46,9 +57,8 @@ const NewQuestion = (props) => {
     return (
       <Col key={`default-radio`} className="my-3" md={3}>
         {options.map((option, index) => {
-          console.log(index);
           return (
-            <div className="d-flex align-items-center">
+            <div key={index} className="d-flex align-items-center">
               <Form.Check
                 type={optionType}
                 label={option}
@@ -87,7 +97,7 @@ const NewQuestion = (props) => {
   };
 
   return (
-    <Container
+    <Form
       className={`${classes.container} p-4 border border-1 rounded shadow-sm`}
     >
       <Row className="align-items-center">
@@ -142,7 +152,7 @@ const NewQuestion = (props) => {
           </Button>
         </Col>
       </Row>
-    </Container>
+    </Form>
   );
 };
 

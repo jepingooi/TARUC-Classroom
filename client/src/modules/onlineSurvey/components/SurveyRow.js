@@ -12,7 +12,7 @@ const SurveyRow = (props) => {
     <tbody>
       {props.surveys.length > 0 &&
         props.surveys.map((survey) => {
-          const { title, status, responseNumber, startDate, endDate, id } =
+          const { title, status, responseNumber, createdDate, endDate, id } =
             survey;
 
           return (
@@ -22,7 +22,7 @@ const SurveyRow = (props) => {
               </td>
               <td>{status}</td>
               {responseNumber != undefined && <td>{responseNumber}</td>}
-              {startDate && <td>{startDate}</td>}
+              {createdDate && <td>{createdDate}</td>}
               {endDate && <td>{endDate}</td>}
               <td>
                 {!user.isStudent && (

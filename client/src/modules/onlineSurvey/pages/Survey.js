@@ -77,7 +77,7 @@ const Survey = () => {
           title: data.title,
           status: data.status,
           responseNumber: data.responses.length,
-          startDate: data.startDate.toDate().toDateString(),
+          createdDate: data.createdDate.toDate().toDateString(),
         });
       });
 
