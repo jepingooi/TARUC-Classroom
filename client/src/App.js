@@ -17,6 +17,7 @@ import { firebaseConfig } from "./firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
 import AnswerSurvey from "./modules/onlineSurvey/pages/AnswerSurvey";
+import Register from "./modules/login/pages/Register";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
 const NewSurvey = React.lazy(() =>
@@ -209,6 +210,9 @@ const App = (props) => {
           {authContext.isLoggedIn && loggedInRoutes}
           {!authContext.isLoggedIn && (
             <Switch>
+              <Route path={"/register"}>
+                <Register />
+              </Route>
               <Route path={"*"}>
                 <Login />
               </Route>

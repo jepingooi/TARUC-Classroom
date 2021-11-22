@@ -1,20 +1,36 @@
 import { Container, Nav, Navbar, Button } from "react-bootstrap";
 import TarucLogo from "../resources/TARUCLogo.png";
 import classes from "./Header.module.css";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import { useHistory } from "react-router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthContext from "../store/auth-context";
 
 const Header = () => {
   const authContext = useContext(AuthContext);
-
+  let location = useLocation();
   const isLoggedIn = authContext.isLoggedIn;
+  const [isRegister, setIsRegister] = useState(false);
   const history = useHistory();
   const logoutHandler = () => {
     authContext.logout();
     history.push("/login");
   };
+
+  useEffect(() => {
+    console.log(location.pathname);
+  }, []);
+
+  const handleRegister = () => {
+    setIsRegister(true);
+    history.push("/register");
+  };
+
+  const handleLogin = () => {
+    setIsRegister(false);
+    history.push("/login");
+  };
+
   return (
     <Navbar
       className={classes.navbar}
@@ -52,6 +68,16 @@ const Header = () => {
         {isLoggedIn && (
           <Button size="md" variant="outline-light" onClick={logoutHandler}>
             Logout
+          </Button>
+        )}
+        {!isLoggedIn && !isRegister && (
+          <Button size="md" variant="outline-light" onClick={handleRegister}>
+            Register
+          </Button>
+        )}
+        {!isLoggedIn && isRegister && (
+          <Button size="md" variant="outline-light" onClick={handleLogin}>
+            Login
           </Button>
         )}
       </Container>

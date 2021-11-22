@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, Fragment } from "react";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import {
@@ -9,7 +9,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Alert, Button } from "react-bootstrap";
 import SurveyTable from "../../../components/Table";
 
 import SurveyRow from "../components/SurveyRow";
@@ -86,6 +86,7 @@ const Survey = () => {
   const authContext = useContext(AuthContext);
   const [surveys, setSurveys] = useState([]);
   const [search, setSearch] = useState([]);
+  const [hasDelete, setHasDelete] = useState(false);
   const { user } = authContext;
 
   useEffect(() => {
@@ -185,30 +186,59 @@ const Survey = () => {
     setSearch(e.target.value);
   };
 
+  const handleDelete = () => {
+    setHasDelete(true);
+  };
+
   return (
     <Container className="mt-3">
-      <Heading>Your Surveys</Heading>
-      <ActionBar
-        studentFilter={studentFilter}
-        filterList={filterList}
-        onClick={() => history.push("/surveys/new")}
-        buttonText={"Add Survey"}
-        isStudent={user.isStudent}
-        onSearch={handleSearch}
-      />
-      <Row className="py-3">
-        <Col>
-          <SurveyTable
-            headers={user.isStudent ? studentHeaderList : headerList}
-          >
-            <SurveyRow
-              search={myQuery.get("search")}
-              filter={myQuery.get("filter")}
-              surveys={surveys}
-            ></SurveyRow>
-          </SurveyTable>
-        </Col>
-      </Row>
+      {hasDelete && (
+        <Row>
+          <Col className="my-5" md={{ span: 6, offset: 3 }}>
+            <Alert show={hasDelete} variant="danger">
+              <Alert.Heading>Success</Alert.Heading>
+              <p>Survey deleted successfully!</p>
+              <hr />
+              <div className="d-flex justify-content-end">
+                <Button
+                  onClick={() => setHasDelete(false)}
+                  variant="outline-danger"
+                >
+                  Done
+                </Button>
+              </div>
+            </Alert>
+          </Col>
+        </Row>
+      )}
+
+      {!hasDelete && (
+        <Fragment>
+          <Heading>Your Surveys</Heading>
+          <ActionBar
+            studentFilter={studentFilter}
+            filterList={filterList}
+            onClick={() => history.push("/surveys/new")}
+            buttonText={"Add Survey"}
+            isStudent={user.isStudent}
+            onSearch={handleSearch}
+          />
+          <Row className="py-3">
+            <Col>
+              <SurveyTable
+                headers={user.isStudent ? studentHeaderList : headerList}
+              >
+                <SurveyRow
+                  search={myQuery.get("search")}
+                  filter={myQuery.get("filter")}
+                  surveys={surveys}
+                  onDelete={handleDelete}
+                />
+              </SurveyTable>
+            </Col>
+          </Row>
+        </Fragment>
+      )}
     </Container>
   );
 };

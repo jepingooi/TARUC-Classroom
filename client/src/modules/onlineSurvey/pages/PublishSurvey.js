@@ -117,16 +117,25 @@ const PublishSurvey = () => {
 
   return (
     <Container className="mt-3">
-      <Alert show={show} variant="success">
-        <Alert.Heading>Success</Alert.Heading>
-        <p>Your survey has been published successfully!</p>
-        <hr />
-        <div className="d-flex justify-content-end">
-          <Button onClick={() => history.goBack()} variant="outline-success">
-            Done
-          </Button>
-        </div>
-      </Alert>
+      {show && (
+        <Row>
+          <Col className="my-5" md={{ span: 6, offset: 3 }}>
+            <Alert show={show} variant="success">
+              <Alert.Heading>Success</Alert.Heading>
+              <p>Your survey has been published successfully!</p>
+              <hr />
+              <div className="d-flex justify-content-end">
+                <Button
+                  onClick={() => history.goBack()}
+                  variant="outline-success"
+                >
+                  Done
+                </Button>
+              </div>
+            </Alert>
+          </Col>
+        </Row>
+      )}
 
       {!show && (
         <Fragment>

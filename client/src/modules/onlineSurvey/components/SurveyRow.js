@@ -63,6 +63,8 @@ const SurveyRow = (props) => {
 
       updateStudent(doc.id, id, surveys);
     });
+
+    props.onDelete();
   };
 
   return (

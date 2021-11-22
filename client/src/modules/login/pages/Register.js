@@ -20,15 +20,16 @@ import {
   query,
   where,
 } from "firebase/firestore/lite";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const Login = (props) => {
+const Register = (props) => {
   const history = useHistory();
 
   const authContext = useContext(AuthContext);
-  const [email, setEmail] = useState("ooijp-pm18@student.tarc.edu.my");
-  const [password, setPassword] = useState("ooijp123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState();
   const [hasError, setHasError] = useState(false);
 
@@ -36,61 +37,14 @@ const Login = (props) => {
 
   function handleSubmit(event) {
     event.preventDefault();
-    fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
-      {
-        method: "POST",
-        body: JSON.stringify({ email, password, returnSecureToken: true }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then(() => {
-            let errMsg = "Authentication Failed";
-            throw new Error(errMsg);
-          });
-        }
+
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        history.push("/login");
       })
-      .then((data) => {
-        let user;
-        const fetchUser = async () => {
-          const emailDomain = data.email.split("@")[1];
-          let userCollection;
-          if (emailDomain.startsWith("student")) {
-            userCollection = "students";
-          } else {
-            userCollection = "staff";
-          }
-
-          const usersRef = collection(db, userCollection);
-          const q = query(usersRef, where("email", "==", data.email));
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            user = doc.data();
-            switch (userCollection) {
-              case "students":
-                user.isStudent = true;
-                break;
-              default:
-                user.isStudent = false;
-            }
-            const expirationTime = new Date(
-              new Date().getTime() + +data.expiresIn * 1000
-            );
-
-            authContext.login(data.idToken, user, expirationTime.toISOString());
-            history.replace("/videoConferencing");
-          });
-        };
-
-        fetchUser();
-      })
-      .catch((e) => {
+      .catch((error) => {
         setHasError(true);
 
         setError("Please enter a valid email and password.");
@@ -119,10 +73,11 @@ const Login = (props) => {
           </Col>
         </Row>
       )}
+
       <Row className="justify-content-md-center">
         <Col md={4}>
           <Card bg="light">
-            <Card.Header>Login</Card.Header>
+            <Card.Header>Register</Card.Header>
             <Card.Body>
               <Form noValidate onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="email">
@@ -146,7 +101,7 @@ const Login = (props) => {
                 </Form.Group>
                 <div className="d-grid gap-2">
                   <Button className={classes.button} size="md" type="submit">
-                    Login
+                    Register
                   </Button>
                 </div>
               </Form>
@@ -158,4 +113,4 @@ const Login = (props) => {
   );
 };
 
-export default Login;
+export default Register;
