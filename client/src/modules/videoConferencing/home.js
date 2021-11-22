@@ -391,6 +391,21 @@ export default class VideoConferencingHome extends Component {
     this.generatePollReport(room);
   };
 
+  msToTime = (duration) => {
+    let seconds = Math.floor((duration / 1000) % 60);
+    let minutes = Math.floor((duration / (1000 * 60)) % 60);
+    let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+    hours = hours < 10 ? "0" + hours : hours;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    if (seconds > 0) minutes += 1;
+
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+
+    // return hours + " Hour(s) " + minutes + " Minute(s) " + seconds + " Second(s)";
+    return hours + " Hour(s) " + minutes + " Minute(s) ";
+  };
+
   markAttendance = async (room) => {
     let attendance = await this.getAttendanceFromFirebase(room.id);
 
@@ -411,16 +426,28 @@ export default class VideoConferencingHome extends Component {
     let generateClass = `Class - ${room.roomName}`;
     let startTime = `Start time - ${this.getRoomDate(room.startTime)}`;
     let endTime = `End time - ${this.getRoomDate(room.endTime)}`;
-    let headers = [["No.", "Participant ID", "Join time", "Leave time", "Action"]];
+    let headers = [["No.", "Participant ID", "Join time", "Leave time", "Action", "Join duration"]];
 
     // Generate user data
     let attendanceList = [];
     let ownerAttendance = [{}];
+    let ownerTempStartTime;
+    let ownerDuration = 0;
 
     attendance.attendanceList.forEach((attendance) => {
       if (attendance.attendeeId === room.ownerId) {
         ownerAttendance[0].id = attendance.attendeeId;
         ownerAttendance[0].leaveTime = this.getRoomDate(attendance.time);
+
+        if (ownerAttendance[0].joinTime && ownerAttendance[0].leaveTime && attendance.action === "Leave") {
+          let tempDuration = attendance.time - ownerTempStartTime;
+          ownerTempStartTime = attendance.time;
+          ownerDuration += tempDuration;
+          ownerAttendance[0].duration = this.msToTime(ownerDuration);
+        }
+
+        if (attendance.action === "Join") ownerTempStartTime = attendance.time;
+
         if (!ownerAttendance[0].joinTime) {
           ownerAttendance[0].joinTime = this.getRoomDate(attendance.time);
           if (attendance.notes === "Late") ownerAttendance[0].action = "Late";
@@ -429,20 +456,34 @@ export default class VideoConferencingHome extends Component {
       }
     });
 
-    if (!ownerAttendance[0].action)
+    if (!ownerAttendance[0].action) {
       ownerAttendance[0] = {
         id: this.props.loginUser.email,
         joinTime: "-",
         leaveTime: "-",
         action: "absent",
+        duration: "-",
       };
+    }
 
     room.invitedParticipantList.forEach((user) => {
       let userAttendance = {};
+      let tempStartTime;
+      let duration = 0;
+
       attendance.attendanceList.forEach((attendance) => {
         if (attendance.attendeeId === user.id) {
           userAttendance.id = attendance.attendeeId;
           userAttendance.leaveTime = this.getRoomDate(attendance.time);
+
+          if (userAttendance.joinTime && userAttendance.leaveTime && attendance.action === "Leave") {
+            let tempDuration = attendance.time - tempStartTime;
+            duration += tempDuration;
+            userAttendance.duration = this.msToTime(duration);
+          }
+
+          if (attendance.action === "Join") tempStartTime = attendance.time;
+
           if (!userAttendance.joinTime) {
             userAttendance.joinTime = this.getRoomDate(attendance.time);
             if (attendance.notes === "Late") userAttendance.action = "Late";
@@ -457,6 +498,7 @@ export default class VideoConferencingHome extends Component {
           joinTime: "-",
           leaveTime: "-",
           action: "absent",
+          duration: "-",
         };
 
       attendanceList.push(userAttendance);
@@ -470,6 +512,7 @@ export default class VideoConferencingHome extends Component {
       attendance.joinTime,
       attendance.leaveTime,
       attendance.action,
+      attendance.duration,
     ]);
 
     let content = {
@@ -569,9 +612,6 @@ export default class VideoConferencingHome extends Component {
       const queryRoom = query(collection(db, "videoConferencingRooms"), where("id", "==", room.id));
       unsubRoomRef = onSnapshot(queryRoom, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
-          // if (change.type === "added") {
-          //   console.log("New room: ", change.doc.data());
-          // }
           if (change.type === "modified") {
             this.getRoomFromFirebase();
           }
