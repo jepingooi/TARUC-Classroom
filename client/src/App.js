@@ -43,31 +43,10 @@ const ExamDetails = React.lazy(() =>
 initializeApp(firebaseConfig);
 const db = getFirestore();
 
-const rand = Math.floor(Math.random() * 4) + 1;
-const user1 = {
-  email: `ooijp-pm18@student.tarc.edu.my`,
-  name: `Ooi Je Ping`,
-};
-const user2 = {
-  email: `keesimee@tarc.edu.my`,
-  name: `Kee Sim Ee`,
-};
-const user3 = {
-  email: `william@tarc.edu.my`,
-  name: `William`,
-};
-const user4 = {
-  email: `ngwl-pm18@student.tarc.edu.my`,
-  name: `Ng Wei Lun`,
-};
-
-const tempLoginUser =
-  rand >= 3 ? (rand === 3 ? user3 : user4) : rand === 1 ? user1 : user2;
-
 const App = (props) => {
   const authContext = useContext(AuthContext);
   const [page, setPage] = useState("videoConferencing");
-  const [loginUser, setLoginUser] = useState(tempLoginUser);
+  const [loginUser, setLoginUser] = useState();
   const [selectedRoomID, setSelectedRoomID] = useState(null);
 
   useEffect(() => {
@@ -94,7 +73,7 @@ const App = (props) => {
 
       // eslint-disable-next-line
       roomSnapshot.data().participantInRoomList.map((eachParticipant) => {
-        if (eachParticipant.id === loginUser.email) match = true;
+        if (eachParticipant.id === authContext.user.email) match = true;
       });
 
       if (screenSharing) match = false;
@@ -103,9 +82,11 @@ const App = (props) => {
       if (!match) {
         let participantData = {
           id: screenSharing
-            ? `shareScreen_${loginUser.email}`
-            : loginUser.email,
-          name: screenSharing ? `${loginUser.name}'s screen` : loginUser.name,
+            ? `shareScreen_${authContext.user.email}`
+            : authContext.user.email,
+          name: screenSharing
+            ? `${authContext.user.name}'s screen`
+            : authContext.user.name,
           mic: true,
           shareScreen: false,
           camera: false,
@@ -138,7 +119,7 @@ const App = (props) => {
   function renderVideoConferencingHome() {
     return (
       <VideoConferencing
-        loginUser={loginUser}
+        loginUser={authContext.user}
         joinRoom={(roomID) => joinRoom(roomID, false)}
       />
     );
@@ -148,7 +129,7 @@ const App = (props) => {
     if (selectedRoomID)
       return (
         <VideoConferencingRoom
-          loginUser={loginUser}
+          loginUser={authContext.user}
           selectedRoomId={selectedRoomID}
           handleNavigation={(page) => handleNavigation(page, null)}
           joinRoom={(roomID, screenSharing) => joinRoom(roomID, screenSharing)}
