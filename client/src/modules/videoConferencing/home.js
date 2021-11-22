@@ -239,7 +239,7 @@ export default class VideoConferencingHome extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
 
     let title = `Attendance report`;
     let generateDate = `Date - ${formattedDate}`;
@@ -289,7 +289,7 @@ export default class VideoConferencingHome extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
 
     let title = `Chat messages report`;
     let generateDate = `Date - ${formattedDate}`;
@@ -334,7 +334,7 @@ export default class VideoConferencingHome extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
 
     let title = `Poll report`;
     let generateDate = `Date - ${formattedDate}`;
@@ -386,7 +386,7 @@ export default class VideoConferencingHome extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
 
     let title = `Mark attendance simulation`;
     let generateDate = `Date - ${formattedDate}`;
