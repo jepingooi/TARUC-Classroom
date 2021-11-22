@@ -39,17 +39,28 @@ const Register = (props) => {
     event.preventDefault();
 
     const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        history.push("/login");
-      })
-      .catch((error) => {
-        setHasError(true);
 
-        setError("Please enter a valid email and password.");
-        console.log(error);
-      });
+    if (email) {
+      const emailDomain = email.split("@")[1];
+      let userCollection;
+      if (emailDomain.startsWith("student") || emailDomain.startsWith("tarc")) {
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            // Signed in
+            history.push("/login");
+          })
+          .catch((error) => {
+            setHasError(true);
+
+            setError("Please enter a valid email and password.");
+            console.log(error);
+          });
+      } else {
+        setHasError(true);
+        setError("Please enter a valid TARUC email");
+        return;
+      }
+    }
   }
 
   return (
