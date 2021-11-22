@@ -124,7 +124,7 @@ const Video = (props) => {
     }); // eslint-disable-next-line
   }, []);
 
-  return <video playsInline autoPlay ref={ref} style={{ maxHeight: "100%" }} />;
+  return <video playsInline autoPlay ref={ref} style={{ maxHeight: "100%", transform: "scaleX(-1)" }} />;
 };
 
 const Room = (props) => {
@@ -375,7 +375,9 @@ const Room = (props) => {
   }
 
   function renderScreens() {
-    let userScreen = <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%" }} />;
+    let userScreen = (
+      <video muted ref={userVideoRef} autoPlay playsInline style={{ maxHeight: "100%", transform: "scaleX(-1)" }} />
+    );
     return (
       <ParticipantScreenContainer>
         <ParticipantContainer key={loginUser.email}>

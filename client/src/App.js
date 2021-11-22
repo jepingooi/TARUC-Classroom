@@ -1,10 +1,5 @@
 import React, { Suspense, useEffect, useState, useContext } from "react";
-import {
-  Route,
-  Switch,
-  Redirect,
-  BrowserRouter as Router,
-} from "react-router-dom";
+import { Route, Switch, Redirect, BrowserRouter as Router } from "react-router-dom";
 
 import VideoConferencing from "./modules/videoConferencing/home";
 
@@ -20,25 +15,13 @@ import AnswerSurvey from "./modules/onlineSurvey/pages/AnswerSurvey";
 import Register from "./modules/login/pages/Register";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
-const NewSurvey = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/NewSurvey")
-);
-const EditSurvey = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/PublishSurvey.js")
-);
-const PublishSurvey = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/PublishSurvey.js")
-);
-const SurveyDetails = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/SurveyDetails")
-);
-const VideoConferencingRoom = React.lazy(() =>
-  import("./modules/videoConferencing/room")
-);
+const NewSurvey = React.lazy(() => import("./modules/onlineSurvey/pages/NewSurvey"));
+const EditSurvey = React.lazy(() => import("./modules/onlineSurvey/pages/PublishSurvey.js"));
+const PublishSurvey = React.lazy(() => import("./modules/onlineSurvey/pages/PublishSurvey.js"));
+const SurveyDetails = React.lazy(() => import("./modules/onlineSurvey/pages/SurveyDetails"));
+const VideoConferencingRoom = React.lazy(() => import("./modules/videoConferencing/room"));
 const Exam = React.lazy(() => import("./modules/onlineExam/pages/Exam"));
-const ExamDetails = React.lazy(() =>
-  import("./modules/onlineExam/pages/ExamDetails")
-);
+const ExamDetails = React.lazy(() => import("./modules/onlineExam/pages/ExamDetails"));
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -50,7 +33,6 @@ const App = (props) => {
   const [selectedRoomID, setSelectedRoomID] = useState(null);
 
   useEffect(() => {
-    console.log(loginUser);
     let pathName = window.location.pathname.trim();
     let firstParam = pathName.split("/")[1];
 
@@ -81,12 +63,8 @@ const App = (props) => {
       // If user didnt join the room before, update the participant in room data else skip
       if (!match) {
         let participantData = {
-          id: screenSharing
-            ? `shareScreen_${authContext.user.email}`
-            : authContext.user.email,
-          name: screenSharing
-            ? `${authContext.user.name}'s screen`
-            : authContext.user.name,
+          id: screenSharing ? `shareScreen_${authContext.user.email}` : authContext.user.email,
+          name: screenSharing ? `${authContext.user.name}'s screen` : authContext.user.name,
           mic: true,
           shareScreen: false,
           camera: false,
@@ -94,8 +72,7 @@ const App = (props) => {
           type: screenSharing ? "screenSharing" : "default",
         };
 
-        let tempParticipantInRoomList =
-          roomSnapshot.data().participantInRoomList;
+        let tempParticipantInRoomList = roomSnapshot.data().participantInRoomList;
         tempParticipantInRoomList.push(participantData);
         await updateDoc(roomRef, {
           participantInRoomList: tempParticipantInRoomList,
@@ -117,12 +94,7 @@ const App = (props) => {
   }
 
   function renderVideoConferencingHome() {
-    return (
-      <VideoConferencing
-        loginUser={authContext.user}
-        joinRoom={(roomID) => joinRoom(roomID, false)}
-      />
-    );
+    return <VideoConferencing loginUser={authContext.user} joinRoom={(roomID) => joinRoom(roomID, false)} />;
   }
 
   function renderVideoConferencingRoom() {
@@ -147,9 +119,7 @@ const App = (props) => {
       <Route exact path={`/videoConferencing`}>
         {renderVideoConferencingHome()}
       </Route>
-      <Route path={`/videoConferencing/:roomID`}>
-        {renderVideoConferencingRoom()}
-      </Route>
+      <Route path={`/videoConferencing/:roomID`}>{renderVideoConferencingRoom()}</Route>
 
       <Route path={"/surveys/new"}>
         <NewSurvey />
