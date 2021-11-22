@@ -75,7 +75,8 @@ const SurveyRow = (props) => {
             survey;
           if (
             (props.filter && status == props.filter) ||
-            (props.search && title.startsWith(props.search)) ||
+            (props.search &&
+              title.toLowerCase().startsWith(props.search.toLowerCase())) ||
             props.search == "" ||
             props.filter == "All"
           ) {
