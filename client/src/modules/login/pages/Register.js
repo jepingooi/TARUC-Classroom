@@ -30,6 +30,7 @@ const Register = (props) => {
   const authContext = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [error, setError] = useState();
   const [hasError, setHasError] = useState(false);
 
@@ -45,8 +46,8 @@ const Register = (props) => {
       let userCollection;
       if (emailDomain) {
         if (
-          emailDomain.startsWith("student") ||
-          emailDomain.startsWith("tarc")
+          emailDomain.startsWith("student.tarc.edu.my") ||
+          emailDomain.startsWith("tarc.edu.my")
         ) {
           createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
