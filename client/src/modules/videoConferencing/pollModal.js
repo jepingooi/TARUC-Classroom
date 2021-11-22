@@ -148,7 +148,7 @@ export default class pollModal extends Component {
     let option = {
       id: uuidv4(),
       option: "",
-      amountSelected: 0,
+      idList: [],
     };
     tempPoll.options.push(option);
 
