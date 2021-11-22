@@ -43,22 +43,34 @@ const Register = (props) => {
     if (email) {
       const emailDomain = email.split("@")[1];
       let userCollection;
-      if (emailDomain.startsWith("student") || emailDomain.startsWith("tarc")) {
-        createUserWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            // Signed in
-            history.push("/login");
-          })
-          .catch((error) => {
-            setHasError(true);
+      if (emailDomain) {
+        if (
+          emailDomain.startsWith("student") ||
+          emailDomain.startsWith("tarc")
+        ) {
+          createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+              // Signed in
+              // const docRef = await addDoc(collection(db, "users"), {
+              //   name: "Tokyo",
+              //   email,
+              // });
+              history.push("/login");
+            })
+            .catch((error) => {
+              setHasError(true);
 
-            setError("Please enter a valid email and password.");
-            console.log(error);
-          });
+              setError("Please enter a valid email and password.");
+              console.log(error);
+            });
+        } else {
+          setHasError(true);
+          setError("Please enter a valid TARUC email");
+          return;
+        }
       } else {
         setHasError(true);
         setError("Please enter a valid TARUC email");
-        return;
       }
     } else {
       setHasError(true);

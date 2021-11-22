@@ -218,18 +218,20 @@ const AnswerSurvey = () => {
             })}
         </Fragment>
       )}
-      <Row>
-        <Col className="text-center my-4">
-          <Buttons
-            isDefault={true}
-            primary="Submit"
-            secondary="Cancel"
-            isPublish={true}
-            onCancel={handleCancel}
-            onSave={handleSubmit}
-          />
-        </Col>
-      </Row>
+      {!show && (
+        <Row>
+          <Col className="text-center my-4">
+            <Buttons
+              isDefault={true}
+              primary="Submit"
+              secondary="Cancel"
+              isPublish={true}
+              onCancel={handleCancel}
+              onSave={handleSubmit}
+            />
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 };
