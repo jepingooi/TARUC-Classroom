@@ -60,6 +60,9 @@ const Register = (props) => {
         setError("Please enter a valid TARUC email");
         return;
       }
+    } else {
+      setHasError(true);
+      setError("Please enter a valid TARUC email");
     }
   }
 
