@@ -280,7 +280,10 @@ export default class pollModal extends Component {
     });
 
     // Validate option >= 2
-    if (options.length < 2) optionError = "Poll options must be more than 1";
+    if (options.length < 2) {
+      optionError = "Poll options must be more than 1";
+      error = true;
+    }
 
     if (error) {
       this.setState({
