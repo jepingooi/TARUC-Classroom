@@ -415,6 +415,7 @@ class VideoConferencingRoom extends Component {
         selectedRoom={this.state.selectedRoom}
         pollModal={this.state.pollModal}
         action={this.state.action}
+        userList={this.state.userList}
       />
     );
   };

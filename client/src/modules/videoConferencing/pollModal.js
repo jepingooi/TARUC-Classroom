@@ -110,7 +110,7 @@ export default class pollModal extends Component {
         let option = {
           id: uuidv4(),
           option: "",
-          amountSelected: 0,
+          idList: [],
         };
 
         tempEachOptionError.push("");
@@ -159,6 +159,19 @@ export default class pollModal extends Component {
     this.setState({ selectedPoll: tempPoll, eachOptionError: tempEachOptionError });
   };
 
+  formatRespondentDetail = (idList) => {
+    let formattedName = "";
+
+    idList.forEach((id) => {
+      this.props.userList.forEach((user) => {
+        if (user.email === id) formattedName = formattedName + (formattedName.length > 1 ? ", " : "") + user.name;
+      });
+    });
+
+    if (formattedName.length < 1) formattedName = "-";
+    return formattedName;
+  };
+
   // Download result to PDF
   handleDownloadResult = () => {
     let unit = "pt";
@@ -171,7 +184,7 @@ export default class pollModal extends Component {
 
     let today = new Date();
     // Format date to DD/MM/YYYY
-    let formattedDate = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+    let formattedDate = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
 
     let title = `Poll result`;
     let generateDate = `Date - ${formattedDate}`;
@@ -179,12 +192,13 @@ export default class pollModal extends Component {
     let generateRoom = `Generated in room - ${this.props.selectedRoom.roomName}`;
     let totalRespondent = `Total respondent - ${this.state.selectedPoll.respondentIdList.length} `;
     let question = `Question - ${this.state.selectedPoll.question}`;
-    let headers = [["No.", "Option", "Total respondent"]];
+    let headers = [["No.", "Option", "Total respondent", "Respondent name list"]];
 
     let data = this.state.selectedPoll.options.map((eachOption, i) => [
       i + 1,
       eachOption.option,
-      eachOption.amountSelected,
+      eachOption.idList.length,
+      this.formatRespondentDetail(eachOption.idList),
     ]);
 
     let content = {
@@ -332,7 +346,7 @@ export default class pollModal extends Component {
     // eslint-disable-next-line
     this.state.selectedPoll.options.map((eachOption, i) => {
       let tempOption = JSON.parse(JSON.stringify(eachOption));
-      if (i === this.state.optionChecked) tempOption.amountSelected++;
+      if (i === this.state.optionChecked) tempOption.idList.push(this.props.loginUser.email);
       tempOptions.push(tempOption);
     });
 
@@ -393,7 +407,8 @@ export default class pollModal extends Component {
         <StyledRow key={eachResult.id}>
           <StyledCell>{i + 1}</StyledCell>
           <StyledCell>{eachResult.option}</StyledCell>
-          <StyledCell>{eachResult.amountSelected}</StyledCell>
+          <StyledCell>{eachResult.idList.length}</StyledCell>
+          <StyledCell>{this.formatRespondentDetail(eachResult.idList)}</StyledCell>
         </StyledRow>
       );
     });
@@ -523,6 +538,7 @@ export default class pollModal extends Component {
               <Table.HeaderCell>No.</Table.HeaderCell>
               <Table.HeaderCell>Poll options</Table.HeaderCell>
               <Table.HeaderCell>Responses</Table.HeaderCell>
+              <Table.HeaderCell>Respondent name list</Table.HeaderCell>
             </StyledRow>
           </Table.Header>
           <Table.Body>{this.generatePollResult()}</Table.Body>

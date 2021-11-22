@@ -226,6 +226,19 @@ export default class VideoConferencingHome extends Component {
     return num;
   };
 
+  formatRespondentDetail = (idList) => {
+    let formattedName = "";
+
+    idList.forEach((id) => {
+      this.state.userList.forEach((user) => {
+        if (user.email === id) formattedName = formattedName + (formattedName.length > 1 ? ", " : "") + user.name;
+      });
+    });
+
+    if (formattedName.length < 1) formattedName = "-";
+    return formattedName;
+  };
+
   generateAttendanceReport = async (room) => {
     let attendance = await this.getAttendanceFromFirebase(room.id);
 
@@ -351,8 +364,13 @@ export default class VideoConferencingHome extends Component {
     polls.forEach((poll, i) => {
       let totalRespondent = `Total respondent - ${poll.respondentIdList.length} `;
       let question = `Question - ${poll.question}`;
-      let headers = [["No.", "Option", "Total respondent"]];
-      let data = poll.options.map((option, i) => [i + 1, option.option, option.amountSelected]);
+      let headers = [["No.", "Option", "Total respondent", "Respondent name list"]];
+      let data = poll.options.map((option, i) => [
+        i + 1,
+        option.option,
+        option.idList.length,
+        this.formatRespondentDetail(option.idList),
+      ]);
       let content = {
         startY: i === 0 ? 180 : doc.lastAutoTable.finalY + 60,
         head: headers,
