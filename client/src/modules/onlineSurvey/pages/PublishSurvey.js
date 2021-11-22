@@ -151,11 +151,19 @@ const PublishSurvey = () => {
                         autoFocus
                         type="date"
                         required
+                        min={new Date().toISOString().split("T")[0]}
+                        defaultValue={new Date().toISOString().split("T")[0]}
                       />
                     </Form.Group>
                     <Form.Group className={`mx-auto mb-3`} controlId="endDate">
                       <Form.Label>End Date</Form.Label>
-                      <Form.Control ref={endDateRef} type="date" required />
+                      <Form.Control
+                        ref={endDateRef}
+                        type="date"
+                        required
+                        min={new Date().toISOString().split("T")[0]}
+                        defaultValue={new Date().toISOString().split("T")[0]}
+                      />
                     </Form.Group>
                   </Form>
                 </Card.Body>
