@@ -26,7 +26,7 @@ import NewUserModal from "../components/NewUserModal";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const User = (props) => {
+const User = () => {
   const location = useLocation();
   const history = useHistory();
   const authContext = useContext(AuthContext);
