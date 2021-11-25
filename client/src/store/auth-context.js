@@ -21,18 +21,21 @@ export const AuthContextProvider = (props) => {
   const activeUser = localStorage.getItem("user");
   const [token, setToken] = useState(initialToken);
   const [user, setUser] = useState(JSON.parse(activeUser));
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const userIsLoggedIn = !!token;
 
   const logoutHandler = () => {
     setToken(null);
     setUser(null);
+    setIsLoggedIn(false);
     localStorage.clear();
   };
 
   const loginHandler = (token, user, expirationTime) => {
     setToken(token);
     setUser(user);
+    setIsLoggedIn(true);
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
     const remainingTime = calcRemainingTime(expirationTime);

@@ -12,7 +12,7 @@ const Header = () => {
   const isLoggedIn = authContext.isLoggedIn;
   const [isRegister, setIsRegister] = useState(false);
   const history = useHistory();
-  const logoutHandler = () => {
+  const handleLogout = () => {
     authContext.logout();
     history.push({
       pathname: "/user",
@@ -71,16 +71,16 @@ const Header = () => {
         )}
 
         {isLoggedIn && (
-          <Button size="md" variant="outline-light" onClick={logoutHandler}>
+          <Button size="md" variant="outline-light" onClick={handleLogout}>
             Logout
           </Button>
         )}
-        {!isLoggedIn && !isRegister && (
+        {!isLoggedIn && !location.state.register && (
           <Button size="md" variant="outline-light" onClick={handleRegister}>
             Register
           </Button>
         )}
-        {!isLoggedIn && isRegister && (
+        {!isLoggedIn && location.state.register && (
           <Button size="md" variant="outline-light" onClick={handleLogin}>
             Login
           </Button>

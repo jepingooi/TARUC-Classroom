@@ -10,10 +10,14 @@ import {
   query,
   where,
 } from "firebase/firestore/lite";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import AuthenticationForm from "../components/AuthenticationForm";
 import { Container } from "react-bootstrap";
-import ErrorModal from "../../../components/ErrorModal";
+import CustomModal from "../../../components/CustomModal";
 import classes from "./User.module.css";
 
 const app = initializeApp(firebaseConfig);
@@ -26,12 +30,19 @@ const User = (props) => {
   const API_KEY = firebaseConfig.apiKey;
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
-  const [show, setShow] = useState(false);
+  const [error, setError] = useState();
+  const [showError, setShowError] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     setErrors({});
   }, [location.state.register]);
-  const handleClose = () => setShow(false);
+
+  const handleClose = () => {
+    setShowError(false);
+    setShowSuccess(false);
+  };
+
   const setField = (field, value) => {
     setForm((prevState) => {
       return { ...prevState, [field]: value };
@@ -138,8 +149,8 @@ const User = (props) => {
           fetchUser();
         })
         .catch((e) => {
-          console.log(e);
-          setShow(true);
+          setError("Please enter a valid email/password!");
+          setShowError(true);
         });
     }
   }
@@ -156,15 +167,24 @@ const User = (props) => {
     } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          // Signed in
-          // const docRef = await addDoc(collection(db, "users"), {
-          //   name: "Tokyo",
-          //   email,
-          // });
-          history.push({ pathname: "/user", state: { register: false } });
+          sendEmailVerification(auth.currentUser)
+            .then(() => {
+              setShowSuccess(true);
+              history.push({ pathname: "/user", state: { register: false } });
+              console.log("New user created: " + auth.currentUser);
+            })
+            .catch((error) => {
+              setError(error);
+              setShowError(true);
+            });
         })
         .catch((error) => {
-          console.log(error);
+          if (error.message == "Firebase: Error (auth/email-already-in-use).") {
+            setError("Account already exists!");
+          } else {
+            setError(error);
+          }
+          setShowError(true);
         });
     }
   }
@@ -178,17 +198,28 @@ const User = (props) => {
 
   return (
     <Container className={`py-5 ${classes.background}`}>
-      <ErrorModal
-        show={show}
-        message="Account doesn't exist!"
+      <CustomModal
+        show={showError}
+        isSuccess={false}
         onClose={handleClose}
-      />
+        title="Error"
+      >
+        {error}
+      </CustomModal>
+
+      <CustomModal
+        show={showSuccess}
+        isSuccess={true}
+        onClose={handleClose}
+        title="Success"
+      >
+        Account created, please check your email to verify your account!
+      </CustomModal>
 
       <AuthenticationForm
         onEmailChange={(e) => setField("email", e.target.value)}
         onPasswordChange={(e) => setField("password", e.target.value)}
         onSubmit={type == "Login" ? handleLogin : handleRegister}
-        show={show}
         errors={errors}
       >
         {type}
