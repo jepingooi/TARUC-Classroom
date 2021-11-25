@@ -14,6 +14,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import AuthenticationForm from "../components/AuthenticationForm";
 import { Container } from "react-bootstrap";
@@ -30,7 +31,8 @@ const User = (props) => {
   const API_KEY = firebaseConfig.apiKey;
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -82,7 +84,7 @@ const User = (props) => {
 
   const { email, password } = form;
 
-  function handleLogin(event) {
+  const handleLogin = (event) => {
     event.preventDefault();
 
     const newErrors = findFormErrors();
@@ -153,9 +155,28 @@ const User = (props) => {
           setShowError(true);
         });
     }
-  }
+  };
 
-  function handleRegister(event) {
+  const handleResetPassword = () => {
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        // Password reset email sent!
+        setSuccess("Check your email to reset your password!");
+        setShowSuccess(true);
+      })
+      .catch((error) => {
+        if (error.message == "Firebase: Error (auth/missing-email).") {
+          setError("Please provide an email first!");
+          setShowError(true);
+        } else {
+          setError(error.message);
+          setShowError(true);
+        }
+      });
+  };
+
+  const handleRegister = (event) => {
     event.preventDefault();
 
     const auth = getAuth();
@@ -167,8 +188,12 @@ const User = (props) => {
     } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
+          console.log(userCredential);
           sendEmailVerification(auth.currentUser)
             .then(() => {
+              setSuccess(
+                "Account created, please check your email to verify your account!"
+              );
               setShowSuccess(true);
               history.push({ pathname: "/user", state: { register: false } });
               console.log("New user created: " + auth.currentUser);
@@ -179,7 +204,7 @@ const User = (props) => {
             });
         })
         .catch((error) => {
-          if (error.message == "Firebase: Error (auth/email-already-in-use).") {
+          if (error.code == "auth/email-already-in-use") {
             setError("Account already exists!");
           } else {
             setError(error);
@@ -187,7 +212,7 @@ const User = (props) => {
           setShowError(true);
         });
     }
-  }
+  };
 
   let type;
   if (location.state) {
@@ -213,13 +238,14 @@ const User = (props) => {
         onClose={handleClose}
         title="Success"
       >
-        Account created, please check your email to verify your account!
+        {success}
       </CustomModal>
 
       <AuthenticationForm
         onEmailChange={(e) => setField("email", e.target.value)}
         onPasswordChange={(e) => setField("password", e.target.value)}
         onSubmit={type == "Login" ? handleLogin : handleRegister}
+        onReset={handleResetPassword}
         errors={errors}
       >
         {type}

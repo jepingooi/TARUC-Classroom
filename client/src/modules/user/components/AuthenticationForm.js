@@ -1,5 +1,5 @@
-import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
-import { Fragment, useEffect } from "react";
+import { Form, Button, Row, Col, Card } from "react-bootstrap";
+import { Fragment } from "react";
 import classes from "./AuthenticationForm.module.css";
 
 const AuthenticationForm = (props) => {
@@ -41,6 +41,13 @@ const AuthenticationForm = (props) => {
                 </div>
               </Form>
             </Card.Body>
+            {props.children == "Login" && (
+              <Card.Footer>
+                <Card.Link className={classes.link} onClick={props.onReset}>
+                  Forgot Password
+                </Card.Link>
+              </Card.Footer>
+            )}
           </Card>
         </Col>
       </Row>

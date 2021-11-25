@@ -8,3 +8,7 @@
   background-color: #2e70a9;
   color: white;
 }
+
+.link:hover {
+  cursor: pointer;
+}
