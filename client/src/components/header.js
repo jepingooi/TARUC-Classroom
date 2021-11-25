@@ -14,7 +14,12 @@ const Header = () => {
   const history = useHistory();
   const logoutHandler = () => {
     authContext.logout();
-    history.push("/login");
+    history.push({
+      pathname: "/user",
+      state: {
+        register: false,
+      },
+    });
   };
 
   useEffect(() => {
@@ -23,12 +28,12 @@ const Header = () => {
 
   const handleRegister = () => {
     setIsRegister(true);
-    history.push("/register");
+    history.push({ pathname: "/user", state: { register: true } });
   };
 
   const handleLogin = () => {
     setIsRegister(false);
-    history.push("/login");
+    history.push({ pathname: "/user", state: { register: false } });
   };
 
   return (
@@ -48,7 +53,7 @@ const Header = () => {
             width="30"
             height="30"
             className={`${classes.img} d-inline-block align-center`}
-          />{" "}
+          />
           TARUC Classroom
         </Link>
         {isLoggedIn && (

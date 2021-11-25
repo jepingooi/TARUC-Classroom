@@ -7,14 +7,3 @@
   object-fit: cover;
   background-image: url("../../../resources/background.jpg");
 }
-
-.button {
-  background-color: #337ab7;
-  color: white;
-}
-
-.button:hover,
-.button:focus {
-  background-color: #2e70a9;
-  color: white;
-}
