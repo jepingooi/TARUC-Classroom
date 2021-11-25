@@ -26,9 +26,11 @@ const User = (props) => {
   const API_KEY = firebaseConfig.apiKey;
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
-
   const [show, setShow] = useState(false);
 
+  useEffect(() => {
+    setErrors({});
+  }, [location.state.register]);
   const handleClose = () => setShow(false);
   const setField = (field, value) => {
     setForm((prevState) => {
