@@ -1,7 +1,11 @@
-import { Container, Modal, Row, Col } from "react-bootstrap";
-const NewUserModal = () => {
+import { Container, Modal, Row, Col, Button } from "react-bootstrap";
+const NewUserModal = (props) => {
   return (
-    <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
+    <Modal
+      show={props.show}
+      onHide={props.onClose}
+      aria-labelledby="contained-modal-title-vcenter"
+    >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           Using Grid in Modal
@@ -32,7 +36,7 @@ const NewUserModal = () => {
         </Container>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button onClick={props.onClose}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

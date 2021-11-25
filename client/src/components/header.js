@@ -3,7 +3,7 @@ import TarucLogo from "../resources/TARUCLogo.png";
 import classes from "./Header.module.css";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import { useHistory } from "react-router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, Fragment, useState } from "react";
 import AuthContext from "../store/auth-context";
 
 const Header = () => {
@@ -12,6 +12,7 @@ const Header = () => {
   const isLoggedIn = authContext.isLoggedIn;
   const [isRegister, setIsRegister] = useState(false);
   const history = useHistory();
+
   const handleLogout = () => {
     authContext.logout();
     history.push({
@@ -21,10 +22,6 @@ const Header = () => {
       },
     });
   };
-
-  useEffect(() => {
-    console.log(location.pathname);
-  }, []);
 
   const handleRegister = () => {
     setIsRegister(true);
@@ -75,14 +72,28 @@ const Header = () => {
             Logout
           </Button>
         )}
-        {!isLoggedIn && !location.state.register && (
+        {location.state != null && (
+          <Fragment>
+            {" "}
+            {!isLoggedIn && !location.state.register && (
+              <Button
+                size="md"
+                variant="outline-light"
+                onClick={handleRegister}
+              >
+                Register
+              </Button>
+            )}
+            {!isLoggedIn && location.state.register && (
+              <Button size="md" variant="outline-light" onClick={handleLogin}>
+                Login
+              </Button>
+            )}
+          </Fragment>
+        )}
+        {location.state == null && (
           <Button size="md" variant="outline-light" onClick={handleRegister}>
             Register
-          </Button>
-        )}
-        {!isLoggedIn && location.state.register && (
-          <Button size="md" variant="outline-light" onClick={handleLogin}>
-            Login
           </Button>
         )}
       </Container>

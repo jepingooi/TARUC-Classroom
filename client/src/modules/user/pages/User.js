@@ -15,11 +15,13 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   sendPasswordResetEmail,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import AuthenticationForm from "../components/AuthenticationForm";
 import { Container } from "react-bootstrap";
 import CustomModal from "../../../components/CustomModal";
 import classes from "./User.module.css";
+import NewUserModal from "../components/NewUserModal";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -28,21 +30,22 @@ const User = (props) => {
   const location = useLocation();
   const history = useHistory();
   const authContext = useContext(AuthContext);
-  const API_KEY = firebaseConfig.apiKey;
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showNewUserModal, setShowNewUserModal] = useState(false);
 
   useEffect(() => {
     setErrors({});
-  }, [location.state.register]);
+  }, [location.state]);
 
   const handleClose = () => {
     setShowError(false);
     setShowSuccess(false);
+    setShowNewUserModal(false);
   };
 
   const setField = (field, value) => {
@@ -92,30 +95,20 @@ const User = (props) => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      fetch(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
-        {
-          method: "POST",
-          body: JSON.stringify({ email, password, returnSecureToken: true }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            return res.json().then(() => {
-              let errMsg = "Authentication Failed";
-              throw new Error(errMsg);
-            });
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          if (user.emailVerified == false) {
+            setError("Your account is not verified!");
+            setShowError(true);
+            return;
           }
-        })
-        .then((data) => {
-          let user;
+
           const fetchUser = async () => {
-            const emailDomain = data.email.split("@")[1];
+            const emailDomain = user.email.split("@")[1];
             let userCollection;
             if (emailDomain.startsWith("student")) {
               userCollection = "students";
@@ -124,33 +117,38 @@ const User = (props) => {
             }
 
             const usersRef = collection(db, userCollection);
-            const q = query(usersRef, where("email", "==", data.email));
+            const q = query(usersRef, where("email", "==", user.email));
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-              user = doc.data();
+              let userProfile = doc.data();
+
               switch (userCollection) {
                 case "students":
-                  user.isStudent = true;
+                  userProfile.isStudent = true;
                   break;
                 default:
-                  user.isStudent = false;
+                  userProfile.isStudent = false;
               }
               const expirationTime = new Date(
-                new Date().getTime() + +data.expiresIn * 1000
+                new Date().getTime() +
+                  +userCredential._tokenResponse.expiresIn * 1000
               );
 
               authContext.login(
-                data.idToken,
-                user,
+                userCredential.idToken,
+                userProfile,
                 expirationTime.toISOString()
               );
+
               history.replace("/videoConferencing");
             });
           };
 
           fetchUser();
         })
-        .catch((e) => {
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
           setError("Please enter a valid email/password!");
           setShowError(true);
         });
@@ -186,6 +184,7 @@ const User = (props) => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
+      setShowNewUserModal(true);
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           console.log(userCredential);
@@ -223,6 +222,7 @@ const User = (props) => {
 
   return (
     <Container className={`py-5 ${classes.background}`}>
+      <NewUserModal onClose={handleClose} show={showNewUserModal} />
       <CustomModal
         show={showError}
         isSuccess={false}
