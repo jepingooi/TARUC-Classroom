@@ -42,10 +42,8 @@ const AuthenticationForm = (props) => {
               </Form>
             </Card.Body>
             {props.children == "Login" && (
-              <Card.Footer>
-                <Card.Link className={classes.link} onClick={props.onReset}>
-                  Forgot Password
-                </Card.Link>
+              <Card.Footer className={`${classes.footer} text-center`}>
+                <Card.Link onClick={props.onReset}>Forgot Password</Card.Link>
               </Card.Footer>
             )}
           </Card>

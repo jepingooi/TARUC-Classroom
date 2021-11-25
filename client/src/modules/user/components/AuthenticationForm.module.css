@@ -9,6 +9,12 @@
   color: white;
 }
 
-.link:hover {
+.footer a:hover {
   cursor: pointer;
+  text-decoration: underline;
+}
+
+.footer a {
+  color: #337ab7;
+  text-decoration: none;
 }
