@@ -100,7 +100,6 @@ const User = (props) => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
           if (user.emailVerified == false) {
             setError("Your account is not verified!");
             setShowError(true);
@@ -135,16 +134,15 @@ const User = (props) => {
               );
 
               authContext.login(
-                userCredential.idToken,
+                userCredential._tokenResponse.idToken,
                 userProfile,
                 expirationTime.toISOString()
               );
-
-              history.replace("/videoConferencing");
             });
           };
 
           fetchUser();
+          history.replace("/videoConferencing");
         })
         .catch((error) => {
           const errorCode = error.code;

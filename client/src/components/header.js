@@ -72,28 +72,22 @@ const Header = () => {
             Logout
           </Button>
         )}
-        {location.state != null && (
-          <Fragment>
-            {" "}
-            {!isLoggedIn && !location.state.register && (
-              <Button
-                size="md"
-                variant="outline-light"
-                onClick={handleRegister}
-              >
-                Register
-              </Button>
-            )}
-            {!isLoggedIn && location.state.register && (
-              <Button size="md" variant="outline-light" onClick={handleLogin}>
-                Login
-              </Button>
-            )}
-          </Fragment>
-        )}
-        {location.state == null && (
+
+        {!isLoggedIn &&
+          location.state != undefined &&
+          !location.state.register && (
+            <Button size="md" variant="outline-light" onClick={handleRegister}>
+              Register
+            </Button>
+          )}
+        {!isLoggedIn && location.state == undefined && (
           <Button size="md" variant="outline-light" onClick={handleRegister}>
             Register
+          </Button>
+        )}
+        {!isLoggedIn && location.state != undefined && location.state.register && (
+          <Button size="md" variant="outline-light" onClick={handleLogin}>
+            Login
           </Button>
         )}
       </Container>
