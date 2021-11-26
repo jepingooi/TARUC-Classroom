@@ -1,22 +1,11 @@
 import { Bar, Pie } from "react-chartjs-2";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { useRef, useState } from "react";
-
-const DEFAULT_OPTION = {
-  indexAxis: "x",
-  scales: {
-    yAxes: [
-      {
-        ticks: {
-          beginAtZero: true,
-        },
-      },
-    ],
-  },
-};
+import classes from "./Chart.module.css";
 const Chart = (props) => {
   const questionRef = useRef(null);
-  const [option, setOption] = useState(DEFAULT_OPTION);
+  const [type, setType] = useState("Bar");
+
   let data = {
     labels: [],
     datasets: [
@@ -31,6 +20,9 @@ const Chart = (props) => {
   };
 
   const { question } = props;
+  const option = {
+    indexAxis: "x",
+  };
 
   if (question.type != "Paragraph") {
     const backgroundColor = [
@@ -50,25 +42,20 @@ const Chart = (props) => {
       "rgba(255, 159, 64, 1)",
     ];
 
-    question.options.map((option) => {
-      const randomNum = Math.floor(Math.random() * 6) + 0;
+    question.options.map((option, index) => {
+      let colorIndex = index;
+      if (index > 5) {
+        colorIndex -= 6;
+      }
       data.labels.push(option.option);
       data.datasets[0].data.push(option.answers);
-      data.datasets[0].backgroundColor.push(backgroundColor[randomNum]);
-      data.datasets[0].borderColor.push(borderColor[randomNum]);
+      data.datasets[0].backgroundColor.push(backgroundColor[colorIndex]);
+      data.datasets[0].borderColor.push(borderColor[colorIndex]);
     });
   }
 
   const handleTypeChange = () => {
-    if (questionRef.current.value == "Bar") {
-      setOption((prevState) => {
-        return { ...prevState, indexAxis: "x" };
-      });
-    } else if (questionRef.current.value == "Horizontal Bar") {
-      setOption((prevState) => {
-        return { ...prevState, indexAxis: "y" };
-      });
-    }
+    setType(questionRef.current.value);
   };
 
   return (
@@ -90,11 +77,23 @@ const Chart = (props) => {
           </Form.Select>
         </Col>
       </Row>
-      <Row>
-        <Col className="mb-4 " md={{ span: 8, offset: 2 }}>
-          <Bar data={data} options={option} />
-        </Col>
-      </Row>
+      {type != "Pie" && (
+        <Row>
+          <Col className="mb-4 " md={{ span: 8, offset: 2 }}>
+            {type == "Bar" && <Bar data={data} options={option} />}
+            {type == "Horizontal Bar" && (
+              <Bar data={data} options={{ ...option, indexAxis: "y" }} />
+            )}
+          </Col>
+        </Row>
+      )}
+      {type == "Pie" && (
+        <Row className="d-flex justify-content-center">
+          <Col className="mb-4 " md={6}>
+            <Pie data={data} />
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 };
