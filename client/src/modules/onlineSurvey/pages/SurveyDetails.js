@@ -3,11 +3,10 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import Chart from "../components/Chart";
 import ParagraphResponse from "../components/ParagraphResponse";
 import Heading from "../../../components/Heading.js";
-import Buttons from "../../../components/Buttons";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 

@@ -1,7 +1,6 @@
 import { Bar, Pie } from "react-chartjs-2";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { useRef, useState } from "react";
-import classes from "./Chart.module.css";
 const Chart = (props) => {
   const questionRef = useRef(null);
   const [type, setType] = useState("Bar");
