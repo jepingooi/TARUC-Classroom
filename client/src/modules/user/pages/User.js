@@ -21,7 +21,6 @@ import AuthenticationForm from "../components/AuthenticationForm";
 import { Container } from "react-bootstrap";
 import CustomModal from "../../../components/CustomModal";
 import classes from "./User.module.css";
-import NewUserModal from "../components/NewUserModal";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -59,17 +58,14 @@ const User = () => {
       });
     }
   };
-  const findFormErrors = () => {
-    const { email, password } = form;
+  const findFormErrors = (isLogin) => {
+    const { email, password, name } = form;
 
     const newErrors = {};
 
     // email errors
     if (!email || email === "") newErrors.email = "Email cannot be empty!";
     else if (
-      // !email.split("@")[1] ||
-      // !email.split("@")[1].startsWith("student.tarc.edu.my") ||
-      // !email.split("@")[1].startsWith("tarc.edu.my")
       !email.endsWith("@student.tarc.edu.my") &&
       !email.endsWith("@tarc.edu.my")
     ) {
@@ -82,6 +78,9 @@ const User = () => {
     else if (password.length < 6)
       newErrors.password = "Password must be greater than 6 characters!";
 
+    if ((!isLogin && !name) || name === "")
+      newErrors.name = "Name cannot be empty!";
+
     return newErrors;
   };
 
@@ -90,7 +89,7 @@ const User = () => {
   const handleLogin = (event) => {
     event.preventDefault();
 
-    const newErrors = findFormErrors();
+    const newErrors = findFormErrors(true);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -173,52 +172,47 @@ const User = () => {
       });
   };
 
-  const registerNewUser = () => {
-    const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const emailDomain = email.split("@")[1];
-        let userCollection;
-
-        if (emailDomain.startsWith("student")) {
-          userCollection = "students";
-        } else {
-          userCollection = "staff";
-        }
-
-        sendEmailVerification(auth.currentUser)
-          .then(() => {
-            setSuccess(
-              "Account created, please check your email to verify your account!"
-            );
-            setShowSuccess(true);
-            history.push({ pathname: "/user", state: { register: false } });
-            console.log("New user created: " + auth.currentUser);
-          })
-          .catch((error) => {
-            setError(error);
-            setShowError(true);
-          });
-      })
-      .catch((error) => {
-        if (error.code == "auth/email-already-in-use") {
-          setError("Account already exists!");
-        } else {
-          setError(error);
-        }
-        setShowError(true);
-      });
-  };
-
   const handleRegister = (event) => {
     event.preventDefault();
 
-    const newErrors = findFormErrors();
+    const newErrors = findFormErrors(false);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      setShowNewUserModal(true);
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const emailDomain = email.split("@")[1];
+          let userCollection;
+          if (emailDomain.startsWith("student")) {
+            userCollection = "students";
+          } else {
+            userCollection = "staff";
+          }
+
+          sendEmailVerification(auth.currentUser)
+            .then(() => {
+              setSuccess(
+                "Account created, please check your email to verify your account!"
+              );
+              setShowSuccess(true);
+              history.push({ pathname: "/user", state: { register: false } });
+              console.log("New user created: " + auth.currentUser);
+            })
+            .catch((error) => {
+              setError(error);
+              setShowError(true);
+            });
+        })
+        .catch((error) => {
+          if (error.code == "auth/email-already-in-use") {
+            setError("Account already exists!");
+          } else {
+            setError(error);
+          }
+          setShowError(true);
+        });
     }
   };
 
@@ -231,12 +225,6 @@ const User = () => {
 
   return (
     <Container className={`py-5 ${classes.background}`}>
-      <NewUserModal
-        onClose={handleClose}
-        show={showNewUserModal}
-        onRegister={registerNewUser}
-      />
-      ;
       <CustomModal
         show={showError}
         isSuccess={false}
@@ -256,6 +244,7 @@ const User = () => {
       <AuthenticationForm
         onEmailChange={(e) => setField("email", e.target.value)}
         onPasswordChange={(e) => setField("password", e.target.value)}
+        onNameChange={(e) => setField("name", e.target.value)}
         onSubmit={type == "Login" ? handleLogin : handleRegister}
         onReset={handleResetPassword}
         errors={errors}

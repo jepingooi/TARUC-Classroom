@@ -8,18 +8,17 @@ const Filters = (props) => {
 
   return (
     <div>
-      {props.filters.map((filter) => {
-        const isActive =
-          queryParams.get("filter") === filter.filterText ? "dark" : "";
+      {props.filters.map((filter, index) => {
+        const isActive = queryParams.get("filter") === filter ? "dark" : "";
         return (
           <NavLink
-            key={filter.id}
-            to={`/surveys?filter=${filter.filterText}`}
+            key={index}
+            to={`/surveys?filter=${filter}`}
             className={`mx-3 ${
               isActive ? classes.dark : classes.link
             } ${isActive}`}
           >
-            {filter.filterText}
+            {filter}
           </NavLink>
         );
       })}

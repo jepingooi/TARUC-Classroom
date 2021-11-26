@@ -88,9 +88,9 @@ const SurveyRow = (props) => {
                   )}
                   {user.isStudent && (
                     <Link
-                      style={
-                        status == "Answered" ? { pointerEvents: "none" } : {}
-                      }
+                      className={`${classes.link} ${
+                        status == "Answered" ? classes.answered : {}
+                      }`}
                       to={`/surveys/${id}/answer`}
                     >
                       {title}

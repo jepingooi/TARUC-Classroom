@@ -13,6 +13,19 @@ const AuthenticationForm = (props) => {
             <Card.Header>{props.children}</Card.Header>
             <Card.Body>
               <Form noValidate onSubmit={props.onSubmit}>
+                {props.children == "Register" && (
+                  <Form.Group className="mb-3" controlId="name">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                      isInvalid={!!errors.name}
+                      onChange={props.onNameChange}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.name}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                )}
+
                 <Form.Group className="mb-3" controlId="email">
                   <Form.Label>Email</Form.Label>
                   <Form.Control

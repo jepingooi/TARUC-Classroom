@@ -10,3 +10,11 @@ tr a {
 tr {
   height: 3.5em;
 }
+
+.answered {
+  pointer-events: none;
+}
+
+.link:hover {
+  color: #2f6ea5;
+}

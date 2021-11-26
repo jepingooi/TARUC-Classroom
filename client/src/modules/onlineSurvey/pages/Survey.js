@@ -21,57 +21,13 @@ import AuthContext from "../../../store/auth-context";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const filterList = [
-  {
-    id: "f1",
-    filterText: "All",
-  },
-  {
-    id: "f2",
-    filterText: "Published",
-  },
+const filterList = ["All", "Published", "Closed", "Drafted"];
 
-  {
-    id: "f3",
-    filterText: "Closed",
-  },
+const studentFilter = ["All", "Answered", "Pending"];
 
-  {
-    id: "f4",
-    filterText: "Drafted",
-  },
-];
+const headerList = ["Title", "Status", "Responses", "Start Date", "Actions"];
 
-const studentFilter = [
-  {
-    id: "f1",
-    filterText: "All",
-  },
-  {
-    id: "f2",
-    filterText: "Answered",
-  },
-
-  {
-    id: "f3",
-    filterText: "Pending",
-  },
-];
-
-const headerList = [
-  { id: "h1", headerText: "Title" },
-  { id: "h2", headerText: "Status" },
-  { id: "h3", headerText: "Responses" },
-  { id: "h4", headerText: "Start Date" },
-  { id: "h5", headerText: "Actions" },
-];
-
-const studentHeaderList = [
-  { id: "h1", headerText: "Title" },
-  { id: "h2", headerText: "Status" },
-  { id: "h3", headerText: "Deadline" },
-  { id: "h4", headerText: "Action" },
-];
+const studentHeaderList = ["Title", "Status", "Deadline", "Action"];
 
 function useQuery() {
   const { search } = useLocation();

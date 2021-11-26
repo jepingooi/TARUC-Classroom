@@ -7,8 +7,8 @@ const CustomTable = (props) => {
       <Table striped hover>
         <thead className={`${classes["table-header"]} sticky-top`}>
           <tr>
-            {props.headers.map((header) => {
-              return <th key={header.id}>{header.headerText}</th>;
+            {props.headers.map((header, index) => {
+              return <th key={index}>{header}</th>;
             })}
           </tr>
         </thead>

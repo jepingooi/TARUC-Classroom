@@ -19,31 +19,28 @@ const TableActions = (props) => {
             <Button
               variant="light"
               disabled={!props.isViewable}
-              style={props.isViewable ? { backgroundColor: "transparent" } : {}}
+              style={props.isViewable ? {} : { backgroundColor: "transparent" }}
+              onClick={props.onEdit}
             >
               {props.isViewable && (
                 <ViewSVG className={classes.hover} onClick={props.onView} />
               )}
               {!props.isViewable && (
-                <DisabledViewSVG
-                  className={classes.hover}
-                  onClick={props.onEdit}
-                />
+                <DisabledViewSVG className={classes.hover} />
               )}
             </Button>
             <Button
               variant="light"
               disabled={props.isDisabled}
               style={props.isDisabled ? { backgroundColor: "transparent" } : {}}
+              onClick={props.onEdit}
             >
               {props.isDisabled && <DisabledEditSVG />}
-              {!props.isDisabled && (
-                <EditSVG className={classes.hover} onClick={props.onEdit} />
-              )}
+              {!props.isDisabled && <EditSVG className={classes.hover} />}
             </Button>
 
-            <Button variant="light">
-              <DeleteSVG className={classes.hover} onClick={props.onDelete} />
+            <Button variant="light" onClick={props.onDelete}>
+              <DeleteSVG className={classes.hover} />
             </Button>
           </Fragment>
         )}
@@ -51,14 +48,15 @@ const TableActions = (props) => {
         {user.isStudent && (
           <Fragment>
             <Button
+              className={`${classes["btn-text"]} d-flex align-items-center`}
               variant="light"
               disabled={props.isAnswered}
               style={props.isAnswered ? { backgroundColor: "transparent" } : {}}
+              onClick={props.onAnswer}
             >
               {props.isAnswered && <DisabledEditSVG />}
-              {!props.isAnswered && (
-                <EditSVG className={classes.hover} onClick={props.onAnswer} />
-              )}
+              {!props.isAnswered && <EditSVG className={classes.hover} />}
+              Answer
             </Button>
           </Fragment>
         )}
