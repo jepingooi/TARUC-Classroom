@@ -9,7 +9,8 @@ import {
   getDocs,
   query,
   where,
-} from "firebase/firestore/lite";
+  addDoc,
+} from "firebase/firestore";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -24,6 +25,15 @@ import classes from "./User.module.css";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+const YEARS = [1, 2, 3];
+const SEMESTERS = [1, 2, 3];
+const TUTORIAL_GROUPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+const PROGRAMMES = [
+  { faculty: "FOCS", programmes: ["RSD", "RIS", "RIT"] },
+  { faculty: "FAFB", programmes: ["RAC", "RBU", "REN"] },
+  { faculty: "FCCI", programmes: ["RAV", "RPR", "RGD"] },
+];
 
 const User = () => {
   const location = useLocation();
@@ -84,7 +94,7 @@ const User = () => {
     return newErrors;
   };
 
-  const { email, password } = form;
+  const { email, password, name } = form;
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -128,10 +138,14 @@ const User = () => {
                 default:
                   userProfile.isStudent = false;
               }
+              //One hour expire-time
               const expirationTime = new Date(
                 new Date().getTime() +
                   +userCredential._tokenResponse.expiresIn * 1000
               );
+
+              //Eight seconds expire-time
+              //const expirationTime = new Date(new Date().getTime() + 8000);
 
               authContext.login(
                 userCredential._tokenResponse.idToken,
@@ -182,14 +196,42 @@ const User = () => {
     } else {
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+        .then(async (userCredential) => {
           const emailDomain = email.split("@")[1];
+
+          //Create new user
           let userCollection;
+          let userDocument;
+          const programme =
+            PROGRAMMES[Math.floor(Math.random() * PROGRAMMES.length)];
+
+          const { programmes } = programme;
+
           if (emailDomain.startsWith("student")) {
             userCollection = "students";
+            userDocument = {
+              name,
+              email,
+              faculty: programme.faculty,
+              programme:
+                programmes[Math.floor(Math.random() * programmes.length)],
+              year: YEARS[Math.floor(Math.random() * YEARS.length)],
+              semester: SEMESTERS[Math.floor(Math.random() * SEMESTERS.length)],
+              tutorialGroup:
+                TUTORIAL_GROUPS[
+                  Math.floor(Math.random() * TUTORIAL_GROUPS.length)
+                ],
+              surveys: [],
+            };
           } else {
             userCollection = "staff";
+            userDocument = {
+              name,
+              email,
+            };
           }
+          console.log(userCollection);
+          await addDoc(collection(db, userCollection), userDocument);
 
           sendEmailVerification(auth.currentUser)
             .then(() => {

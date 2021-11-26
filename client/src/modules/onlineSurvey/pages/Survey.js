@@ -168,7 +168,7 @@ const Survey = () => {
         </Row>
       )}
 
-      {!hasDelete && (
+      {!hasDelete && surveys.length > 0 && (
         <Fragment>
           <Heading>Your Surveys</Heading>
           <ActionBar
@@ -195,6 +195,7 @@ const Survey = () => {
           </Row>
         </Fragment>
       )}
+      {surveys.length == 0 && <Heading>No survey to show.</Heading>}
     </Container>
   );
 };

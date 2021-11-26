@@ -34,6 +34,15 @@ import Buttons from "../../../components/Buttons";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const YEARS = [1, 2, 3];
+const SEMESTERS = [1, 2, 3];
+const TUTORIAL_GROUPS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+const PROGRAMMES = [
+  { faculty: "FOCS", programmes: ["RSD", "RIS", "RIT"] },
+  { faculty: "FAFB", programmes: ["RAC", "RBU", "REN"] },
+  { faculty: "FCCI", programmes: ["RAV", "RPR", "RGD"] },
+];
+
 const PublishSurvey = () => {
   const { id } = useParams();
   const [survey, setSurvey] = useState({});
@@ -204,9 +213,14 @@ const PublishSurvey = () => {
                               required
                               ref={facultyRef}
                             >
-                              <option value="FOCS">FOCS</option>
-                              <option value="FAFB">FAFB</option>
-                              <option value="FCCI">FCCI</option>
+                              {PROGRAMMES.map((programme, index) => {
+                                const { faculty } = programme;
+                                return (
+                                  <option key={index} value={faculty}>
+                                    {faculty}
+                                  </option>
+                                );
+                              })}
                             </Form.Select>
                           </Form.Group>
                         </Col>
@@ -219,9 +233,27 @@ const PublishSurvey = () => {
                               required
                               ref={programmeRef}
                             >
-                              <option value="RSD">RSD</option>
-                              <option value="RIS">RIS</option>
-                              <option value="RIT">RIT</option>
+                              {PROGRAMMES.map((programme) => {
+                                if (facultyRef.current) {
+                                  const faculty = facultyRef.current.value;
+
+                                  if (programme.faculty === faculty) {
+                                    return programme.programmes.map(
+                                      (p, programmeIndex) => {
+                                        console.log(p);
+                                        return (
+                                          <option
+                                            key={programmeIndex}
+                                            value={p}
+                                          >
+                                            {p}
+                                          </option>
+                                        );
+                                      }
+                                    );
+                                  }
+                                }
+                              })}
                             </Form.Select>
                           </Form.Group>
                         </Col>
