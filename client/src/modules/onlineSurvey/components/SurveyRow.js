@@ -105,6 +105,7 @@ const SurveyRow = (props) => {
                   {!user.isStudent && (
                     <TableActions
                       onView={handleView.bind(null, id)}
+                      isViewable={responseNumber != 0}
                       isDisabled={status === "Closed" || status === "Published"}
                       onEdit={handleEdit.bind(null, id)}
                       onDelete={handleDelete.bind(null, id)}

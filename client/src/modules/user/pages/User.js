@@ -100,11 +100,12 @@ const User = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          if (user.emailVerified == false) {
-            setError("Your account is not verified!");
-            setShowError(true);
-            return;
-          }
+          //TODO - UNCOMMENT THIS LINE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          // if (user.emailVerified == false) {
+          //   setError("Your account is not verified!");
+          //   setShowError(true);
+          //   return;
+          // }
 
           const fetchUser = async () => {
             const emailDomain = user.email.split("@")[1];
@@ -172,10 +173,45 @@ const User = () => {
       });
   };
 
+  const registerNewUser = () => {
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const emailDomain = email.split("@")[1];
+        let userCollection;
+
+        if (emailDomain.startsWith("student")) {
+          userCollection = "students";
+        } else {
+          userCollection = "staff";
+        }
+
+        sendEmailVerification(auth.currentUser)
+          .then(() => {
+            setSuccess(
+              "Account created, please check your email to verify your account!"
+            );
+            setShowSuccess(true);
+            history.push({ pathname: "/user", state: { register: false } });
+            console.log("New user created: " + auth.currentUser);
+          })
+          .catch((error) => {
+            setError(error);
+            setShowError(true);
+          });
+      })
+      .catch((error) => {
+        if (error.code == "auth/email-already-in-use") {
+          setError("Account already exists!");
+        } else {
+          setError(error);
+        }
+        setShowError(true);
+      });
+  };
+
   const handleRegister = (event) => {
     event.preventDefault();
-
-    const auth = getAuth();
 
     const newErrors = findFormErrors();
 
@@ -183,31 +219,6 @@ const User = () => {
       setErrors(newErrors);
     } else {
       setShowNewUserModal(true);
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          console.log(userCredential);
-          sendEmailVerification(auth.currentUser)
-            .then(() => {
-              setSuccess(
-                "Account created, please check your email to verify your account!"
-              );
-              setShowSuccess(true);
-              history.push({ pathname: "/user", state: { register: false } });
-              console.log("New user created: " + auth.currentUser);
-            })
-            .catch((error) => {
-              setError(error);
-              setShowError(true);
-            });
-        })
-        .catch((error) => {
-          if (error.code == "auth/email-already-in-use") {
-            setError("Account already exists!");
-          } else {
-            setError(error);
-          }
-          setShowError(true);
-        });
     }
   };
 
@@ -220,7 +231,12 @@ const User = () => {
 
   return (
     <Container className={`py-5 ${classes.background}`}>
-      <NewUserModal onClose={handleClose} show={showNewUserModal} />
+      <NewUserModal
+        onClose={handleClose}
+        show={showNewUserModal}
+        onRegister={registerNewUser}
+      />
+      ;
       <CustomModal
         show={showError}
         isSuccess={false}
@@ -229,7 +245,6 @@ const User = () => {
       >
         {error}
       </CustomModal>
-
       <CustomModal
         show={showSuccess}
         isSuccess={true}
@@ -238,7 +253,6 @@ const User = () => {
       >
         {success}
       </CustomModal>
-
       <AuthenticationForm
         onEmailChange={(e) => setField("email", e.target.value)}
         onPasswordChange={(e) => setField("password", e.target.value)}

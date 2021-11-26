@@ -8,7 +8,7 @@ const NewUserModal = (props) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Using Grid in Modal
+          Profile Setup
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="show-grid">
