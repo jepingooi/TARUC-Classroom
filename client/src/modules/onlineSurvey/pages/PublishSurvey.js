@@ -95,6 +95,12 @@ const PublishSurvey = () => {
       return;
     }
 
+    console.log(facultyRef.current.value);
+    console.log(programmeRef.current.value);
+    console.log(year);
+    console.log(semester);
+    console.log(Number(tutorialRef.current.value));
+
     const q = query(
       collection(db, "students"),
       where("faculty", "==", facultyRef.current.value),
@@ -312,14 +318,14 @@ const PublishSurvey = () => {
                               <option value="1">1</option>
                               <option value="2">2</option>
                               <option value="3">3</option>
-                              <option value="3">4</option>
-                              <option value="3">5</option>
-                              <option value="3">6</option>
-                              <option value="3">7</option>
-                              <option value="3">8</option>
-                              <option value="3">9</option>
-                              <option value="3">10</option>
-                              <option value="3">11</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                              <option value="9">9</option>
+                              <option value="10">10</option>
+                              <option value="11">11</option>
                               {/* <option value="Multiple Choice">FAFB</option>
                     <option value="Checkbox">FCCI</option> */}
                             </Form.Select>
