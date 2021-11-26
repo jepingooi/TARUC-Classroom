@@ -31,7 +31,7 @@ const SurveyDetails = () => {
   return (
     <Container className="mt-3">
       <Row className="d-flex align-items-center justify-content-center">
-        <Col md={6}>
+        <Col>
           <Heading>{survey.title}</Heading>
         </Col>
         <Col md={1} className="text-end">

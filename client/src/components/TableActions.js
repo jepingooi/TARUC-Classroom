@@ -20,7 +20,7 @@ const TableActions = (props) => {
               variant="light"
               disabled={!props.isViewable}
               style={props.isViewable ? {} : { backgroundColor: "transparent" }}
-              onClick={props.onEdit}
+              onClick={props.onView}
             >
               {props.isViewable && (
                 <ViewSVG className={classes.hover} onClick={props.onView} />

@@ -59,8 +59,8 @@ const Chart = (props) => {
 
   return (
     <Container className="my-5">
-      <Row className="d-flex justify-content-center">
-        <Col className="mb-4" md={5}>
+      <Row className="d-flex justify-content-center align-items-center mb-4">
+        <Col className="d-flex" md={5}>
           <h1 className="title">{props.question.question}</h1>
         </Col>
         <Col className="text-right" md={3}>
