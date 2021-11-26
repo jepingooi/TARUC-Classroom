@@ -40,7 +40,7 @@ const Survey = () => {
   let myQuery = useQuery();
 
   const authContext = useContext(AuthContext);
-  const [surveys, setSurveys] = useState([]);
+  const [surveys, setSurveys] = useState();
   const [search, setSearch] = useState([]);
   const [hasDelete, setHasDelete] = useState(false);
   const { user } = authContext;
@@ -146,6 +146,43 @@ const Survey = () => {
     setHasDelete(true);
   };
 
+  let renderSurvey;
+
+  if (surveys) {
+    if (
+      (!hasDelete && surveys.length > 0) ||
+      (surveys.length == 0 && !user.isStudent)
+    ) {
+      renderSurvey = (
+        <Fragment>
+          <Heading>Your Surveys</Heading>
+          <ActionBar
+            studentFilter={studentFilter}
+            filterList={filterList}
+            onClick={() => history.push("/surveys/new")}
+            buttonText={"Add Survey"}
+            isStudent={user.isStudent}
+            onSearch={handleSearch}
+          />
+          <Row className="py-3">
+            <Col>
+              <SurveyTable
+                headers={user.isStudent ? studentHeaderList : headerList}
+              >
+                <SurveyRow
+                  search={myQuery.get("search")}
+                  filter={myQuery.get("filter")}
+                  surveys={surveys}
+                  onDelete={handleDelete}
+                />
+              </SurveyTable>
+            </Col>
+          </Row>
+        </Fragment>
+      );
+    }
+  }
+
   return (
     <Container className="mt-3">
       {hasDelete && (
@@ -168,8 +205,14 @@ const Survey = () => {
         </Row>
       )}
 
-      {(!hasDelete && surveys.length > 0) ||
-        (!user.isStudent && (
+      {surveys && surveys.length == 0 && user.isStudent && (
+        <Heading>No survey to show.</Heading>
+      )}
+
+      {renderSurvey}
+
+      {/* {(!hasDelete && surveys.length > 0) ||
+        (surveys.length == 0 && !user.isStudent && (
           <Fragment>
             <Heading>Your Surveys</Heading>
             <ActionBar
@@ -195,11 +238,9 @@ const Survey = () => {
               </Col>
             </Row>
           </Fragment>
-        ))}
-      {surveys.length == 0 && user.isStudent && (
-        <Heading>No survey to show.</Heading>
-      )}
-      {surveys.length == 0 && !user.isStudent && (
+        ))} */}
+
+      {surveys && surveys.length == 0 && !user.isStudent && (
         <h2 className="display-5 text-center">No survey to show.</h2>
       )}
     </Container>
