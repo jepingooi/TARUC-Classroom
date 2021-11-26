@@ -168,34 +168,40 @@ const Survey = () => {
         </Row>
       )}
 
-      {!hasDelete && surveys.length > 0 && (
-        <Fragment>
-          <Heading>Your Surveys</Heading>
-          <ActionBar
-            studentFilter={studentFilter}
-            filterList={filterList}
-            onClick={() => history.push("/surveys/new")}
-            buttonText={"Add Survey"}
-            isStudent={user.isStudent}
-            onSearch={handleSearch}
-          />
-          <Row className="py-3">
-            <Col>
-              <SurveyTable
-                headers={user.isStudent ? studentHeaderList : headerList}
-              >
-                <SurveyRow
-                  search={myQuery.get("search")}
-                  filter={myQuery.get("filter")}
-                  surveys={surveys}
-                  onDelete={handleDelete}
-                />
-              </SurveyTable>
-            </Col>
-          </Row>
-        </Fragment>
+      {(!hasDelete && surveys.length > 0) ||
+        (!user.isStudent && (
+          <Fragment>
+            <Heading>Your Surveys</Heading>
+            <ActionBar
+              studentFilter={studentFilter}
+              filterList={filterList}
+              onClick={() => history.push("/surveys/new")}
+              buttonText={"Add Survey"}
+              isStudent={user.isStudent}
+              onSearch={handleSearch}
+            />
+            <Row className="py-3">
+              <Col>
+                <SurveyTable
+                  headers={user.isStudent ? studentHeaderList : headerList}
+                >
+                  <SurveyRow
+                    search={myQuery.get("search")}
+                    filter={myQuery.get("filter")}
+                    surveys={surveys}
+                    onDelete={handleDelete}
+                  />
+                </SurveyTable>
+              </Col>
+            </Row>
+          </Fragment>
+        ))}
+      {surveys.length == 0 && user.isStudent && (
+        <Heading>No survey to show.</Heading>
       )}
-      {surveys.length == 0 && <Heading>No survey to show.</Heading>}
+      {surveys.length == 0 && !user.isStudent && (
+        <h2 className="display-5 text-center">No survey to show.</h2>
+      )}
     </Container>
   );
 };
