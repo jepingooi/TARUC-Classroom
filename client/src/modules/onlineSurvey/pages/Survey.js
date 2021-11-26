@@ -186,7 +186,7 @@ const Survey = () => {
               >
                 <SurveyRow
                   search={myQuery.get("search")}
-                  filter={myQuery.get("filter") || "All"}
+                  filter={myQuery.get("filter")}
                   surveys={surveys}
                   onDelete={handleDelete}
                 />

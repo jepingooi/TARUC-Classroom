@@ -21,7 +21,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const SurveyRow = (props) => {
-  console.log(props.search);
   const authContext = useContext(AuthContext);
   const history = useHistory();
   const { user } = authContext;
@@ -73,6 +72,7 @@ const SurveyRow = (props) => {
         props.surveys.map((survey) => {
           const { title, status, responseNumber, createdDate, endDate, id } =
             survey;
+
           if (
             (props.filter && status == props.filter) ||
             (props.search &&

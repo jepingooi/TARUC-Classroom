@@ -10,13 +10,16 @@ const Filters = (props) => {
     <div>
       {props.filters.map((filter, index) => {
         const isActive = queryParams.get("filter") === filter ? "dark" : "";
+
         return (
           <NavLink
             key={index}
             to={`/surveys?filter=${filter}`}
             className={`mx-3 ${
-              isActive ? classes.dark : classes.link
-            } ${isActive}`}
+              queryParams.get("filter") == null && filter == "All"
+                ? classes.dark
+                : classes.link
+            } ${isActive ? classes.dark : classes.link} ${isActive}`}
           >
             {filter}
           </NavLink>
