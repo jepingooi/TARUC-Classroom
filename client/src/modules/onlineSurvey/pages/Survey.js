@@ -19,7 +19,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import { Container, Row, Col, Alert, Button } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import SurveyTable from "../../../components/Table";
 
 import SurveyRow from "../components/SurveyRow";
@@ -28,6 +28,7 @@ import ActionBar from "../../../components/ActionBar";
 import Heading from "../../../components/Heading";
 import AuthContext from "../../../store/auth-context";
 import ConfirmationModal from "../../../components/ConfirmationModal";
+import AddSurveyButton from "../../../components/AddItemButton";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -209,7 +210,7 @@ const Survey = () => {
   let renderSurvey;
 
   if (surveys) {
-    if (surveys.length > 0 || (surveys.length == 0 && !user.isStudent)) {
+    if (surveys.length > 0) {
       renderSurvey = (
         <Fragment>
           <Heading>Your Surveys</Heading>
@@ -251,34 +252,20 @@ const Survey = () => {
       >
         {confirmationState.message}
       </ConfirmationModal>
-      {hasDelete && (
-        <Row>
-          <Col className="my-5" md={{ span: 6, offset: 3 }}>
-            <Alert show={hasDelete} variant="danger">
-              <Alert.Heading>Success</Alert.Heading>
-              <p>Survey deleted successfully!</p>
-              <hr />
-              <div className="d-flex justify-content-end">
-                <Button
-                  onClick={() => setHasDelete(false)}
-                  variant="outline-danger"
-                >
-                  Done
-                </Button>
-              </div>
-            </Alert>
-          </Col>
-        </Row>
-      )}
 
-      {surveys && surveys.length == 0 && user.isStudent && (
-        <Heading>No survey to show.</Heading>
+      {surveys && surveys.length == 0 && (
+        <Heading>Nothing to show here.</Heading>
       )}
 
       {renderSurvey}
 
       {surveys && surveys.length == 0 && !user.isStudent && (
-        <h2 className="display-5 text-center">No survey to show.</h2>
+        <div className="py-3">
+          <AddSurveyButton
+            buttonText={"Add Survey"}
+            onClick={() => history.push("/surveys/new")}
+          />
+        </div>
       )}
     </Container>
   );

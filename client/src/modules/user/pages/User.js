@@ -268,7 +268,7 @@ const User = () => {
       <CustomModal
         show={showError}
         isSuccess={false}
-        onClose={handleClose}
+        onHide={handleClose}
         title="Error"
       >
         {error}
@@ -276,7 +276,7 @@ const User = () => {
       <CustomModal
         show={showSuccess}
         isSuccess={true}
-        onClose={handleClose}
+        onHide={handleClose}
         title="Success"
       >
         {success}

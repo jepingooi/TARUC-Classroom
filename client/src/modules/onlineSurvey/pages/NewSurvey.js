@@ -14,6 +14,7 @@ import classes from "./NewSurvey.module.css";
 import NewQuestion from "../components/NewQuestion";
 import PrimaryButton from "../../../components/AddItemButton";
 import AuthContext from "../../../store/auth-context";
+import CustomModal from "../../../components/CustomModal";
 
 const BASE_QUESTION = {
   id: 0,
@@ -30,8 +31,14 @@ const NewSurvey = () => {
   const history = useHistory();
   const [questions, setQuestions] = useState([BASE_QUESTION]);
   const [title, setTitle] = useState("New Survey");
-  const [show, setShow] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const { user } = authContext;
+
+  const handleClose = () => {
+    setShowSuccess(false);
+    history.goBack();
+  };
 
   const handleCancel = () => {
     history.goBack();
@@ -87,7 +94,7 @@ const NewSurvey = () => {
       responses: 0,
     });
 
-    setShow(true);
+    setShowSuccess(true);
   };
 
   useEffect(async () => {
@@ -96,77 +103,64 @@ const NewSurvey = () => {
 
   return (
     <Container className="mt-4">
-      {show && (
-        <Row>
-          <Col className="my-5" md={{ span: 6, offset: 3 }}>
-            <Alert show={show} variant="success">
-              <Alert.Heading>Success</Alert.Heading>
-              <p>Your survey has been created successfully!</p>
-              <hr />
-              <div className="d-flex justify-content-end">
-                <Button
-                  onClick={() => history.goBack()}
-                  variant="outline-success"
-                >
-                  Done
-                </Button>
-              </div>
-            </Alert>
+      <CustomModal
+        show={showSuccess}
+        isSuccess={true}
+        onHide={handleClose}
+        title="Success"
+      >
+        Your survey has been created successfully!
+      </CustomModal>
+
+      <Fragment>
+        <Row className="justify-content-center align-items-center position-sticky">
+          <Col md={6}>
+            <Form.Control
+              size="lg"
+              type="text"
+              placeholder="Survey Title"
+              className={classes.title}
+              onBlur={(e) => {
+                setTitle(e.target.value);
+              }}
+            />
+          </Col>
+          <Col md={3} className="text-end">
+            <Buttons
+              isDefault={true}
+              primary="Save"
+              secondary="Cancel"
+              onCancel={handleCancel}
+              onSave={handleSave}
+            />
           </Col>
         </Row>
-      )}
-
-      {!show && (
-        <Fragment>
-          <Row className="justify-content-center align-items-center position-sticky">
-            <Col md={6}>
-              <Form.Control
-                size="lg"
-                type="text"
-                placeholder="Survey Title"
-                className={classes.title}
-                onBlur={(e) => {
-                  setTitle(e.target.value);
-                }}
-              />
-            </Col>
-            <Col md={3} className="text-end">
-              <Buttons
-                isDefault={true}
-                primary="Save"
-                secondary="Cancel"
-                onCancel={handleCancel}
-                onSave={handleSave}
-              />
-            </Col>
-          </Row>
-          {questions.map((question, index) => {
-            return (
-              <Row
-                key={index}
-                className={`${
-                  index == 0 ? "mt-3" : "mt-4"
-                } justify-content-center`}
-              >
-                <Col md={9}>
-                  <NewQuestion
-                    onChange={handleQuestionChange}
-                    question={question}
-                    onDelete={handleDeleteQuestion.bind(null, question)}
-                  />
-                </Col>
-              </Row>
-            );
-          })}
-          <Row>
-            <Col className="text-center my-5">
-              <PrimaryButton onClick={handleAddQuestion}>
-                Add Question
-              </PrimaryButton>
-            </Col>
-          </Row>
-        </Fragment>
-      )}
+        {questions.map((question, index) => {
+          return (
+            <Row
+              key={index}
+              className={`${
+                index == 0 ? "mt-3" : "mt-4"
+              } justify-content-center`}
+            >
+              <Col md={9}>
+                <NewQuestion
+                  onChange={handleQuestionChange}
+                  question={question}
+                  onDelete={handleDeleteQuestion.bind(null, question)}
+                />
+              </Col>
+            </Row>
+          );
+        })}
+        <Row>
+          <Col className="text-center my-5">
+            <PrimaryButton onClick={handleAddQuestion}>
+              Add Question
+            </PrimaryButton>
+          </Col>
+        </Row>
+      </Fragment>
     </Container>
   );
 };
