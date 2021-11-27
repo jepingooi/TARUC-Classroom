@@ -7,7 +7,7 @@ import {
 } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import { useState, useContext, Fragment } from "react";
+import { useState, useContext, useEffect, Fragment } from "react";
 import { useHistory } from "react-router-dom";
 import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
@@ -89,6 +89,10 @@ const NewSurvey = () => {
 
     setShow(true);
   };
+
+  useEffect(async () => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, [questions]);
 
   return (
     <Container className="mt-4">
