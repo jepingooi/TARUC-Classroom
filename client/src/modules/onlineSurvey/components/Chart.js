@@ -1,9 +1,11 @@
 import { Bar, Pie } from "react-chartjs-2";
-import { Container, Row, Col, Form } from "react-bootstrap";
-import { useRef, useState } from "react";
+import { Row, Col, Form } from "react-bootstrap";
+import { useRef, useState, Fragment } from "react";
+
 const Chart = (props) => {
   const questionRef = useRef(null);
   const [type, setType] = useState("Bar");
+  const chartRef = useRef();
 
   let data = {
     labels: [],
@@ -54,16 +56,17 @@ const Chart = (props) => {
   }
 
   const handleTypeChange = () => {
+    props.onChange(chartRef, props.index);
     setType(questionRef.current.value);
   };
 
   return (
-    <Container className="my-5">
-      <Row className="d-flex justify-content-center align-items-center mb-4">
-        <Col className="d-flex" md={5}>
-          <h1 className="title">{props.question.question}</h1>
+    <Fragment>
+      <Row className="mb-4" ref={chartRef}>
+        <Col className="d-flex">
+          <h3 className="title">{props.question.question}</h3>
         </Col>
-        <Col className="text-right" md={3}>
+        <Col className="text-right" md={4}>
           <Form.Select
             onChange={handleTypeChange}
             size="lg"
@@ -76,24 +79,22 @@ const Chart = (props) => {
           </Form.Select>
         </Col>
       </Row>
-      {type != "Pie" && (
-        <Row>
-          <Col className="mb-4 " md={{ span: 8, offset: 2 }}>
+      <Row className="d-flex justify-content-center">
+        {type != "Pie" && (
+          <Col className="mb-4">
             {type == "Bar" && <Bar data={data} options={option} />}
             {type == "Horizontal Bar" && (
               <Bar data={data} options={{ ...option, indexAxis: "y" }} />
             )}
           </Col>
-        </Row>
-      )}
-      {type == "Pie" && (
-        <Row className="d-flex justify-content-center">
-          <Col className="mb-4 " md={6}>
+        )}
+        {type == "Pie" && (
+          <Col className="mb-4" md={8}>
             <Pie data={data} />
           </Col>
-        </Row>
-      )}
-    </Container>
+        )}
+      </Row>
+    </Fragment>
   );
 };
 

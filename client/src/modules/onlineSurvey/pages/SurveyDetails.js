@@ -3,16 +3,19 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Chart from "../components/Chart";
 import ParagraphResponse from "../components/ParagraphResponse";
 import Heading from "../../../components/Heading.js";
+import classes from "./SurveyDetails.module.css";
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const SurveyDetails = () => {
   const [survey, setSurvey] = useState({});
-  //same as req.params in express
+  const [bottom, setBottom] = useState(false);
+
   const { id } = useParams();
   const history = useHistory();
 
@@ -27,6 +30,26 @@ const SurveyDetails = () => {
       console.log("No such document!");
     }
   }, []);
+
+  useEffect(async () => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, [bottom]);
+
+  const handleScroll = (chart, index) => {
+    if (index !== survey.questions.length - 1) {
+      const yOffset = -50;
+      const y =
+        chart.current.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    } else {
+      console.log(bottom);
+      setBottom((prevState) => {
+        return !prevState;
+      });
+    }
+  };
 
   return (
     <Container className="mt-3">
@@ -51,11 +74,23 @@ const SurveyDetails = () => {
         <Col>
           {survey.questions &&
             survey.questions.map((question, index) => {
-              if (question.type != "Paragraph") {
-                return <Chart question={question} key={index} />;
-              } else {
-                return <ParagraphResponse question={question} key={index} />;
-              }
+              return (
+                <Container
+                  key={index}
+                  className={`${classes.container} p-4 border border-1 rounded shadow-sm my-4`}
+                >
+                  {question.type != "Paragraph" ? (
+                    <Chart
+                      question={question}
+                      key={index}
+                      index={index}
+                      onChange={handleScroll}
+                    />
+                  ) : (
+                    <ParagraphResponse question={question} key={index} />
+                  )}
+                </Container>
+              );
             })}
         </Col>
       </Row>

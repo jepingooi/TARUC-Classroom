@@ -1,12 +1,11 @@
 import classes from "./ParagraphResponse.module.css";
 import { Container, Form, Row, Col } from "react-bootstrap";
+import { Fragment } from "react";
 const ParagraphResponse = (props) => {
   const { question } = props;
   console.log(question.answers);
   return (
-    <Container
-      className={`${classes.container} p-4 border border-1 rounded shadow-sm my-4`}
-    >
+    <Fragment>
       <Form>
         <Row className="align-items-center mb-2">
           <Col md={6}>
@@ -29,7 +28,7 @@ const ParagraphResponse = (props) => {
           );
         })}
       </Form>
-    </Container>
+    </Fragment>
   );
 };
 
