@@ -54,7 +54,7 @@ const SurveyDetails = () => {
   return (
     <Container className="mt-3">
       <Row className="d-flex align-items-center justify-content-center">
-        <Col>
+        <Col md={{ span: 6 }}>
           <Heading>{survey.title}</Heading>
         </Col>
         <Col md={1} className="text-end">

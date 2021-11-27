@@ -198,16 +198,21 @@ const AnswerSurvey = () => {
 
       {!show && (
         <Fragment>
-          <Row className="align-items-center position-sticky mb-4">
-            <Col>
-              <Heading>{survey.title}</Heading>
+          <Row className="justify-content-around align-items-center position-sticky mb-4">
+            <Col md={9}>
+              <Heading>Replacement Class Time</Heading>
             </Col>
           </Row>
           {survey.questions &&
             survey.questions.map((question, index) => {
               return (
-                <Row key={index} className={`${index == 0 ? "mt-3" : "mt-4"}`}>
-                  <Col>
+                <Row
+                  key={index}
+                  className={`${
+                    index == 0 ? "mt-3" : "mt-4"
+                  } justify-content-center`}
+                >
+                  <Col md={9}>
                     <AnswerQuestion
                       question={question}
                       onAnswer={handleOnAnswer}

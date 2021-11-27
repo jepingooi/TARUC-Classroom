@@ -82,7 +82,7 @@ const NewQuestion = (props) => {
 
   const renderOptions = (optionType) => {
     return (
-      <Col key={`default-radio`} className="" md={3}>
+      <Col key={`default-radio`} md={4}>
         {options.map((option, index) => {
           return (
             <div key={index} className="d-flex align-items-center">
@@ -128,7 +128,7 @@ const NewQuestion = (props) => {
       className={`${classes.container} p-4 border border-1 rounded shadow-sm`}
     >
       <Row className="align-items-center">
-        <Col md={5}>
+        <Col md={6}>
           <Form.Control
             placeholder="Question"
             size="lg"
@@ -138,7 +138,7 @@ const NewQuestion = (props) => {
           />
         </Col>
 
-        <Col className="text-right" md={{ span: 3, offset: 4 }}>
+        <Col className="text-right" md={{ span: 4, offset: 2 }}>
           <Form.Select
             onChange={handleTypeChange}
             size="lg"

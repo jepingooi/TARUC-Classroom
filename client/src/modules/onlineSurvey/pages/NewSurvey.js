@@ -114,8 +114,8 @@ const NewSurvey = () => {
 
       {!show && (
         <Fragment>
-          <Row className="align-items-center position-sticky">
-            <Col md={3}>
+          <Row className="justify-content-center align-items-center position-sticky">
+            <Col md={6}>
               <Form.Control
                 size="lg"
                 type="text"
@@ -126,7 +126,7 @@ const NewSurvey = () => {
                 }}
               />
             </Col>
-            <Col className="text-end">
+            <Col md={3} className="text-end">
               <Buttons
                 isDefault={true}
                 primary="Save"
@@ -138,8 +138,13 @@ const NewSurvey = () => {
           </Row>
           {questions.map((question, index) => {
             return (
-              <Row key={index} className={`${index == 0 ? "mt-3" : "mt-4"}`}>
-                <Col>
+              <Row
+                key={index}
+                className={`${
+                  index == 0 ? "mt-3" : "mt-4"
+                } justify-content-center`}
+              >
+                <Col md={9}>
                   <NewQuestion
                     onChange={handleQuestionChange}
                     question={question}
