@@ -19,6 +19,7 @@ import { useParams } from "react-router";
 import Heading from "../../../components/Heading";
 import AnswerQuestion from "../components/AnswerQuestion";
 import AuthContext from "../../../store/auth-context";
+import CustomModal from "../../../components/CustomModal";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -29,9 +30,13 @@ const AnswerSurvey = () => {
   const { id } = useParams();
   const history = useHistory();
   const [survey, setSurvey] = useState({});
-  const [show, setShow] = useState(false);
   const [questions, setQuestions] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
 
+  const handleClose = () => {
+    setShowSuccess(false);
+    history.goBack();
+  };
   const updateStatus = useCallback(async (surveys, studentId) => {
     const studentRef = doc(db, "students", studentId);
     await updateDoc(studentRef, {
@@ -135,7 +140,7 @@ const AnswerSurvey = () => {
       updateStatus(surveys, doc.id);
     });
 
-    setShow(true);
+    setShowSuccess(true);
   };
 
   const handleOnAnswer = (question, answer) => {
@@ -185,58 +190,53 @@ const AnswerSurvey = () => {
 
   return (
     <Container className="mt-4">
-      <Alert show={show} variant="success">
-        <Alert.Heading>Success</Alert.Heading>
-        <p>You have submitted the survey!</p>
-        <hr />
-        <div className="d-flex justify-content-end">
-          <Button onClick={() => history.goBack()} variant="outline-success">
-            Done
-          </Button>
-        </div>
-      </Alert>
+      <CustomModal
+        show={showSuccess}
+        isSuccess={true}
+        onHide={handleClose}
+        title="Success"
+      >
+        Your response has been submitted successfully!
+      </CustomModal>
 
-      {!show && (
-        <Fragment>
-          <Row className="justify-content-around align-items-center position-sticky mb-4">
-            <Col md={9}>
-              <Heading>Replacement Class Time</Heading>
-            </Col>
-          </Row>
-          {survey.questions &&
-            survey.questions.map((question, index) => {
-              return (
-                <Row
-                  key={index}
-                  className={`${
-                    index == 0 ? "mt-3" : "mt-4"
-                  } justify-content-center`}
-                >
-                  <Col md={9}>
-                    <AnswerQuestion
-                      question={question}
-                      onAnswer={handleOnAnswer}
-                    />
-                  </Col>
-                </Row>
-              );
-            })}
-        </Fragment>
-      )}
-      {!show && (
-        <Row>
-          <Col className="text-center my-4">
-            <Buttons
-              isDefault={true}
-              primary="Submit"
-              secondary="Cancel"
-              isPublish={true}
-              onCancel={handleCancel}
-              onSave={handleSubmit}
-            />
+      <Fragment>
+        <Row className="justify-content-around align-items-center position-sticky mb-4">
+          <Col md={9}>
+            <Heading>Replacement Class Time</Heading>
           </Col>
         </Row>
-      )}
+        {survey.questions &&
+          survey.questions.map((question, index) => {
+            return (
+              <Row
+                key={index}
+                className={`${
+                  index == 0 ? "mt-3" : "mt-4"
+                } justify-content-center`}
+              >
+                <Col md={9}>
+                  <AnswerQuestion
+                    question={question}
+                    onAnswer={handleOnAnswer}
+                  />
+                </Col>
+              </Row>
+            );
+          })}
+      </Fragment>
+
+      <Row>
+        <Col className="text-center my-4">
+          <Buttons
+            isDefault={true}
+            primary="Submit"
+            secondary="Cancel"
+            isPublish={true}
+            onCancel={handleCancel}
+            onSave={handleSubmit}
+          />
+        </Col>
+      </Row>
     </Container>
   );
 };
