@@ -53,7 +53,7 @@ const AnswerQuestion = (props) => {
       </Row>
       <Row>
         {question.type === "Paragraph" && (
-          <Col md={5}>
+          <Col md={7}>
             <Form.Control
               size="lg"
               type="text"
