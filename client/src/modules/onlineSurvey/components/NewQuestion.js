@@ -18,7 +18,6 @@ const NewQuestion = (props) => {
   const optionRef = useRef(null);
 
   useEffect(() => {
-    console.log(question);
     props.onChange(question.id, question);
   }, [question]);
 

@@ -4,7 +4,7 @@ const ErrorModal = (props) => {
   return (
     <Modal
       show={props.show}
-      onHide={props.onClose}
+      onHide={props.onHide}
       aria-labelledby="contained-modal-title-vcenter"
       className={
         props.isSuccess ? classes["modal-success"] : classes["modal-error"]
@@ -22,7 +22,7 @@ const ErrorModal = (props) => {
       <Modal.Footer>
         <Button
           variant={props.isSuccess ? "outline-success" : "outline-danger"}
-          onClick={props.onClose}
+          onClick={props.onHide}
         >
           Close
         </Button>

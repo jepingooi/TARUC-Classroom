@@ -37,33 +37,8 @@ const SurveyRow = (props) => {
     history.push(`/surveys/${id}/answer`);
   };
 
-  const updateStudent = useCallback(async (studentId, surveyId, surveys) => {
-    const studentRef = doc(db, "students", studentId);
-    const newSurveys = surveys.filter((survey) => {
-      return survey.id != surveyId;
-    });
-
-    console.log(newSurveys);
-
-    await updateDoc(studentRef, {
-      surveys: newSurveys,
-    });
-  }, []);
-  const handleDelete = async (id) => {
-    await deleteDoc(doc(db, "surveys", id));
-
-    const q = query(collection(db, "students"));
-
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(async (doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
-      const surveys = doc.data().surveys;
-
-      updateStudent(doc.id, id, surveys);
-    });
-
-    props.onDelete();
+  const handleDelete = async (survey) => {
+    props.onDelete(survey);
   };
 
   return (
@@ -115,7 +90,7 @@ const SurveyRow = (props) => {
                       isViewable={responseNumber != 0}
                       isDisabled={status === "Closed" || status === "Published"}
                       onEdit={handleEdit.bind(null, id)}
-                      onDelete={handleDelete.bind(null, id)}
+                      onDelete={handleDelete.bind(null, { id, title })}
                     />
                   )}
                   {user.isStudent && (

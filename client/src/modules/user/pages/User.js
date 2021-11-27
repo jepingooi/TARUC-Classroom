@@ -45,7 +45,6 @@ const User = () => {
   const [success, setSuccess] = useState("");
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showNewUserModal, setShowNewUserModal] = useState(false);
 
   useEffect(() => {
     setErrors({});
@@ -54,7 +53,6 @@ const User = () => {
   const handleClose = () => {
     setShowError(false);
     setShowSuccess(false);
-    setShowNewUserModal(false);
   };
 
   const setField = (field, value) => {

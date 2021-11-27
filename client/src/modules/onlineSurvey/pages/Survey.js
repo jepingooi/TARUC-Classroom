@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useContext, Fragment } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+  useReducer,
+  Fragment,
+} from "react";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import {
@@ -8,6 +15,9 @@ import {
   onSnapshot,
   where,
   getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { Container, Row, Col, Alert, Button } from "react-bootstrap";
 import SurveyTable from "../../../components/Table";
@@ -17,6 +27,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import ActionBar from "../../../components/ActionBar";
 import Heading from "../../../components/Heading";
 import AuthContext from "../../../store/auth-context";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -35,6 +46,13 @@ function useQuery() {
   return React.useMemo(() => new URLSearchParams(search), [search]);
 }
 
+const confirmationReducer = (state, action) => {
+  if (action.message) {
+    return { message: action.message, survey: action.survey };
+  }
+  return { message: "", survey: {} };
+};
+
 const Survey = () => {
   const history = useHistory();
   let myQuery = useQuery();
@@ -43,6 +61,12 @@ const Survey = () => {
   const [surveys, setSurveys] = useState();
   const [search, setSearch] = useState([]);
   const [hasDelete, setHasDelete] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationState, dispatchConfirmation] = useReducer(
+    confirmationReducer,
+    { message: "", survey: {} }
+  );
+
   const { user } = authContext;
 
   useEffect(() => {
@@ -142,17 +166,50 @@ const Survey = () => {
     setSearch(e.target.value);
   };
 
-  const handleDelete = () => {
-    setHasDelete(true);
+  const updateStudent = useCallback(async (studentId, surveyId, surveys) => {
+    const studentRef = doc(db, "students", studentId);
+    const newSurveys = surveys.filter((survey) => {
+      return survey.id != surveyId;
+    });
+
+    console.log(newSurveys);
+
+    await updateDoc(studentRef, {
+      surveys: newSurveys,
+    });
+  }, []);
+
+  const handleDelete = async () => {
+    const { id } = confirmationState.survey;
+    console.log(id);
+    await deleteDoc(doc(db, "surveys", id));
+    const q = query(collection(db, "students"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(async (doc) => {
+      console.log(doc.id, " => ", doc.data());
+      const surveys = doc.data().surveys;
+      updateStudent(doc.id, id, surveys);
+    });
+    setShowConfirmation(false);
+  };
+
+  const handleShow = (survey) => {
+    dispatchConfirmation({
+      message: `Are you sure you want to delete survey '${survey.title}'?`,
+      survey,
+    });
+
+    setShowConfirmation(true);
+  };
+
+  const handleClose = () => {
+    setShowConfirmation(false);
   };
 
   let renderSurvey;
 
   if (surveys) {
-    if (
-      (!hasDelete && surveys.length > 0) ||
-      (surveys.length == 0 && !user.isStudent)
-    ) {
+    if (surveys.length > 0 || (surveys.length == 0 && !user.isStudent)) {
       renderSurvey = (
         <Fragment>
           <Heading>Your Surveys</Heading>
@@ -173,7 +230,7 @@ const Survey = () => {
                   search={myQuery.get("search")}
                   filter={myQuery.get("filter")}
                   surveys={surveys}
-                  onDelete={handleDelete}
+                  onDelete={handleShow}
                 />
               </SurveyTable>
             </Col>
@@ -185,6 +242,15 @@ const Survey = () => {
 
   return (
     <Container className="mt-3">
+      <ConfirmationModal
+        show={showConfirmation}
+        onHide={handleClose}
+        onCancel={handleClose}
+        onConfirm={handleDelete}
+        title="Confirmation"
+      >
+        {confirmationState.message}
+      </ConfirmationModal>
       {hasDelete && (
         <Row>
           <Col className="my-5" md={{ span: 6, offset: 3 }}>
