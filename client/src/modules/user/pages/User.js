@@ -66,6 +66,7 @@ const User = () => {
       });
     }
   };
+
   const findFormErrors = (isLogin) => {
     const { email, password, name } = form;
 

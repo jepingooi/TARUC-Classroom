@@ -14,6 +14,21 @@ import { useState, useRef, useEffect } from "react";
 const AnswerQuestion = (props) => {
   const [question, setQuestion] = useState(props.question);
   const [option, setOption] = useState();
+  console.log(question);
+  // const [questionForm, setQuestionForm] = useState({});
+  // const [errors, setErrors] = useState({});
+
+  // const setField = (field, value) => {
+  //   setQuestionForm((prevState) => {
+  //     return { ...prevState, [field]: value };
+  //   });
+
+  //   if (!!errors[field]) {
+  //     setErrors((prevState) => {
+  //       return { ...prevState, [field]: null };
+  //     });
+  //   }
+  // };
 
   const renderOptions = (optionType) => {
     return (
@@ -28,8 +43,7 @@ const AnswerQuestion = (props) => {
               id={`${question.question}-${index}`}
               className={index == 0 ? "" : "mt-2"}
               onChange={(e) => {
-                // console.log(e.target.parentNode.lastChild.innerText);
-                // setOption(e.target.parentNode.lastChild.innerText);
+                // setField("answer", e.target.parentNode.lastChild.innerText);
                 props.onAnswer(
                   question,
                   e.target.parentNode.lastChild.innerText
@@ -44,6 +58,7 @@ const AnswerQuestion = (props) => {
 
   return (
     <Form
+      noValidate
       className={`${classes.container} p-4 border border-1 rounded shadow-sm`}
     >
       <Row className="align-items-center mb-2">
@@ -58,11 +73,16 @@ const AnswerQuestion = (props) => {
               size="lg"
               type="text"
               placeholder="Text Answer"
+              // isInvalid={!!errors.answer}
+              // onChange={(e) => setField("answer", e.target.value)}
               className={`mt-3 ${classes.paragraph}`}
               onBlur={(e) => {
                 props.onAnswer(question, e.target.value);
               }}
             />
+            {/* <Form.Control.Feedback type="invalid">
+              {errors.answer}
+            </Form.Control.Feedback> */}
           </Col>
         )}
         {question.type === "Multiple Choice" && renderOptions("radio")}

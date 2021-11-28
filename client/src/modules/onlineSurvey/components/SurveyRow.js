@@ -60,8 +60,10 @@ const SurveyRow = (props) => {
                 <td className={classes.title}>
                   {!user.isStudent && (
                     <Link
-                      className={`${classes.link} ${
-                        status == "Closed" ? classes.closed : {}
+                      className={`${
+                        responseNumber > 0 ? "" : classes.disabled
+                      } ${classes.link} ${
+                        status == "Closed" ? classes.disabled : {}
                       }`}
                       to={`/surveys/${id}`}
                     >
@@ -71,7 +73,7 @@ const SurveyRow = (props) => {
                   {user.isStudent && (
                     <Link
                       className={`${classes.link} ${
-                        status == "Answered" ? classes.answered : {}
+                        status == "Answered" ? classes.disabled : {}
                       }`}
                       to={`/surveys/${id}/answer`}
                     >

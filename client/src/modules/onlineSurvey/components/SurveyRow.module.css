@@ -11,8 +11,7 @@ tr {
   height: 3.5em;
 }
 
-.answered,
-.closed {
+.disabled {
   pointer-events: none;
 }
 

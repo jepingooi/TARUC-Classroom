@@ -77,18 +77,19 @@ const NewSurvey = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-
-    for (const q of questions) {
+    const newQuestions = JSON.parse(JSON.stringify(questions));
+    for (const q of newQuestions) {
       if (q.type !== "Paragraph") {
         for (const index of q.options.keys()) {
           q.options[index] = { option: q.options[index], answers: 0 };
         }
       }
     }
+
     await addDoc(collection(db, "surveys"), {
       createdDate: Timestamp.fromDate(new Date()),
       owner: user.email,
-      questions,
+      questions: newQuestions,
       status: "Drafted",
       title,
       responses: 0,

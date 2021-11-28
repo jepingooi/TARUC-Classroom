@@ -32,11 +32,23 @@ const AnswerSurvey = () => {
   const [survey, setSurvey] = useState({});
   const [questions, setQuestions] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
-
+  // const [questionForm, setQuestionForm] = useState({});
+  // const [errors, setErrors] = useState({});
   const handleClose = () => {
     setShowSuccess(false);
     history.goBack();
   };
+
+  // const findFormErrors = () => {
+  //   const { answer } = questionForm;
+  //   const newErrors = {};
+  //   // required errors
+  //   if (!answer || (answer === "" && question.isRequired === true))
+  //     newErrors.answer = "Answer is required!";
+
+  //   return newErrors;
+  // };
+
   const updateStatus = useCallback(async (surveys, studentId) => {
     const studentRef = doc(db, "students", studentId);
     await updateDoc(studentRef, {
@@ -76,6 +88,11 @@ const AnswerSurvey = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // const newErrors = findFormErrors(true);
+
+    // if (Object.keys(newErrors).length > 0) {
+    //   setErrors(newErrors);
+    // } else {
     for (const q of questions) {
       if (q.type == "Paragraph") {
         const { tempAnswer, ...newQuestion } = q;
@@ -127,7 +144,6 @@ const AnswerSurvey = () => {
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
-      // doc.data() is never undefined for query doc snapshots
       console.log(doc.id, " => ", doc.data());
       const surveys = doc.data().surveys;
 
@@ -141,12 +157,12 @@ const AnswerSurvey = () => {
     });
 
     setShowSuccess(true);
+    // }
   };
 
   const handleOnAnswer = (question, answer) => {
     if (question.type === "Paragraph") {
       if (question.answers) {
-        //question.answers.push(answer);
         question.tempAnswer = "";
         if (answer != "") {
           question.tempAnswer = answer;
@@ -156,7 +172,6 @@ const AnswerSurvey = () => {
       for (const index of question.options.keys()) {
         console.log(question.options[index]);
         if (question.options[index].option == answer) {
-          //question.options[index].answers++;
           question.options[index].isChosen = true;
         } else {
           question.options[index].isChosen = false;
@@ -166,7 +181,6 @@ const AnswerSurvey = () => {
       for (const index of question.options.keys()) {
         console.log(question.options[index]);
         if (question.options[index].option == answer) {
-          //question.options[index].answers++;
           if (question.options[index].isChosen == true) {
             question.options[index].isChosen = false;
           } else {

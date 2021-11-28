@@ -1,4 +1,5 @@
 import { Button, Modal } from "react-bootstrap";
+import classes from "./Buttons.module.css";
 
 const ConfirmationModal = (props) => {
   return (
@@ -11,7 +12,11 @@ const ConfirmationModal = (props) => {
         <Button variant="secondary" onClick={props.onCancel}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={props.onConfirm}>
+        <Button
+          className={classes["btn-primary"]}
+          variant="primary"
+          onClick={props.onConfirm}
+        >
           Confirm
         </Button>
       </Modal.Footer>
