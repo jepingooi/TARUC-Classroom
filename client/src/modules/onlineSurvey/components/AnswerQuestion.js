@@ -6,7 +6,7 @@ const AnswerQuestion = (props) => {
   const [question, setQuestion] = useState(props.question);
   const [questionForm, setQuestionForm] = useState({});
   const [errors, setErrors] = useState({});
-  const [isAnswered, setIsAnswered] = useState(false);
+
   const setField = (field, value) => {
     setQuestionForm((prevState) => {
       return { ...prevState, [field]: value };
