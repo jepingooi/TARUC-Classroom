@@ -58,9 +58,9 @@ const Header = () => {
             <NavLink className="nav-link" to="/videoConferencing">
               Video Conferencing
             </NavLink>
-            {/* <NavLink className="nav-link" to="/exams">
+            <NavLink className="nav-link" to="/exams">
               Exams
-            </NavLink> */}
+            </NavLink>
             <NavLink className="nav-link" to="/surveys">
               Surveys
             </NavLink>

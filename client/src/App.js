@@ -45,7 +45,6 @@ const db = getFirestore();
 const App = (props) => {
   const authContext = useContext(AuthContext);
   const [page, setPage] = useState("videoConferencing");
-  const [loginUser, setLoginUser] = useState();
   const [selectedRoomID, setSelectedRoomID] = useState(null);
 
   useEffect(() => {
