@@ -32,7 +32,7 @@ const NewSurvey = () => {
   const [questions, setQuestions] = useState([BASE_QUESTION]);
   const [title, setTitle] = useState("New Survey");
   const [showSuccess, setShowSuccess] = useState(false);
-
+  const [questionCount, setQuestionCount] = useState(0);
   const { user } = authContext;
 
   const handleClose = () => {
@@ -47,6 +47,9 @@ const NewSurvey = () => {
   const handleAddQuestion = () => {
     setQuestions((prevState) => {
       return [...prevState, { ...BASE_QUESTION, id: prevState.length }];
+    });
+    setQuestionCount((prevState) => {
+      return prevState + 1;
     });
   };
 
@@ -100,7 +103,7 @@ const NewSurvey = () => {
 
   useEffect(async () => {
     window.scrollTo(0, document.body.scrollHeight);
-  }, [questions]);
+  }, [questionCount]);
 
   return (
     <Container className="mt-4">

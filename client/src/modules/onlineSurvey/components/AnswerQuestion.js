@@ -6,14 +6,8 @@ const AnswerQuestion = (props) => {
   const [question, setQuestion] = useState(props.question);
   const [questionForm, setQuestionForm] = useState({});
   const [errors, setErrors] = useState({});
-  const [isValidated, setIsValidated] = useState(false);
-
-  useEffect(() => {
-    setIsValidated(props.isValidated);
-  });
-
+  const [isAnswered, setIsAnswered] = useState(false);
   const setField = (field, value) => {
-    setIsValidated(false);
     setQuestionForm((prevState) => {
       return { ...prevState, [field]: value };
     });
@@ -35,22 +29,6 @@ const AnswerQuestion = (props) => {
 
     return newErrors;
   };
-
-  useEffect(() => {
-    if (isValidated) {
-      if (question.isRequired) {
-        const newErrors = findFormErrors();
-        if (Object.keys(newErrors).length > 0) {
-          setErrors(newErrors);
-          props.setError(true);
-        } else {
-          props.setError(false);
-        }
-      } else {
-        props.setError(false);
-      }
-    }
-  }, [isValidated]);
 
   const renderOptions = (optionType) => {
     return (

@@ -32,9 +32,7 @@ const AnswerSurvey = () => {
   const [survey, setSurvey] = useState({});
   const [questions, setQuestions] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [isValidated, setIsValidated] = useState(false);
-  const [error, setError] = useState();
-  console.log(error);
+
   const handleClose = () => {
     setShowSuccess(false);
     history.goBack();
@@ -78,14 +76,6 @@ const AnswerSurvey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsValidated(true);
-    console.log(error);
-
-    // if (error !== undefined) {
-    //   if (error === true) {
-    //     console.log("error!");
-    //   } else {
-    //     console.log("nice!");
 
     for (const q of questions) {
       if (q.type == "Paragraph") {
@@ -141,22 +131,6 @@ const AnswerSurvey = () => {
       updateStatus(surveys, doc.id);
     });
     setShowSuccess(true);
-    //   }
-    // }
-  };
-
-  const handleError = (nextError) => {
-    setError((prevState) => {
-      console.log(prevState, nextError);
-
-      if (prevState === undefined) {
-        return nextError;
-      } else if (prevState === nextError) {
-        return nextError;
-      } else if (prevState === true || nextError === true) {
-        return true;
-      }
-    });
   };
 
   const handleOnAnswer = (question, answer) => {
@@ -164,21 +138,24 @@ const AnswerSurvey = () => {
       if (question.answers) {
         question.tempAnswer = "";
         if (answer != "") {
+          question.isAnswered = true;
           question.tempAnswer = answer;
+        } else if (answer == "") {
+          question.isAnswered = true;
         }
       }
     } else if (question.type === "Multiple Choice") {
       for (const index of question.options.keys()) {
-        console.log(question.options[index]);
         if (question.options[index].option == answer) {
+          // question.isAnswered = true;
           question.options[index].isChosen = true;
         } else {
+          // question.isAnswered = true;
           question.options[index].isChosen = false;
         }
       }
     } else {
       for (const index of question.options.keys()) {
-        console.log(question.options[index]);
         if (question.options[index].option == answer) {
           if (question.options[index].isChosen == true) {
             question.options[index].isChosen = false;
@@ -190,6 +167,12 @@ const AnswerSurvey = () => {
             question.options[index].isChosen = false;
           }
         }
+        // let answered;
+        // question.options.map((option) => {
+        //   if (option.isChosen === true) answered = true;
+        // });
+
+        // question.isAnswered = answered;
       }
     }
     setQuestions((prevState) => {
@@ -229,8 +212,6 @@ const AnswerSurvey = () => {
               >
                 <Col md={9}>
                   <AnswerQuestion
-                    setError={handleError}
-                    isValidated={isValidated}
                     question={question}
                     onAnswer={handleOnAnswer}
                   />
