@@ -33,7 +33,7 @@ const AnswerSurvey = () => {
   const [questions, setQuestions] = useState([]);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [hasError, setHasError] = useState(true);
   console.log(questions);
   const handleClose = () => {
     setShowSuccess(false);
@@ -57,13 +57,12 @@ const AnswerSurvey = () => {
   }, []);
 
   useEffect(async () => {
-    if (questions) {
-      if (questions.length > 0 && !hasError) {
-        const surveyRef = doc(db, "surveys", id);
-        await updateDoc(surveyRef, {
-          questions,
-        });
-      }
+    console.log(hasError);
+    if (!hasError) {
+      const surveyRef = doc(db, "surveys", id);
+      await updateDoc(surveyRef, {
+        questions,
+      });
     }
   }, [questions]);
 
@@ -92,7 +91,7 @@ const AnswerSurvey = () => {
         return;
       }
     }
-
+    setHasError(false);
     for (const q of questions) {
       if (q.type == "Paragraph") {
         const { isAnswered, error, tempAnswer, ...newQuestion } = q;
@@ -104,7 +103,7 @@ const AnswerSurvey = () => {
           return [...newArr, newQuestion];
         });
       } else {
-        const { options, ...newQuestion } = q;
+        const { isAnswered, options, ...newQuestion } = q;
         for (const o of options) {
           if (o.isChosen) {
             const { isChosen, ...finalOption } = o;
