@@ -4,31 +4,7 @@ import { useState, useEffect, Fragment } from "react";
 
 const AnswerQuestion = (props) => {
   const [question, setQuestion] = useState(props.question);
-  const [questionForm, setQuestionForm] = useState({});
   const [errors, setErrors] = useState({});
-
-  const setField = (field, value) => {
-    setQuestionForm((prevState) => {
-      return { ...prevState, [field]: value };
-    });
-
-    if (!!errors[field]) {
-      setErrors((prevState) => {
-        return { ...prevState, [field]: null };
-      });
-    }
-  };
-
-  const findFormErrors = () => {
-    const { answer } = questionForm;
-
-    const newErrors = {};
-    // required errors
-    if (!answer || (answer === "" && question.isRequired === true))
-      newErrors.answer = "Answer is required!";
-
-    return newErrors;
-  };
 
   const renderOptions = (optionType) => {
     return (
@@ -37,8 +13,6 @@ const AnswerQuestion = (props) => {
           return (
             <Fragment key={index}>
               <Form.Check
-                required={question.isRequired ? 1 : 0}
-                isInvalid={!!errors.answer}
                 key={index}
                 type={optionType}
                 label={option.option}
@@ -46,7 +20,6 @@ const AnswerQuestion = (props) => {
                 id={`${question.question}-${index}`}
                 className={index == 0 ? "" : "mt-2"}
                 onChange={(e) => {
-                  setField("answer", e.target.parentNode.lastChild.innerText);
                   props.onAnswer(
                     question,
                     e.target.parentNode.lastChild.innerText
@@ -66,7 +39,11 @@ const AnswerQuestion = (props) => {
   return (
     <Form
       noValidate
-      className={`${classes.container} p-4 border border-1 rounded shadow-sm`}
+      className={`${
+        (question.isRequired && question.isAnswered) || !question.isRequired
+          ? classes.container
+          : classes.required
+      }  p-4 border border-1 rounded shadow-sm`}
     >
       <Row className="align-items-center mb-2">
         <Col md={6}>
@@ -81,11 +58,8 @@ const AnswerQuestion = (props) => {
               type="text"
               required={question.isRequired ? 1 : 0}
               placeholder="Text Answer"
-              isInvalid={!!errors.answer}
-              onChange={(e) => setField("answer", e.target.value)}
-              className={`mt-3 ${classes.paragraph}`}
+              className={`mt-3 ${classes.paragraph} `}
               onBlur={(e) => {
-                setField("answer", e.target.value);
                 props.onAnswer(question, e.target.value);
               }}
             />

@@ -31,13 +31,18 @@ const AnswerSurvey = () => {
   const history = useHistory();
   const [survey, setSurvey] = useState({});
   const [questions, setQuestions] = useState([]);
+  const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [hasError, setHasError] = useState(false);
   console.log(questions);
-
   const handleClose = () => {
     setShowSuccess(false);
     history.goBack();
   };
+
+  useEffect(() => {
+    setQuestions(survey.questions);
+  }, [survey]);
 
   const updateStatus = useCallback(async (surveys, studentId) => {
     const studentRef = doc(db, "students", studentId);
@@ -52,11 +57,13 @@ const AnswerSurvey = () => {
   }, []);
 
   useEffect(async () => {
-    if (questions.length > 0) {
-      const surveyRef = doc(db, "surveys", id);
-      await updateDoc(surveyRef, {
-        questions,
-      });
+    if (questions) {
+      if (questions.length > 0 && !hasError) {
+        const surveyRef = doc(db, "surveys", id);
+        await updateDoc(surveyRef, {
+          questions,
+        });
+      }
     }
   }, [questions]);
 
@@ -76,13 +83,19 @@ const AnswerSurvey = () => {
   };
 
   const handleSubmit = async (e) => {
-    //if questions.includes(question) then this question is not answered
     e.preventDefault();
 
-    for (const question of questions) {
-      const { isAnswered, ...q } = question;
+    for (const q of questions) {
+      if (!q.isAnswered && q.isRequired) {
+        setShowError(true);
+        setHasError(true);
+        return;
+      }
+    }
+
+    for (const q of questions) {
       if (q.type == "Paragraph") {
-        const { tempAnswer, ...newQuestion } = q;
+        const { isAnswered, error, tempAnswer, ...newQuestion } = q;
         newQuestion.answers.push(tempAnswer);
         setQuestions((prevState) => {
           const newArr = prevState.filter((question) => {
@@ -182,6 +195,14 @@ const AnswerSurvey = () => {
 
   return (
     <Container className="mt-4">
+      <CustomModal
+        show={showError}
+        isSuccess={false}
+        onHide={() => setShowError(false)}
+        title="Error"
+      >
+        Please answer all the required questions(red) first!
+      </CustomModal>
       <CustomModal
         show={showSuccess}
         isSuccess={true}
