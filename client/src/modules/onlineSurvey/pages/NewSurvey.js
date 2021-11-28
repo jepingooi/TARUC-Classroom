@@ -76,6 +76,9 @@ const NewSurvey = () => {
         return question !== deleteQuestion;
       });
     });
+    setQuestionCount((prevState) => {
+      return prevState - 1;
+    });
   };
 
   const handleSave = async (e) => {
