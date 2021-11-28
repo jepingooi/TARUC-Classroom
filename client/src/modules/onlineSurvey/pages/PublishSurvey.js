@@ -310,7 +310,7 @@ const PublishSurvey = () => {
                             ref={tutorialRef}
                           >
                             {TUTORIAL_GROUPS.map((group) => {
-                              return <option value="group">{group}</option>;
+                              return <option value={group}>{group}</option>;
                             })}
                           </Form.Select>
                         </Form.Group>

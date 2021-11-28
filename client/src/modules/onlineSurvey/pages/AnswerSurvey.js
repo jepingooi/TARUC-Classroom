@@ -1,4 +1,4 @@
-import { Container, Col, Row, Button, Alert } from "react-bootstrap";
+import { Container, Col, Row } from "react-bootstrap";
 import {
   getFirestore,
   doc,
@@ -32,22 +32,13 @@ const AnswerSurvey = () => {
   const [survey, setSurvey] = useState({});
   const [questions, setQuestions] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
-  // const [questionForm, setQuestionForm] = useState({});
-  // const [errors, setErrors] = useState({});
+  const [isValidated, setIsValidated] = useState(false);
+  const [error, setError] = useState();
+  console.log(error);
   const handleClose = () => {
     setShowSuccess(false);
     history.goBack();
   };
-
-  // const findFormErrors = () => {
-  //   const { answer } = questionForm;
-  //   const newErrors = {};
-  //   // required errors
-  //   if (!answer || (answer === "" && question.isRequired === true))
-  //     newErrors.answer = "Answer is required!";
-
-  //   return newErrors;
-  // };
 
   const updateStatus = useCallback(async (surveys, studentId) => {
     const studentRef = doc(db, "students", studentId);
@@ -87,27 +78,27 @@ const AnswerSurvey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsValidated(true);
+    console.log(error);
 
-    // const newErrors = findFormErrors(true);
+    // if (error !== undefined) {
+    //   if (error === true) {
+    //     console.log("error!");
+    //   } else {
+    //     console.log("nice!");
 
-    // if (Object.keys(newErrors).length > 0) {
-    //   setErrors(newErrors);
-    // } else {
     for (const q of questions) {
       if (q.type == "Paragraph") {
         const { tempAnswer, ...newQuestion } = q;
         newQuestion.answers.push(tempAnswer);
-
         setQuestions((prevState) => {
           const newArr = prevState.filter((question) => {
             return question.id != newQuestion.id;
           });
-
           return [...newArr, newQuestion];
         });
       } else {
         const { options, ...newQuestion } = q;
-
         for (const o of options) {
           if (o.isChosen) {
             const { isChosen, ...finalOption } = o;
@@ -126,38 +117,46 @@ const AnswerSurvey = () => {
             }
           }
         }
-
         setQuestions((prevState) => {
           const newArr = prevState.filter((question) => {
             return question.id != newQuestion.id;
           });
-
           return [...newArr, newQuestion];
         });
       }
     }
-
     const q = query(
       collection(db, "students"),
       where("email", "==", user.email)
     );
-
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
       console.log(doc.id, " => ", doc.data());
       const surveys = doc.data().surveys;
-
       for (const s of surveys) {
         if (s.id == id) {
           s.status = "Answered";
         }
       }
-
       updateStatus(surveys, doc.id);
     });
-
     setShowSuccess(true);
+    //   }
     // }
+  };
+
+  const handleError = (nextError) => {
+    setError((prevState) => {
+      console.log(prevState, nextError);
+
+      if (prevState === undefined) {
+        return nextError;
+      } else if (prevState === nextError) {
+        return nextError;
+      } else if (prevState === true || nextError === true) {
+        return true;
+      }
+    });
   };
 
   const handleOnAnswer = (question, answer) => {
@@ -230,6 +229,8 @@ const AnswerSurvey = () => {
               >
                 <Col md={9}>
                   <AnswerQuestion
+                    setError={handleError}
+                    isValidated={isValidated}
                     question={question}
                     onAnswer={handleOnAnswer}
                   />
