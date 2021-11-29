@@ -3,7 +3,6 @@ import { Container, Form, Row, Col } from "react-bootstrap";
 import { Fragment } from "react";
 const ParagraphResponse = (props) => {
   const { question } = props;
-  console.log(question.answers);
   return (
     <Fragment>
       <Form>

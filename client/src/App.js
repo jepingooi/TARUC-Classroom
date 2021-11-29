@@ -16,28 +16,27 @@ import AuthContext from "./store/auth-context";
 import { firebaseConfig } from "./firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
-import AnswerSurvey from "./modules/onlineSurvey/pages/AnswerSurvey";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
 const NewSurvey = React.lazy(() =>
   import("./modules/onlineSurvey/pages/NewSurvey")
 );
-const EditSurvey = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/PublishSurvey.js")
+const AnswerSurvey = React.lazy(() =>
+  import("./modules/onlineSurvey/pages/AnswerSurvey.js")
 );
 const PublishSurvey = React.lazy(() =>
   import("./modules/onlineSurvey/pages/PublishSurvey.js")
 );
-const SurveyDetails = React.lazy(() =>
-  import("./modules/onlineSurvey/pages/SurveyDetails")
+const SurveyResponse = React.lazy(() =>
+  import("./modules/onlineSurvey/pages/SurveyResponse")
 );
 const VideoConferencingRoom = React.lazy(() =>
   import("./modules/videoConferencing/room")
 );
-const Exam = React.lazy(() => import("./modules/onlineExam/pages/Exam"));
-const ExamDetails = React.lazy(() =>
-  import("./modules/onlineExam/pages/ExamDetails")
-);
+// const Exam = React.lazy(() => import("./modules/onlineExam/pages/Exam"));
+// const ExamDetails = React.lazy(() =>
+//   import("./modules/onlineExam/pages/ExamDetails")
+// );
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -151,7 +150,7 @@ const App = (props) => {
         <NewSurvey />
       </Route>
       <Route path={"/surveys/:id/edit"}>
-        <EditSurvey />
+        <NewSurvey />
       </Route>
       <Route path={"/surveys/:id/answer"}>
         <AnswerSurvey />
@@ -159,21 +158,24 @@ const App = (props) => {
       <Route path={"/surveys/:id/publish"}>
         <PublishSurvey />
       </Route>
+      <Route path={"/surveys/:id/responses"}>
+        <SurveyResponse />
+      </Route>
       <Route path={"/surveys/:id"}>
-        <SurveyDetails />
+        <AnswerSurvey />
       </Route>
       <Route path={"/surveys"}>
         <Survey />
       </Route>
 
-      <Route path={"/exams/new"}></Route>
+      {/* <Route path={"/exams/new"}></Route>
       <Route path={"/exams/:id/edit"}></Route>
       <Route path={"/exams/:id"}>
         <ExamDetails />
       </Route>
       <Route path={"/exams"}>
         <Exam />
-      </Route>
+      </Route> */}
       <Route path={"*"}>
         <p>THIS SHOULD BE REPLACED WITH 404 PAGE</p>
       </Route>

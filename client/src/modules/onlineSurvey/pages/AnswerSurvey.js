@@ -20,6 +20,10 @@ import Heading from "../../../components/Heading";
 import AnswerQuestion from "../components/AnswerQuestion";
 import AuthContext from "../../../store/auth-context";
 import CustomModal from "../../../components/CustomModal";
+import classes from "./AnswerSurvey.module.css";
+import { ReactComponent as PublishedSVG } from "../../../resources/icon-published.svg";
+import { ReactComponent as DraftedSVG } from "../../../resources/icon-drafted.svg";
+import { ReactComponent as ClosedSVG } from "../../../resources/icon-closed.svg";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -34,7 +38,7 @@ const AnswerSurvey = () => {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasError, setHasError] = useState(true);
-  console.log(questions);
+
   const handleClose = () => {
     setShowSuccess(false);
     history.goBack();
@@ -212,9 +216,26 @@ const AnswerSurvey = () => {
       </CustomModal>
 
       <Fragment>
-        <Row className="justify-content-around align-items-center position-sticky mb-4">
-          <Col md={9}>
+        <Row className="justify-content-center align-items-center position-sticky mb-4">
+          <Col md={6}>
             <Heading>Replacement Class Time</Heading>
+          </Col>
+          <Col md={3} className={` text-end align-items-end mt-4`}>
+            <div className="d-flex align-items-center justify-content-end">
+              {survey.status === "Published" && (
+                <PublishedSVG className="mx-1" />
+              )}
+              {survey.status === "Drafted" && <DraftedSVG className="mx-1" />}
+              {survey.status === "Closed" && <ClosedSVG className="mx-1" />}
+              <h4
+                className={`
+                  ${survey.status === "Published" ? classes.published : ""}  
+                  ${survey.status === "Drafted" ? classes.drafted : ""} 
+                  ${survey.status === "Closed" ? classes.closed : ""} my-auto`}
+              >
+                {survey.status}
+              </h4>
+            </div>
           </Col>
         </Row>
         {survey.questions &&
@@ -223,7 +244,7 @@ const AnswerSurvey = () => {
               <Row
                 key={index}
                 className={`${
-                  index == 0 ? "mt-3" : "mt-4"
+                  index === survey.questions.length - 1 ? "mb-5" : "my-4"
                 } justify-content-center`}
               >
                 <Col md={9}>
@@ -237,18 +258,20 @@ const AnswerSurvey = () => {
           })}
       </Fragment>
 
-      <Row>
-        <Col className="text-center my-4">
-          <Buttons
-            isDefault={true}
-            primary="Submit"
-            secondary="Cancel"
-            isPublish={true}
-            onCancel={handleCancel}
-            onSave={handleSubmit}
-          />
-        </Col>
-      </Row>
+      {user.isStudent && (
+        <Row>
+          <Col className="text-center my-4">
+            <Buttons
+              isDefault={true}
+              primary="Submit"
+              secondary="Cancel"
+              isPublish={true}
+              onCancel={handleCancel}
+              onSave={handleSubmit}
+            />
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 };

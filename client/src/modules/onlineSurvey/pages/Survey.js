@@ -61,7 +61,6 @@ const Survey = () => {
   const authContext = useContext(AuthContext);
   const [surveys, setSurveys] = useState();
   const [search, setSearch] = useState([]);
-  const [hasDelete, setHasDelete] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationState, dispatchConfirmation] = useReducer(
     confirmationReducer,

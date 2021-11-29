@@ -2,7 +2,6 @@ import { ReactComponent as ViewSVG } from "../resources/icon-view.svg";
 import { ReactComponent as EditSVG } from "../resources/icon-edit.svg";
 import { ReactComponent as DeleteSVG } from "../resources/icon-delete.svg";
 import { ReactComponent as DisabledEditSVG } from "../resources/icon-edit-disabled.svg";
-import { ReactComponent as DisabledViewSVG } from "../resources/icon-view-disabled.svg";
 import classes from "./TableActions.module.css";
 import { Button, ButtonGroup } from "react-bootstrap";
 import AuthContext from "../store/auth-context";
@@ -16,18 +15,8 @@ const TableActions = (props) => {
       <ButtonGroup className={classes["bg-none"]}>
         {!user.isStudent && (
           <Fragment>
-            <Button
-              variant="light"
-              disabled={!props.isViewable}
-              style={props.isViewable ? {} : { backgroundColor: "transparent" }}
-              onClick={props.onView}
-            >
-              {props.isViewable && (
-                <ViewSVG className={classes.hover} onClick={props.onView} />
-              )}
-              {!props.isViewable && (
-                <DisabledViewSVG className={classes.hover} />
-              )}
+            <Button variant="light" onClick={props.onView}>
+              <ViewSVG className={classes.hover} />
             </Button>
             <Button
               variant="light"

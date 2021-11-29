@@ -4,11 +4,13 @@ import {
   addDoc,
   Timestamp,
   getFirestore,
+  doc,
+  getDoc,
 } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { useState, useContext, useEffect, Fragment } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
 import NewQuestion from "../components/NewQuestion";
@@ -29,11 +31,27 @@ const db = getFirestore(app);
 const NewSurvey = () => {
   const authContext = useContext(AuthContext);
   const history = useHistory();
+  const location = useLocation();
   const [questions, setQuestions] = useState([BASE_QUESTION]);
-  const [title, setTitle] = useState("New Survey");
+  const [title, setTitle] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [questionCount, setQuestionCount] = useState(0);
   const { user } = authContext;
+  const { id } = useParams();
+
+  useEffect(async () => {
+    if (location.pathname.endsWith("edit")) {
+      const docRef = doc(db, "surveys", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setQuestions(docSnap.data().questions);
+        setTitle(docSnap.data().title);
+      } else {
+        console.log("No such document!");
+      }
+    }
+  }, []);
 
   const handleClose = () => {
     setShowSuccess(false);
@@ -62,7 +80,6 @@ const NewSurvey = () => {
       if (question.type == "Paragraph") {
         question = { ...question, answers: [] };
       }
-
       return [...newQuestions, question];
     });
   };
@@ -84,13 +101,7 @@ const NewSurvey = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     const newQuestions = JSON.parse(JSON.stringify(questions));
-    for (const q of newQuestions) {
-      if (q.type !== "Paragraph") {
-        for (const index of q.options.keys()) {
-          q.options[index] = { option: q.options[index], answers: 0 };
-        }
-      }
-    }
+    const { newOptions } = newQuestions;
 
     await addDoc(collection(db, "surveys"), {
       createdDate: Timestamp.fromDate(new Date()),
@@ -125,6 +136,7 @@ const NewSurvey = () => {
             <Form.Control
               size="lg"
               type="text"
+              defaultValue={location.pathname.endsWith("edit") ? title : ""}
               placeholder="Survey Title"
               className={classes.title}
               onBlur={(e) => {

@@ -3,11 +3,11 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Chart from "../components/Chart";
 import ParagraphResponse from "../components/ParagraphResponse";
 import Heading from "../../../components/Heading.js";
-import classes from "./SurveyDetails.module.css";
+import classes from "./SurveyResponse.module.css";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -18,7 +18,6 @@ const SurveyDetails = () => {
 
   const { id } = useParams();
   const history = useHistory();
-
   useEffect(async () => {
     const docRef = doc(db, "surveys", id);
     const docSnap = await getDoc(docRef);

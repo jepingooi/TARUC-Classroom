@@ -58,9 +58,9 @@ const Header = () => {
             <NavLink className="nav-link" to="/videoConferencing">
               Video Conferencing
             </NavLink>
-            <NavLink className="nav-link" to="/exams">
+            {/* <NavLink className="nav-link" to="/exams">
               Exams
-            </NavLink>
+            </NavLink> */}
             <NavLink className="nav-link" to="/surveys">
               Surveys
             </NavLink>
@@ -74,22 +74,24 @@ const Header = () => {
         )}
 
         {!isLoggedIn &&
-          location.state != undefined &&
+          location.state !== undefined &&
           !location.state.register && (
             <Button size="md" variant="outline-light" onClick={handleRegister}>
               Register
             </Button>
           )}
-        {!isLoggedIn && location.state == undefined && (
+        {!isLoggedIn && location.state === undefined && (
           <Button size="md" variant="outline-light" onClick={handleRegister}>
             Register
           </Button>
         )}
-        {!isLoggedIn && location.state != undefined && location.state.register && (
-          <Button size="md" variant="outline-light" onClick={handleLogin}>
-            Login
-          </Button>
-        )}
+        {!isLoggedIn &&
+          location.state !== undefined &&
+          location.state.register && (
+            <Button size="md" variant="outline-light" onClick={handleLogin}>
+              Login
+            </Button>
+          )}
       </Container>
     </Navbar>
   );

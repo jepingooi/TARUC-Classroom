@@ -16,7 +16,7 @@ const Filters = (props) => {
             key={index}
             to={`/surveys?filter=${filter}`}
             className={`mx-3 ${
-              queryParams.get("filter") == null && filter == "All"
+              queryParams.get("filter") === null && filter === "All"
                 ? classes.dark
                 : classes.link
             } ${isActive ? classes.dark : classes.link} ${isActive}`}

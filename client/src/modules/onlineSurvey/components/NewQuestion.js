@@ -13,19 +13,21 @@ import { useState, useRef, useEffect } from "react";
 
 const NewQuestion = (props) => {
   const [question, setQuestion] = useState(props.question);
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState(props.question.options || []);
+  const [title, setTitle] = useState("");
   const questionRef = useRef(null);
   const optionRef = useRef(null);
 
   useEffect(() => {
     props.onChange(question.id, question);
   }, [question]);
+  useEffect(() => {
+    setTitle(props.question.question);
+  }, [props.question]);
 
   useEffect(() => {
-    if (question.type !== "Paragraph") {
-      setQuestion((prevState) => {
-        return { ...prevState, options };
-      });
+    if (props.question.type !== "Paragraph") {
+      setQuestion({ ...props.question, options });
     }
   }, [options]);
 
@@ -64,30 +66,39 @@ const NewQuestion = (props) => {
   const handleRemoveOption = (removeOption) => {
     setOptions((prevState) => {
       return prevState.filter((option) => {
-        return option != removeOption;
+        return option.option != removeOption;
       });
     });
   };
 
   const handleAddOptions = () => {
     const { current: text } = optionRef;
-    if (text.value != "" && !options.includes(text.value)) {
-      setOptions((prevState) => {
-        return [...prevState, text.value];
-      });
+    let optionExists = false;
+
+    props.question.options.map((option) => {
+      if (option.option === text.value) {
+        optionExists = true;
+      }
+    });
+    if (text.value != "" && !optionExists) {
+      setOptions([
+        ...props.question.options,
+        { option: text.value, answers: 0 },
+      ]);
     }
     optionRef.current.value = "";
+    optionRef.current.focus();
   };
 
   const renderOptions = (optionType) => {
     return (
       <Col key={`default-radio`} md={4}>
-        {options.map((option, index) => {
+        {props.question.options.map((option, index) => {
           return (
             <div key={index} className="d-flex align-items-center">
               <Form.Check
                 type={optionType}
-                label={option}
+                label={option.option}
                 name={question.question}
                 id={`${question.question}-${index}`}
               />
@@ -95,7 +106,7 @@ const NewQuestion = (props) => {
                 size="lg"
                 variant="light"
                 className={`${classes.delete} mx-2 pt-0`}
-                onClick={handleRemoveOption.bind(null, option)}
+                onClick={handleRemoveOption.bind(null, option.option)}
               >
                 <CloseSVG />
               </Button>
@@ -134,6 +145,7 @@ const NewQuestion = (props) => {
             type="text"
             className={`${classes.question}`}
             onBlur={handleQuestionChange}
+            defaultValue={title}
           />
         </Col>
 
@@ -151,7 +163,7 @@ const NewQuestion = (props) => {
         </Col>
       </Row>
       <Row className="mt-3">
-        {question.type === "Paragraph" && (
+        {props.question.type === "Paragraph" && (
           <Col md={5}>
             <Form.Control
               size="lg"
@@ -162,8 +174,8 @@ const NewQuestion = (props) => {
             />
           </Col>
         )}
-        {question.type === "Multiple Choice" && renderOptions("radio")}
-        {question.type === "Checkbox" && renderOptions("checkbox")}
+        {props.question.type === "Multiple Choice" && renderOptions("radio")}
+        {props.question.type === "Checkbox" && renderOptions("checkbox")}
       </Row>
       <hr className="mt-5 mb-3" />
       <Row>
@@ -173,6 +185,7 @@ const NewQuestion = (props) => {
             type="switch"
             id="custom-switch"
             label="Required"
+            checked={props.question.isRequired}
           />
           <Button
             size="lg"
