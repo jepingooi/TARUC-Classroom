@@ -82,7 +82,7 @@ const SurveyRow = (props) => {
                   {!user.isStudent && (
                     <TableActions
                       onView={handleView.bind(null, id)}
-                      isDisabled={status === "Closed" || status === "Published"}
+                      isDisabled={status === "Closed"}
                       onEdit={handleEdit.bind(null, id)}
                       onDelete={handleDelete.bind(null, { id, title })}
                     />

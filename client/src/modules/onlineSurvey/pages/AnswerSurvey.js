@@ -1,4 +1,4 @@
-import { Container, Col, Row } from "react-bootstrap";
+import { Container, Col, Row, Button } from "react-bootstrap";
 import {
   getFirestore,
   doc,
@@ -9,6 +9,7 @@ import {
   getDocs,
   collection,
   increment,
+  setDoc,
 } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
@@ -26,6 +27,7 @@ import { ReactComponent as DraftedSVG } from "../../../resources/icon-drafted.sv
 import { ReactComponent as ClosedSVG } from "../../../resources/icon-closed.svg";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import PrimaryButton from "../../../components/AddItemButton";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -40,9 +42,11 @@ const AnswerSurvey = () => {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasError, setHasError] = useState(true);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleClose = () => {
     setShowSuccess(false);
+    setShowConfirmation(false);
     history.goBack();
   };
 
@@ -63,7 +67,6 @@ const AnswerSurvey = () => {
   }, []);
 
   useEffect(async () => {
-    console.log(hasError);
     if (!hasError) {
       const surveyRef = doc(db, "surveys", id);
       await updateDoc(surveyRef, {
@@ -85,6 +88,12 @@ const AnswerSurvey = () => {
 
   const handleCancel = () => {
     history.goBack();
+  };
+
+  const handleCloseSurvey = () => {
+    const surveyRef = doc(db, "surveys", id);
+    setDoc(surveyRef, { status: "Closed" }, { merge: true });
+    history.go(0);
   };
 
   const handleSubmit = async (e) => {
@@ -202,6 +211,15 @@ const AnswerSurvey = () => {
     <Fragment>
       {!user.isStudent && <Breadcrumbs id={id} active="preview" />}
       <Container className="mt-4">
+        <ConfirmationModal
+          show={showConfirmation}
+          onHide={handleClose}
+          onCancel={handleClose}
+          onConfirm={handleCloseSurvey}
+          title="Confirmation"
+        >
+          Are you sure you want to close this survey?
+        </ConfirmationModal>
         <CustomModal
           show={showError}
           isSuccess={false}
@@ -278,17 +296,33 @@ const AnswerSurvey = () => {
           </Row>
         )}
         {!user.isStudent && (
-          <Row>
-            <Col className="text-center mb-5">
-              <PrimaryButton
-                className={classes["add-item-icon"]}
-                isSave={true}
-                onClick={() => history.push(`/surveys/${id}/publish`)}
-              >
-                Publish Survey
-              </PrimaryButton>
-            </Col>
-          </Row>
+          <Fragment>
+            {survey.status === "Drafted" && (
+              <Row>
+                <Col className="text-center mb-5">
+                  <PrimaryButton
+                    className={classes["add-item-icon"]}
+                    isSave={true}
+                    onClick={() => history.push(`/surveys/${id}/publish`)}
+                  >
+                    Publish Survey
+                  </PrimaryButton>
+                </Col>
+              </Row>
+            )}
+            {survey.status === "Published" && (
+              <Row>
+                <Col className="text-center mb-5">
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => setShowConfirmation(true)}
+                  >
+                    Close Survey
+                  </Button>
+                </Col>
+              </Row>
+            )}
+          </Fragment>
         )}
       </Container>
     </Fragment>

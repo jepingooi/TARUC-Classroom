@@ -134,6 +134,10 @@ const PublishSurvey = () => {
     setShowSuccess(true);
   };
 
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
   return (
     <Container className="mt-3">
       <CustomModal
@@ -164,8 +168,8 @@ const PublishSurvey = () => {
                       autoFocus
                       type="date"
                       required
-                      min={new Date().toISOString().split("T")[0]}
-                      defaultValue={new Date().toISOString().split("T")[0]}
+                      min={today.toISOString().split("T")[0]}
+                      defaultValue={today.toISOString().split("T")[0]}
                     />
                   </Form.Group>
                   <Form.Group className={`mx-auto mb-3`} controlId="endDate">
@@ -174,8 +178,8 @@ const PublishSurvey = () => {
                       ref={endDateRef}
                       type="date"
                       required
-                      min={new Date().toISOString().split("T")[0]}
-                      defaultValue={new Date().toISOString().split("T")[0]}
+                      min={tomorrow.toISOString().split("T")[0]}
+                      defaultValue={tomorrow.toISOString().split("T")[0]}
                     />
                   </Form.Group>
                 </Form>
