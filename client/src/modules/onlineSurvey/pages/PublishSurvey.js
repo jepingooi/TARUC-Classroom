@@ -151,7 +151,7 @@ const PublishSurvey = () => {
 
       <Fragment>
         <Heading>{survey.title}</Heading>
-        <Row className="pt-4">
+        <Row className="pt-3">
           <Col md={5}>
             <Card bg="light" className={`shadow-sm ${classes.card}`}>
               <Card.Header

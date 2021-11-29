@@ -11,11 +11,11 @@ import VideoConferencing from "./modules/videoConferencing/home";
 import User from "./modules/user/pages/User";
 import Layout from "./layout/Layout";
 import AuthContext from "./store/auth-context";
-
 // Firebase
 import { firebaseConfig } from "./firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
+import Breadcrumbs from "./components/Breadcrumbs";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
 const NewSurvey = React.lazy(() =>
@@ -33,23 +33,19 @@ const SurveyResponse = React.lazy(() =>
 const VideoConferencingRoom = React.lazy(() =>
   import("./modules/videoConferencing/room")
 );
-// const Exam = React.lazy(() => import("./modules/onlineExam/pages/Exam"));
-// const ExamDetails = React.lazy(() =>
-//   import("./modules/onlineExam/pages/ExamDetails")
-// );
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
 
 const App = (props) => {
   const authContext = useContext(AuthContext);
+  const { user, surveyId } = authContext;
   const [page, setPage] = useState("videoConferencing");
   const [selectedRoomID, setSelectedRoomID] = useState(null);
 
   useEffect(() => {
     let pathName = window.location.pathname.trim();
     let firstParam = pathName.split("/")[1];
-
     if (firstParam === "videoConferencing") {
       let secondParam = pathName.split("/")[2];
       if (secondParam) {
@@ -149,19 +145,22 @@ const App = (props) => {
       <Route path={"/surveys/new"}>
         <NewSurvey />
       </Route>
-      <Route path={"/surveys/:id/edit"}>
-        <NewSurvey />
-      </Route>
       <Route path={"/surveys/:id/answer"}>
         <AnswerSurvey />
+      </Route>
+      <Route path={"/surveys/:id/edit"}>
+        {!user.isStudent && <Breadcrumbs id={surveyId} active="edit" />}
+        <NewSurvey />
       </Route>
       <Route path={"/surveys/:id/publish"}>
         <PublishSurvey />
       </Route>
       <Route path={"/surveys/:id/response"}>
+        <Breadcrumbs active="response" />
         <SurveyResponse />
       </Route>
       <Route path={"/surveys/:id"}>
+        {!user.isStudent && <Breadcrumbs id={surveyId} active="preview" />}
         <AnswerSurvey />
       </Route>
       <Route path={"/surveys"}>
@@ -170,14 +169,6 @@ const App = (props) => {
       <Route path={"*"}>
         <p>THIS SHOULD BE REPLACED WITH 404 PAGE</p>
       </Route>
-      {/* <Route path={"/exams/new"}></Route>
-      <Route path={"/exams/:id/edit"}></Route>
-      <Route path={"/exams/:id"}>
-        <ExamDetails />
-      </Route>
-      <Route path={"/exams"}>
-        <Exam />
-      </Route> */}
     </Switch>
   );
 

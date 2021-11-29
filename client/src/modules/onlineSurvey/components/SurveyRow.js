@@ -23,18 +23,21 @@ const db = getFirestore(app);
 const SurveyRow = (props) => {
   const authContext = useContext(AuthContext);
   const history = useHistory();
-  const { user } = authContext;
+  const { user, setSurvey } = authContext;
 
   const handleEdit = (id) => {
     history.push(`/surveys/${id}/edit`);
+    setSurvey(id);
   };
 
   const handleView = (id) => {
     history.push(`/surveys/${id}`);
+    setSurvey(id);
   };
 
   const handleAnswer = (id) => {
     history.push(`/surveys/${id}/answer`);
+    setSurvey(id);
   };
 
   const handleDelete = async (survey) => {

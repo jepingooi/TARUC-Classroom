@@ -209,13 +209,13 @@ const AnswerSurvey = () => {
 
   return (
     <Fragment>
-      {survey.status && !user.isStudent && (
+      {/* {survey.status && !user.isStudent && (
         <Breadcrumbs
           id={id}
           active="preview"
           isDisabled={survey.status !== "Drafted"}
         />
-      )}
+      )} */}
       <Container className="mt-4">
         <ConfirmationModal
           show={showConfirmation}
