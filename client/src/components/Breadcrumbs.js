@@ -5,6 +5,7 @@ import classes from "./Breadcrumbs.module.css";
 const Breadcrumbs = (props) => {
   const history = useHistory();
   const { active } = props;
+
   return (
     <Container
       fluid
@@ -19,14 +20,17 @@ const Breadcrumbs = (props) => {
         >
           Preview
         </NavLink>
-        <NavLink
-          className={`${
-            active === "edit" ? classes.active : classes.link
-          } nav-link`}
-          to={`/surveys/${props.id}/edit`}
-        >
-          Edit
-        </NavLink>
+        {!props.isDisabled && (
+          <NavLink
+            className={`${
+              active === "edit" ? classes.active : classes.link
+            } nav-link`}
+            to={`/surveys/${props.id}/edit`}
+          >
+            Edit
+          </NavLink>
+        )}
+
         <NavLink
           className={` ${
             active === "response" ? classes.active : classes.link
