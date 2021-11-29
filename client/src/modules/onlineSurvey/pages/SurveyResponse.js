@@ -52,14 +52,6 @@ const SurveyDetails = () => {
 
   return (
     <Fragment>
-      {/* {survey.status && (
-        <Breadcrumbs
-          id={id}
-          active="response"
-          isDisabled={survey.status !== "Drafted"}
-        />
-      )} */}
-
       <Container className="mt-3">
         <Row className="d-flex align-items-center justify-content-center">
           <Col md={{ span: 6 }}>

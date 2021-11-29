@@ -18,18 +18,18 @@ import NewQuestion from "../components/NewQuestion";
 import PrimaryButton from "../../../components/AddItemButton";
 import AuthContext from "../../../store/auth-context";
 import CustomModal from "../../../components/CustomModal";
-import Breadcrumbs from "../../../components/Breadcrumbs";
-const BASE_QUESTION = {
-  id: 0,
-  isRequired: false,
-  question: "",
-  type: "Paragraph",
-};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const NewSurvey = () => {
+  const BASE_QUESTION = {
+    id: 0,
+    isRequired: false,
+    question: "",
+    type: "Paragraph",
+  };
+
   const authContext = useContext(AuthContext);
   const history = useHistory();
   const location = useLocation();
@@ -39,6 +39,7 @@ const NewSurvey = () => {
   const [questionCount, setQuestionCount] = useState(0);
   const { user } = authContext;
   const { id } = useParams();
+
   console.log(questions);
   useEffect(async () => {
     if (location.pathname.endsWith("edit")) {
@@ -162,10 +163,6 @@ const NewSurvey = () => {
 
   return (
     <Fragment>
-      {/* {!user.isStudent && !location.pathname.endsWith("new") && (
-        <Breadcrumbs id={id} active="edit" />
-      )} */}
-
       <Container className="mt-4">
         <CustomModal
           show={showSuccess}

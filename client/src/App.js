@@ -149,7 +149,7 @@ const App = (props) => {
         <AnswerSurvey />
       </Route>
       <Route path={"/surveys/:id/edit"}>
-        {!user.isStudent && <Breadcrumbs id={surveyId} active="edit" />}
+        {user && !user.isStudent && <Breadcrumbs id={surveyId} active="edit" />}
         <NewSurvey />
       </Route>
       <Route path={"/surveys/:id/publish"}>
@@ -160,7 +160,9 @@ const App = (props) => {
         <SurveyResponse />
       </Route>
       <Route path={"/surveys/:id"}>
-        {!user.isStudent && <Breadcrumbs id={surveyId} active="preview" />}
+        {user && !user.isStudent && (
+          <Breadcrumbs id={surveyId} active="preview" />
+        )}
         <AnswerSurvey />
       </Route>
       <Route path={"/surveys"}>

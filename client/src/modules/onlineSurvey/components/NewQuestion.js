@@ -50,6 +50,7 @@ const NewQuestion = (props) => {
 
   const handleAddOption = () => {
     props.onAddOption(question, optionRef.current.value);
+    optionRef.current.value = "";
   };
 
   const renderOptions = (optionType) => {
