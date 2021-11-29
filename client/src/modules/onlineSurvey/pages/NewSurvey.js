@@ -6,6 +6,7 @@ import {
   getFirestore,
   doc,
   getDoc,
+  setDoc,
 } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
@@ -38,7 +39,7 @@ const NewSurvey = () => {
   const [questionCount, setQuestionCount] = useState(0);
   const { user } = authContext;
   const { id } = useParams();
-
+  console.log(questions);
   useEffect(async () => {
     if (location.pathname.endsWith("edit")) {
       const docRef = doc(db, "surveys", id);
@@ -103,14 +104,23 @@ const NewSurvey = () => {
     const newQuestions = JSON.parse(JSON.stringify(questions));
     const { newOptions } = newQuestions;
 
-    await addDoc(collection(db, "surveys"), {
-      createdDate: Timestamp.fromDate(new Date()),
-      owner: user.email,
-      questions: newQuestions,
-      status: "Drafted",
-      title,
-      responses: 0,
-    });
+    if (location.pathname.endsWith("edit")) {
+      const surveyRef = doc(db, "surveys", id);
+      await setDoc(
+        surveyRef,
+        { questions: newQuestions, title },
+        { merge: true }
+      );
+    } else {
+      await addDoc(collection(db, "surveys"), {
+        createdDate: Timestamp.fromDate(new Date()),
+        owner: user.email,
+        questions: newQuestions,
+        status: "Drafted",
+        title: title || "New Survey",
+        responses: 0,
+      });
+    }
 
     setShowSuccess(true);
   };

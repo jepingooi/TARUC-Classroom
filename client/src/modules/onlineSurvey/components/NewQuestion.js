@@ -21,6 +21,7 @@ const NewQuestion = (props) => {
   useEffect(() => {
     props.onChange(question.id, question);
   }, [question]);
+
   useEffect(() => {
     setTitle(props.question.question);
   }, [props.question]);
