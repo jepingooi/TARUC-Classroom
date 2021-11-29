@@ -158,7 +158,7 @@ const App = (props) => {
       <Route path={"/surveys/:id/publish"}>
         <PublishSurvey />
       </Route>
-      <Route path={"/surveys/:id/responses"}>
+      <Route path={"/surveys/:id/response"}>
         <SurveyResponse />
       </Route>
       <Route path={"/surveys/:id"}>
@@ -167,7 +167,9 @@ const App = (props) => {
       <Route path={"/surveys"}>
         <Survey />
       </Route>
-
+      <Route path={"*"}>
+        <p>THIS SHOULD BE REPLACED WITH 404 PAGE</p>
+      </Route>
       {/* <Route path={"/exams/new"}></Route>
       <Route path={"/exams/:id/edit"}></Route>
       <Route path={"/exams/:id"}>
@@ -176,9 +178,6 @@ const App = (props) => {
       <Route path={"/exams"}>
         <Exam />
       </Route> */}
-      <Route path={"*"}>
-        <p>THIS SHOULD BE REPLACED WITH 404 PAGE</p>
-      </Route>
     </Switch>
   );
 

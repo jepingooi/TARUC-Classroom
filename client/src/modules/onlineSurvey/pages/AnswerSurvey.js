@@ -24,6 +24,8 @@ import classes from "./AnswerSurvey.module.css";
 import { ReactComponent as PublishedSVG } from "../../../resources/icon-published.svg";
 import { ReactComponent as DraftedSVG } from "../../../resources/icon-drafted.svg";
 import { ReactComponent as ClosedSVG } from "../../../resources/icon-closed.svg";
+import Breadcrumbs from "../../../components/Breadcrumbs";
+import PrimaryButton from "../../../components/AddItemButton";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -197,82 +199,99 @@ const AnswerSurvey = () => {
   };
 
   return (
-    <Container className="mt-4">
-      <CustomModal
-        show={showError}
-        isSuccess={false}
-        onHide={() => setShowError(false)}
-        title="Error"
-      >
-        Please answer all the required questions(red) first!
-      </CustomModal>
-      <CustomModal
-        show={showSuccess}
-        isSuccess={true}
-        onHide={handleClose}
-        title="Success"
-      >
-        Your response has been submitted successfully!
-      </CustomModal>
+    <Fragment>
+      {!user.isStudent && <Breadcrumbs id={id} active="preview" />}
+      <Container className="mt-4">
+        <CustomModal
+          show={showError}
+          isSuccess={false}
+          onHide={() => setShowError(false)}
+          title="Error"
+        >
+          Please answer all the required questions(red) first!
+        </CustomModal>
+        <CustomModal
+          show={showSuccess}
+          isSuccess={true}
+          onHide={handleClose}
+          title="Success"
+        >
+          Your response has been submitted successfully!
+        </CustomModal>
 
-      <Fragment>
-        <Row className="justify-content-center align-items-center position-sticky mb-4">
-          <Col md={6}>
-            <Heading>Replacement Class Time</Heading>
-          </Col>
-          <Col md={3} className={` text-end align-items-end mt-4`}>
-            <div className="d-flex align-items-center justify-content-end">
-              {survey.status === "Published" && (
-                <PublishedSVG className="mx-1" />
-              )}
-              {survey.status === "Drafted" && <DraftedSVG className="mx-1" />}
-              {survey.status === "Closed" && <ClosedSVG className="mx-1" />}
-              <h4
-                className={`
+        <Fragment>
+          <Row className="justify-content-center align-items-center position-sticky mb-4">
+            <Col md={6}>
+              <Heading>Replacement Class Time</Heading>
+            </Col>
+            <Col md={3} className={` text-end align-items-end mt-4`}>
+              <div className="d-flex align-items-center justify-content-end">
+                {survey.status === "Published" && (
+                  <PublishedSVG className="mx-1" />
+                )}
+                {survey.status === "Drafted" && <DraftedSVG className="mx-1" />}
+                {survey.status === "Closed" && <ClosedSVG className="mx-1" />}
+                <h4
+                  className={`
                   ${survey.status === "Published" ? classes.published : ""}  
                   ${survey.status === "Drafted" ? classes.drafted : ""} 
                   ${survey.status === "Closed" ? classes.closed : ""} my-auto`}
-              >
-                {survey.status}
-              </h4>
-            </div>
-          </Col>
-        </Row>
-        {survey.questions &&
-          survey.questions.map((question, index) => {
-            return (
-              <Row
-                key={index}
-                className={`${
-                  index === survey.questions.length - 1 ? "mb-5" : "my-4"
-                } justify-content-center`}
-              >
-                <Col md={9}>
-                  <AnswerQuestion
-                    question={question}
-                    onAnswer={handleOnAnswer}
-                  />
-                </Col>
-              </Row>
-            );
-          })}
-      </Fragment>
+                >
+                  {survey.status}
+                </h4>
+              </div>
+            </Col>
+          </Row>
+          {survey.questions &&
+            survey.questions.map((question, index) => {
+              return (
+                <Row
+                  key={index}
+                  className={`${
+                    index === survey.questions.length - 1 ? "mb-5" : "my-4"
+                  } justify-content-center`}
+                >
+                  <Col md={9}>
+                    <AnswerQuestion
+                      isPreview={user.isStudent === false}
+                      question={question}
+                      onAnswer={handleOnAnswer}
+                    />
+                  </Col>
+                </Row>
+              );
+            })}
+        </Fragment>
 
-      {user.isStudent && (
-        <Row>
-          <Col className="text-center my-4">
-            <Buttons
-              isDefault={true}
-              primary="Submit"
-              secondary="Cancel"
-              isPublish={true}
-              onCancel={handleCancel}
-              onSave={handleSubmit}
-            />
-          </Col>
-        </Row>
-      )}
-    </Container>
+        {user.isStudent && (
+          <Row>
+            <Col className="text-center my-4">
+              <Buttons
+                isDefault={true}
+                primary="Submit"
+                secondary="Cancel"
+                isPublish={true}
+                onCancel={handleCancel}
+                onSave={handleSubmit}
+              />
+            </Col>
+          </Row>
+        )}
+        {!user.isStudent && (
+          <Row>
+            <Col className="text-center mb-5">
+              <PrimaryButton
+                className={classes["add-item-icon"]}
+                isSave={true}
+                onClick={() => history.push(`/surveys/${id}/publish`)}
+              >
+                Publish Survey
+              </PrimaryButton>
+            </Col>
+          </Row>
+        )}
+      </Container>
+    </Fragment>
   );
 };
 

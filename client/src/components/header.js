@@ -34,11 +34,7 @@ const Header = () => {
   };
 
   return (
-    <Navbar
-      className={classes.navbar}
-      variant="dark"
-      style={{ height: "70px" }}
-    >
+    <Navbar className={classes.navbar} variant="dark">
       <Container>
         <Link
           to="/videoConferencing"
@@ -61,7 +57,7 @@ const Header = () => {
             {/* <NavLink className="nav-link" to="/exams">
               Exams
             </NavLink> */}
-            <NavLink className="nav-link" to="/surveys">
+            <NavLink className="nav-link" to="/surveys?filter=All">
               Surveys
             </NavLink>
           </Nav>

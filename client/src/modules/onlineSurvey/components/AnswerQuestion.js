@@ -13,6 +13,7 @@ const AnswerQuestion = (props) => {
           return (
             <Fragment key={index}>
               <Form.Check
+                disabled={props.isPreview}
                 key={index}
                 type={optionType}
                 label={option.option}
@@ -56,6 +57,7 @@ const AnswerQuestion = (props) => {
             <Form.Control
               size="lg"
               type="text"
+              disabled={props.isPreview}
               required={question.isRequired ? 1 : 0}
               placeholder="Text Answer"
               className={`mt-3 ${classes.paragraph} `}

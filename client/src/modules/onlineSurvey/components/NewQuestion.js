@@ -14,7 +14,7 @@ import { useState, useRef, useEffect } from "react";
 const NewQuestion = (props) => {
   const [question, setQuestion] = useState(props.question);
   const [options, setOptions] = useState(props.question.options || []);
-  const [title, setTitle] = useState("");
+  // const [title, setTitle] = useState("");
   const questionRef = useRef(null);
   const optionRef = useRef(null);
 
@@ -23,7 +23,9 @@ const NewQuestion = (props) => {
   }, [question]);
 
   useEffect(() => {
-    setTitle(props.question.question);
+    questionRef.current.value = props.question.type;
+    // setTitle(props.question.question);
+    // console.log(props.question);
   }, [props.question]);
 
   useEffect(() => {
@@ -146,7 +148,8 @@ const NewQuestion = (props) => {
             type="text"
             className={`${classes.question}`}
             onBlur={handleQuestionChange}
-            defaultValue={title}
+            // defaultValue={title}
+            defaultValue={props.question.question}
           />
         </Col>
 

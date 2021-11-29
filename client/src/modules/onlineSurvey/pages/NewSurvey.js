@@ -1,4 +1,4 @@
-import { Container, Col, Row, Form, Button, Alert } from "react-bootstrap";
+import { Container, Col, Row, Form } from "react-bootstrap";
 import {
   collection,
   addDoc,
@@ -18,7 +18,7 @@ import NewQuestion from "../components/NewQuestion";
 import PrimaryButton from "../../../components/AddItemButton";
 import AuthContext from "../../../store/auth-context";
 import CustomModal from "../../../components/CustomModal";
-
+import Breadcrumbs from "../../../components/Breadcrumbs";
 const BASE_QUESTION = {
   id: 0,
   isRequired: false,
@@ -39,7 +39,7 @@ const NewSurvey = () => {
   const [questionCount, setQuestionCount] = useState(0);
   const { user } = authContext;
   const { id } = useParams();
-  console.log(questions);
+
   useEffect(async () => {
     if (location.pathname.endsWith("edit")) {
       const docRef = doc(db, "surveys", id);
@@ -60,7 +60,7 @@ const NewSurvey = () => {
   };
 
   const handleCancel = () => {
-    history.goBack();
+    history.replace("/surveys?filter=All");
   };
 
   const handleAddQuestion = () => {
@@ -125,72 +125,78 @@ const NewSurvey = () => {
     setShowSuccess(true);
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     window.scrollTo(0, document.body.scrollHeight);
   }, [questionCount]);
 
   return (
-    <Container className="mt-4">
-      <CustomModal
-        show={showSuccess}
-        isSuccess={true}
-        onHide={handleClose}
-        title="Success"
-      >
-        Your survey has been created successfully!
-      </CustomModal>
+    <Fragment>
+      {!user.isStudent && !location.pathname.endsWith("new") && (
+        <Breadcrumbs id={id} active="edit" />
+      )}
 
-      <Fragment>
-        <Row className="justify-content-center align-items-center position-sticky">
-          <Col md={6}>
-            <Form.Control
-              size="lg"
-              type="text"
-              defaultValue={location.pathname.endsWith("edit") ? title : ""}
-              placeholder="Survey Title"
-              className={classes.title}
-              onBlur={(e) => {
-                setTitle(e.target.value);
-              }}
-            />
-          </Col>
-          <Col md={3} className="text-end">
-            <Buttons
-              isDefault={true}
-              primary="Save"
-              secondary="Cancel"
-              onCancel={handleCancel}
-              onSave={handleSave}
-            />
-          </Col>
-        </Row>
-        {questions.map((question, index) => {
-          return (
-            <Row
-              key={index}
-              className={`${
-                index == 0 ? "mt-3" : "mt-4"
-              } justify-content-center`}
-            >
-              <Col md={9}>
-                <NewQuestion
-                  onChange={handleQuestionChange}
-                  question={question}
-                  onDelete={handleDeleteQuestion.bind(null, question)}
-                />
-              </Col>
-            </Row>
-          );
-        })}
-        <Row>
-          <Col className="text-center my-5">
-            <PrimaryButton onClick={handleAddQuestion}>
-              Add Question
-            </PrimaryButton>
-          </Col>
-        </Row>
-      </Fragment>
-    </Container>
+      <Container className="mt-4">
+        <CustomModal
+          show={showSuccess}
+          isSuccess={true}
+          onHide={handleClose}
+          title="Success"
+        >
+          Your survey has been created successfully!
+        </CustomModal>
+
+        <Fragment>
+          <Row className="justify-content-center align-items-center position-sticky">
+            <Col md={6}>
+              <Form.Control
+                size="lg"
+                type="text"
+                defaultValue={location.pathname.endsWith("edit") ? title : ""}
+                placeholder="Survey Title"
+                className={classes.title}
+                onBlur={(e) => {
+                  setTitle(e.target.value);
+                }}
+              />
+            </Col>
+            <Col md={3} className="text-end">
+              <Buttons
+                isDefault={true}
+                primary="Save"
+                secondary="Cancel"
+                onCancel={handleCancel}
+                onSave={handleSave}
+              />
+            </Col>
+          </Row>
+          {questions.map((question, index) => {
+            return (
+              <Row
+                key={index}
+                className={`${
+                  index == 0 ? "mt-3" : "mt-4"
+                } justify-content-center`}
+              >
+                <Col md={9}>
+                  <NewQuestion
+                    onChange={handleQuestionChange}
+                    question={question}
+                    onDelete={handleDeleteQuestion.bind(null, question)}
+                  />
+                </Col>
+              </Row>
+            );
+          })}
+          <Row>
+            <Col className="text-center my-5">
+              <PrimaryButton onClick={handleAddQuestion}>
+                Add Question
+              </PrimaryButton>
+            </Col>
+          </Row>
+        </Fragment>
+      </Container>
+    </Fragment>
   );
 };
 

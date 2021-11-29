@@ -59,14 +59,7 @@ const SurveyRow = (props) => {
               <tr key={id}>
                 <td className={classes.title}>
                   {!user.isStudent && (
-                    <Link
-                      className={`${
-                        responseNumber > 0 ? "" : classes.disabled
-                      } ${classes.link} ${
-                        status == "Closed" ? classes.disabled : {}
-                      }`}
-                      to={`/surveys/${id}`}
-                    >
+                    <Link className={classes.link} to={`/surveys/${id}`}>
                       {title}
                     </Link>
                   )}
