@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import { useState, useContext, useEffect, Fragment } from "react";
+import { useState, useContext, useEffect, Fragment, useCallback } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
@@ -39,7 +39,7 @@ const NewSurvey = () => {
   const [questionCount, setQuestionCount] = useState(0);
   const { user } = authContext;
   const { id } = useParams();
-
+  console.log(questions);
   useEffect(async () => {
     if (location.pathname.endsWith("edit")) {
       const docRef = doc(db, "surveys", id);
@@ -72,30 +72,61 @@ const NewSurvey = () => {
     });
   };
 
-  const handleQuestionChange = (id, question) => {
+  const updateQuestion = useCallback((question) => {
     setQuestions((prevState) => {
-      const newQuestions = prevState.filter((q) => {
-        return q.id != id;
-      });
-
-      if (question.type == "Paragraph") {
-        question = { ...question, answers: [] };
-      }
-      return [...newQuestions, question];
+      const newQuestions = [...prevState];
+      newQuestions[question.id] = question;
+      return newQuestions;
     });
+  }, []);
+
+  const handleTypeChange = (question, type) => {
+    question.type = type;
+    updateQuestion(question);
+  };
+
+  const handleQuestionChange = (question, newQuestion) => {
+    question.question = newQuestion;
+    updateQuestion(question);
+  };
+
+  const handleRequireChange = (question, required) => {
+    question.isRequired = required;
+    updateQuestion(question);
+  };
+
+  const handleRemoveOption = (question, deleteOption) => {
+    const newOptions = question.options.filter((option) => {
+      return option != deleteOption;
+    });
+    question.options = newOptions;
+    updateQuestion(question);
+  };
+
+  const handleAddOption = (question, newOption) => {
+    let optionExists = false;
+    if (question.options !== undefined) {
+      question.options.map((option) => {
+        if (option.option === newOption) {
+          optionExists = true;
+        }
+      });
+    } else {
+      question.options = [];
+    }
+
+    if (newOption !== "" && !optionExists) {
+      question.options.push({ option: newOption, answers: 0 });
+    }
+    updateQuestion(question);
   };
 
   const handleDeleteQuestion = (deleteQuestion) => {
+    console.log(deleteQuestion);
     setQuestions((prevState) => {
-      for (const q of questions) {
-        console.log(q);
-      }
       return prevState.filter((question) => {
-        return question !== deleteQuestion;
+        return question.id !== deleteQuestion.id;
       });
-    });
-    setQuestionCount((prevState) => {
-      return prevState - 1;
     });
   };
 
@@ -179,9 +210,14 @@ const NewSurvey = () => {
               >
                 <Col md={9}>
                   <NewQuestion
-                    onChange={handleQuestionChange}
+                    key={index}
                     question={question}
-                    onDelete={handleDeleteQuestion.bind(null, question)}
+                    onChange={handleQuestionChange}
+                    onDelete={handleDeleteQuestion}
+                    onTypeChange={handleTypeChange}
+                    onRequireChange={handleRequireChange}
+                    onAddOption={handleAddOption}
+                    onRemoveOption={handleRemoveOption}
                   />
                 </Col>
               </Row>
