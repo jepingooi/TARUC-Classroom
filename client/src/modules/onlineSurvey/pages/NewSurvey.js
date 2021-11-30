@@ -56,7 +56,11 @@ const NewSurvey = () => {
 
   const handleClose = () => {
     setShowSuccess(false);
-    history.goBack();
+    if (location.pathname.endsWith("edit")) {
+      history.replace(`/surveys/${id}`);
+    } else {
+      history.goBack();
+    }
   };
 
   const handleCancel = () => {
@@ -169,7 +173,9 @@ const NewSurvey = () => {
           onHide={handleClose}
           title="Success"
         >
-          Your survey has been created successfully!
+          {location.pathname.endsWith("edit")
+            ? "Your survey has been editted successfully!"
+            : "Your survey has been created successfully!"}
         </CustomModal>
 
         <Fragment>

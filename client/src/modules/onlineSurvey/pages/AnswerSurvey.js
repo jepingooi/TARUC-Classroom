@@ -265,7 +265,7 @@ const AnswerSurvey = () => {
                 <Row
                   key={index}
                   className={`${
-                    index === survey.questions.length - 1 ? "mb-5" : "my-4"
+                    index === survey.questions.length - 1 ? "" : "my-4"
                   } justify-content-center`}
                 >
                   <Col md={9}>
@@ -298,7 +298,7 @@ const AnswerSurvey = () => {
           <Fragment>
             {survey.status === "Drafted" && (
               <Row>
-                <Col className="text-center mb-5">
+                <Col className="text-center my-4">
                   <PrimaryButton
                     className={classes["add-item-icon"]}
                     isSave={true}
@@ -311,7 +311,7 @@ const AnswerSurvey = () => {
             )}
             {survey.status === "Published" && (
               <Row>
-                <Col className="text-center mb-5">
+                <Col className="text-center my-4">
                   <Button
                     variant="outline-danger"
                     onClick={() => setShowConfirmation(true)}

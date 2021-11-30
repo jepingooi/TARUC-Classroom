@@ -9,25 +9,33 @@ const SurveyResponses = (props) => {
   };
   return (
     <Fragment>
-      <style>{getPageMargins()}</style>
       {props.survey.questions &&
         props.survey.questions.map((question, index) => {
           return (
-            <Container
-              key={index}
-              className={`${classes.container} p-4 border border-1 rounded shadow-sm my-4`}
-            >
-              {question.type !== "Paragraph" ? (
-                <Chart
-                  question={question}
-                  key={index}
-                  index={index}
-                  onChange={props.onChange}
-                />
-              ) : (
-                <ParagraphResponse question={question} key={index} />
+            <Fragment>
+              {index !== 0 && <div className={classes["page-break"]} />}
+              {props.print && index == 0 && (
+                <h1 className={`text-center`}>{props.survey.title}</h1>
               )}
-            </Container>
+              <div>
+                <Container
+                  key={index}
+                  className={`${classes.container} p-4 border border-1 rounded shadow-sm my-4`}
+                >
+                  {question.type !== "Paragraph" ? (
+                    <Chart
+                      isPrint={props.print}
+                      question={question}
+                      key={index}
+                      index={index}
+                      onChange={props.onChange}
+                    />
+                  ) : (
+                    <ParagraphResponse question={question} key={index} />
+                  )}
+                </Container>
+              </div>
+            </Fragment>
           );
         })}
     </Fragment>

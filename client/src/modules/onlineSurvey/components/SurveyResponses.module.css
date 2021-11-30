@@ -2,3 +2,40 @@
   width: 60%;
   border-left: 3.5px solid #337ab7 !important;
 }
+
+@media print {
+  .container {
+    width: 70%;
+  }
+  @page {
+    size: landscape;
+  }
+}
+
+@media all {
+  .page-break {
+    display: none;
+  }
+}
+
+@media print {
+  html,
+  body {
+    height: initial !important;
+    overflow: initial !important;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+@media print {
+  .page-break {
+    margin-top: 5rem;
+    display: block;
+    page-break-before: always;
+  }
+}
+
+@page {
+  size: auto;
+  margin: 20mm;
+}

@@ -66,22 +66,24 @@ const Chart = (props) => {
         <Col className="d-flex">
           <h3 className="title">{props.question.question}</h3>
         </Col>
-        <Col className="text-right" md={4}>
-          <Form.Select
-            onChange={handleTypeChange}
-            size="lg"
-            aria-label="Question select"
-            ref={questionRef}
-          >
-            <option value="Bar">Bar</option>
-            <option value="Pie">Pie</option>
-            <option value="Horizontal Bar">Horizontal Bar</option>
-          </Form.Select>
-        </Col>
+        {!props.isPrint && (
+          <Col className="text-right" xs={4}>
+            <Form.Select
+              onChange={handleTypeChange}
+              size="lg"
+              aria-label="Question select"
+              ref={questionRef}
+            >
+              <option value="Bar">Bar</option>
+              <option value="Pie">Pie</option>
+              <option value="Horizontal Bar">Horizontal Bar</option>
+            </Form.Select>
+          </Col>
+        )}
       </Row>
       <Row className="d-flex justify-content-center">
         {type != "Pie" && (
-          <Col className="mb-4">
+          <Col className="mb-4 text-center">
             {type == "Bar" && <Bar data={data} options={option} />}
             {type == "Horizontal Bar" && (
               <Bar data={data} options={{ ...option, indexAxis: "y" }} />

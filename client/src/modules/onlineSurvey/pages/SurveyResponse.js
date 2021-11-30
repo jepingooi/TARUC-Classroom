@@ -14,6 +14,7 @@ const db = getFirestore(app);
 const SurveyDetails = () => {
   const [survey, setSurvey] = useState({});
   const [bottom, setBottom] = useState(false);
+  const [print, setPrint] = useState(false);
   const componentRef = useRef();
   const { id } = useParams();
   const history = useHistory();
@@ -50,40 +51,48 @@ const SurveyDetails = () => {
     }
   };
 
-  const getPageMargins = () => {
-    return `@page { margin: ${10000} ${10} ${10} ${10} !important; }`;
-  };
-
-  const handlePrint = useReactToPrint({
+  const printPDF = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: survey.title,
   });
+
+  const handlePrint = () => {
+    setPrint(true);
+    printPDF();
+    setTimeout(() => {
+      setPrint(false);
+    }, 1500);
+  };
 
   const handleBack = () => history.replace("/surveys?filter=All");
 
   return (
     <Fragment>
       <Container className="mt-3">
-        <Row className="align-items-center justify-content-center">
-          <Col md={5}>
-            <Heading>{survey.title}</Heading>
-          </Col>
-          <Col md={2} className="text-end pt-2 pe-0">
-            <Buttons
-              isDefault={true}
-              primary="Print"
-              secondary="Back"
-              onCancel={handleBack}
-              onSave={handlePrint}
-            />
-          </Col>
-        </Row>
+        {!print && (
+          <Row className="align-items-center justify-content-center">
+            <Col md={5}>
+              <Heading>{survey.title}</Heading>
+            </Col>
+            <Col md={2} className="text-end pt-2 pe-0">
+              <Buttons
+                isDefault={true}
+                primary="Print"
+                secondary="Back"
+                onCancel={handleBack}
+                onSave={handlePrint}
+              />
+            </Col>
+          </Row>
+        )}
+
         <Row>
           <Col ref={componentRef}>
             <SurveyResponses
               showTitle={true}
               survey={survey}
               onChange={handleScroll}
+              print={print}
             />
           </Col>
         </Row>
