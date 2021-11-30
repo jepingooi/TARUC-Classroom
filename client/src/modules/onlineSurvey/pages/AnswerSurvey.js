@@ -326,10 +326,10 @@ const AnswerSurvey = () => {
           </Row>
         )}
         {!user.isStudent && (
-          <Fragment>
-            {survey.status === "Drafted" && (
-              <Row>
-                <Col className="text-center my-4">
+          <Row>
+            <Col className="text-center my-4">
+              <Fragment>
+                {survey.status === "Drafted" && (
                   <PrimaryButton
                     className={classes["add-item-icon"]}
                     isSave={true}
@@ -337,22 +337,18 @@ const AnswerSurvey = () => {
                   >
                     Publish Survey
                   </PrimaryButton>
-                </Col>
-              </Row>
-            )}
-            {survey.status === "Published" && (
-              <Row>
-                <Col className="text-center my-4">
+                )}
+                {survey.status === "Published" && (
                   <Button
                     variant="outline-danger"
                     onClick={() => setShowConfirmation(true)}
                   >
                     End Survey
                   </Button>
-                </Col>
-              </Row>
-            )}
-          </Fragment>
+                )}
+              </Fragment>
+            </Col>
+          </Row>
         )}
       </Container>
     </Fragment>

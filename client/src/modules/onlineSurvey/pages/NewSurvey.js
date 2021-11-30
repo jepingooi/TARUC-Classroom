@@ -37,6 +37,10 @@ const NewSurvey = () => {
   const [title, setTitle] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [questionCount, setQuestionCount] = useState(0);
+  const [documentHeight, setDocumentHeight] = useState(
+    document.body.scrollHeight
+  );
+
   const { user } = authContext;
   const { id } = useParams();
 
@@ -164,8 +168,12 @@ const NewSurvey = () => {
   };
 
   useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight);
+    setDocumentHeight(document.body.scrollHeight);
   }, [questionCount]);
+
+  useEffect(() => {
+    window.scrollTo(0, documentHeight);
+  }, [documentHeight]);
 
   return (
     <Fragment>
