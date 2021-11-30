@@ -12,7 +12,7 @@ const SurveyResponses = (props) => {
       {props.survey.questions &&
         props.survey.questions.map((question, index) => {
           return (
-            <Fragment>
+            <Fragment key={index}>
               {index !== 0 && <div className={classes["page-break"]} />}
               {props.print && index == 0 && (
                 <h1 className={`text-center`}>{props.survey.title}</h1>

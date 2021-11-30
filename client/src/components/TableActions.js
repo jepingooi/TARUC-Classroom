@@ -4,7 +4,7 @@ import { ReactComponent as DeleteSVG } from "../resources/icon-delete.svg";
 import { ReactComponent as DisabledEditSVG } from "../resources/icon-edit-disabled.svg";
 import classes from "./TableActions.module.css";
 import { Button, ButtonGroup } from "react-bootstrap";
-import AuthContext from "../store/auth-context";
+import AuthContext from "../store/context";
 import { useContext, Fragment } from "react";
 
 const TableActions = (props) => {

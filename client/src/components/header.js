@@ -4,7 +4,7 @@ import classes from "./Header.module.css";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import { useHistory } from "react-router";
 import { useContext, useState } from "react";
-import AuthContext from "../store/auth-context";
+import AuthContext from "../store/context";
 
 const Header = () => {
   const authContext = useContext(AuthContext);

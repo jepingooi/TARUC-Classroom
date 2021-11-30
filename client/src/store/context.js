@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { getAuth, signOut } from "firebase/auth";
 
-const AuthContext = React.createContext({
+const Context = React.createContext({
   token: "",
   isLoggedIn: false,
   user: {},
   surveyId: "",
+  surveyStatus: "",
   login: (token) => {},
   logout: () => {},
 });
@@ -18,12 +19,13 @@ const calcRemainingTime = (expirationTime) => {
   return remainingTime;
 };
 
-export const AuthContextProvider = (props) => {
+export const ContextProvider = (props) => {
   const initialToken = localStorage.getItem("token");
   const activeUser = localStorage.getItem("user");
   const [token, setToken] = useState(initialToken);
   const [user, setUser] = useState(JSON.parse(activeUser));
   const [surveyId, setSurveyId] = useState("");
+  const [surveyStatus, setSurveyStatus] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const userIsLoggedIn = !!token;
@@ -64,16 +66,16 @@ export const AuthContextProvider = (props) => {
     user,
     isLoggedIn: userIsLoggedIn,
     surveyId,
+    surveyStatus,
+    setSurveyStatus,
     setSurvey,
     login: loginHandler,
     logout: logoutHandler,
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {props.children}
-    </AuthContext.Provider>
+    <Context.Provider value={contextValue}>{props.children}</Context.Provider>
   );
 };
 
-export default AuthContext;
+export default Context;

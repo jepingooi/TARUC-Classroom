@@ -1,5 +1,6 @@
 import React, { Suspense, useEffect, useState, useContext } from "react";
 import {
+  useLocation,
   Route,
   Switch,
   Redirect,
@@ -10,12 +11,12 @@ import VideoConferencing from "./modules/videoConferencing/home";
 
 import User from "./modules/user/pages/User";
 import Layout from "./layout/Layout";
-import AuthContext from "./store/auth-context";
+import AuthContext from "./store/context";
 // Firebase
 import { firebaseConfig } from "./firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
-import Breadcrumbs from "./components/Breadcrumbs";
+import Breadcrumbs from "./modules/onlineSurvey/components/Breadcrumbs";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
 const NewSurvey = React.lazy(() =>
@@ -38,10 +39,13 @@ initializeApp(firebaseConfig);
 const db = getFirestore();
 
 const App = (props) => {
+  const location = useLocation();
   const authContext = useContext(AuthContext);
   const { user, surveyId } = authContext;
   const [page, setPage] = useState("videoConferencing");
   const [selectedRoomID, setSelectedRoomID] = useState(null);
+
+  const idParam = location.pathname.split("surveys/").pop().split("/")[0] || "";
 
   useEffect(() => {
     let pathName = window.location.pathname.trim();
@@ -148,20 +152,34 @@ const App = (props) => {
       <Route path={"/surveys/:id/answer"}>
         <AnswerSurvey />
       </Route>
-      <Route path={"/surveys/:id/edit"}>
-        {user && !user.isStudent && <Breadcrumbs id={surveyId} active="edit" />}
-        <NewSurvey />
-      </Route>
-      <Route path={"/surveys/:id/publish"}>
-        <PublishSurvey />
-      </Route>
-      <Route path={"/surveys/:id/response"}>
-        <Breadcrumbs id={surveyId} active="response" />
-        <SurveyResponse />
-      </Route>
+      {user && !user.isStudent && (
+        <Route path={"/surveys/:id/edit"}>
+          <Breadcrumbs id={surveyId} active="edit" />
+          {authContext.surveyStatus !== "Drafted" && <NewSurvey />}
+        </Route>
+      )}
+      {user && !user.isStudent && (
+        <Route path={"/surveys/:id/publish"}>
+          <PublishSurvey />
+        </Route>
+      )}
+      {user && !user.isStudent && (
+        <Route path={"/surveys/:id/response"}>
+          <Breadcrumbs
+            id={surveyId}
+            active="response"
+            isDisabled={authContext.surveyStatus !== "Drafted" ? true : false}
+          />
+          <SurveyResponse />
+        </Route>
+      )}
       <Route path={"/surveys/:id"}>
         {user && !user.isStudent && (
-          <Breadcrumbs id={surveyId} active="preview" />
+          <Breadcrumbs
+            id={surveyId}
+            active="preview"
+            isDisabled={authContext.surveyStatus !== "Drafted" ? true : false}
+          />
         )}
         <AnswerSurvey />
       </Route>

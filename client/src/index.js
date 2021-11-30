@@ -7,13 +7,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import App from "./App";
-import { AuthContextProvider } from "./store/auth-context";
+import { ContextProvider } from "./store/context";
 
 render(
-  <AuthContextProvider>
+  <ContextProvider>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </AuthContextProvider>,
+  </ContextProvider>,
   document.getElementById("root")
 );

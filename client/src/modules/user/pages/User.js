@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import AuthContext from "../../../store/auth-context";
+import AuthContext from "../../../store/context";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import {
@@ -85,7 +85,7 @@ const User = () => {
     if (!password || password === "")
       newErrors.password = "Password cannot be empty!";
     else if (password.length < 6)
-      newErrors.password = "Password must be greater than 6 characters!";
+      newErrors.password = "Password must be at least 6 characters!";
 
     if ((!isLogin && !name) || name === "")
       newErrors.name = "Name cannot be empty!";

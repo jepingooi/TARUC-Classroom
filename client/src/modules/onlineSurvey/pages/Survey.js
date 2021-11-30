@@ -26,7 +26,7 @@ import SurveyRow from "../components/SurveyRow";
 import { useHistory, useLocation } from "react-router-dom";
 import ActionBar from "../../../components/ActionBar";
 import Heading from "../../../components/Heading";
-import AuthContext from "../../../store/auth-context";
+import AuthContext from "../../../store/context";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import AddSurveyButton from "../../../components/AddItemButton";
 

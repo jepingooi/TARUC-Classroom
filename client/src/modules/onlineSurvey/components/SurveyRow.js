@@ -1,21 +1,12 @@
 import classes from "./SurveyRow.module.css";
 import TableActions from "../../../components/TableActions";
 import { Link } from "react-router-dom";
-import AuthContext from "../../../store/auth-context";
-import { useContext, useCallback } from "react";
+import AuthContext from "../../../store/context";
+import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  query,
-  updateDoc,
-  where,
-  getDocs,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -23,16 +14,18 @@ const db = getFirestore(app);
 const SurveyRow = (props) => {
   const authContext = useContext(AuthContext);
   const history = useHistory();
-  const { user, setSurvey } = authContext;
+  const { user, setSurvey, setSurveyStatus } = authContext;
 
-  const handleEdit = (id) => {
+  const handleEdit = (id, status) => {
     history.push(`/surveys/${id}/edit`);
     setSurvey(id);
+    setSurveyStatus(status);
   };
 
-  const handleView = (id) => {
+  const handleView = (id, status) => {
     history.push(`/surveys/${id}`);
     setSurvey(id);
+    setSurveyStatus(status);
   };
 
   const handleAnswer = (id) => {
@@ -86,14 +79,14 @@ const SurveyRow = (props) => {
                     <TableActions
                       onView={handleView.bind(null, id)}
                       isDisabled={status === "Closed" || status === "Published"}
-                      onEdit={handleEdit.bind(null, id)}
+                      onEdit={handleEdit.bind(null, id, status)}
                       onDelete={handleDelete.bind(null, { id, title })}
                     />
                   )}
                   {user.isStudent && (
                     <TableActions
                       isAnswered={status === "Answered"}
-                      onAnswer={handleAnswer.bind(null, id)}
+                      onAnswer={handleAnswer.bind(null, id, status)}
                     />
                   )}
                 </td>

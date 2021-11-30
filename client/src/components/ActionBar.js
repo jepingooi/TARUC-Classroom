@@ -2,7 +2,7 @@ import { Row, Col } from "react-bootstrap";
 import Filters from "./Filters";
 import PrimaryButton from "./AddItemButton";
 import SearchBar from "./SearchBar";
-import AuthContext from "../store/auth-context";
+import AuthContext from "../store/context";
 import { useContext } from "react";
 const ActionBar = (props) => {
   const authContext = useContext(AuthContext);

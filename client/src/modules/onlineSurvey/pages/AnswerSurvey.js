@@ -19,13 +19,12 @@ import Buttons from "../../../components/Buttons";
 import { useParams } from "react-router";
 import Heading from "../../../components/Heading";
 import AnswerQuestion from "../components/AnswerQuestion";
-import AuthContext from "../../../store/auth-context";
+import AuthContext from "../../../store/context";
 import CustomModal from "../../../components/CustomModal";
 import classes from "./AnswerSurvey.module.css";
 import { ReactComponent as PublishedSVG } from "../../../resources/icon-published.svg";
 import { ReactComponent as DraftedSVG } from "../../../resources/icon-drafted.svg";
 import { ReactComponent as ClosedSVG } from "../../../resources/icon-closed.svg";
-import Breadcrumbs from "../../../components/Breadcrumbs";
 import PrimaryButton from "../../../components/AddItemButton";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 
@@ -242,21 +241,25 @@ const AnswerSurvey = () => {
               <Heading>Replacement Class Time</Heading>
             </Col>
             <Col md={3} className={` text-end align-items-end mt-4`}>
-              <div className="d-flex align-items-center justify-content-end">
-                {survey.status === "Published" && (
-                  <PublishedSVG className="mx-1" />
-                )}
-                {survey.status === "Drafted" && <DraftedSVG className="mx-1" />}
-                {survey.status === "Closed" && <ClosedSVG className="mx-1" />}
-                <h4
-                  className={`
+              {!user.isStudent && (
+                <div className="d-flex align-items-center justify-content-end">
+                  {survey.status === "Published" && (
+                    <PublishedSVG className="mx-1" />
+                  )}
+                  {survey.status === "Drafted" && (
+                    <DraftedSVG className="mx-1" />
+                  )}
+                  {survey.status === "Closed" && <ClosedSVG className="mx-1" />}
+                  <h4
+                    className={`
                   ${survey.status === "Published" ? classes.published : ""}  
                   ${survey.status === "Drafted" ? classes.drafted : ""} 
                   ${survey.status === "Closed" ? classes.closed : ""} my-auto`}
-                >
-                  {survey.status}
-                </h4>
-              </div>
+                  >
+                    {survey.status}
+                  </h4>
+                </div>
+              )}
             </Col>
           </Row>
           {survey.questions &&

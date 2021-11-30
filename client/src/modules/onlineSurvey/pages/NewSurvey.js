@@ -16,7 +16,7 @@ import Buttons from "../../../components/Buttons";
 import classes from "./NewSurvey.module.css";
 import NewQuestion from "../components/NewQuestion";
 import PrimaryButton from "../../../components/AddItemButton";
-import AuthContext from "../../../store/auth-context";
+import AuthContext from "../../../store/context";
 import CustomModal from "../../../components/CustomModal";
 
 const app = initializeApp(firebaseConfig);
