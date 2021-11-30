@@ -1,23 +1,23 @@
 import { useParams, useHistory } from "react-router-dom";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
-import { useState, useEffect, Fragment } from "react";
-import Chart from "../components/Chart";
-import ParagraphResponse from "../components/ParagraphResponse";
+import { useState, useEffect, useRef, Fragment } from "react";
 import Heading from "../../../components/Heading.js";
-import classes from "./SurveyResponse.module.css";
-import Breadcrumbs from "../../../components/Breadcrumbs";
+import { useReactToPrint } from "react-to-print";
+import Buttons from "../../../components/Buttons";
+import SurveyResponses from "../components/SurveyResponses";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const SurveyDetails = () => {
   const [survey, setSurvey] = useState({});
   const [bottom, setBottom] = useState(false);
-
+  const componentRef = useRef();
   const { id } = useParams();
   const history = useHistory();
+
   useEffect(async () => {
     const docRef = doc(db, "surveys", id);
     const docSnap = await getDoc(docRef);
@@ -50,48 +50,41 @@ const SurveyDetails = () => {
     }
   };
 
+  const getPageMargins = () => {
+    return `@page { margin: ${10000} ${10} ${10} ${10} !important; }`;
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: survey.title,
+  });
+
+  const handleBack = () => history.replace("/surveys?filter=All");
+
   return (
     <Fragment>
       <Container className="mt-3">
-        <Row className="d-flex align-items-center justify-content-center">
-          <Col md={{ span: 6 }}>
+        <Row className="align-items-center justify-content-center">
+          <Col md={5}>
             <Heading>{survey.title}</Heading>
           </Col>
-          <Col md={1} className="text-end">
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => {
-                history.replace("/surveys?filter=All");
-              }}
-            >
-              Back
-            </Button>
+          <Col md={2} className="text-end pt-2 pe-0">
+            <Buttons
+              isDefault={true}
+              primary="Print"
+              secondary="Back"
+              onCancel={handleBack}
+              onSave={handlePrint}
+            />
           </Col>
         </Row>
-
         <Row>
-          <Col>
-            {survey.questions &&
-              survey.questions.map((question, index) => {
-                return (
-                  <Container
-                    key={index}
-                    className={`${classes.container} p-4 border border-1 rounded shadow-sm my-4`}
-                  >
-                    {question.type != "Paragraph" ? (
-                      <Chart
-                        question={question}
-                        key={index}
-                        index={index}
-                        onChange={handleScroll}
-                      />
-                    ) : (
-                      <ParagraphResponse question={question} key={index} />
-                    )}
-                  </Container>
-                );
-              })}
+          <Col ref={componentRef}>
+            <SurveyResponses
+              showTitle={true}
+              survey={survey}
+              onChange={handleScroll}
+            />
           </Col>
         </Row>
       </Container>

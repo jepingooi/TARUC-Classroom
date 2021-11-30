@@ -156,7 +156,7 @@ const App = (props) => {
         <PublishSurvey />
       </Route>
       <Route path={"/surveys/:id/response"}>
-        <Breadcrumbs active="response" />
+        <Breadcrumbs id={surveyId} active="response" />
         <SurveyResponse />
       </Route>
       <Route path={"/surveys/:id"}>

@@ -40,7 +40,6 @@ const NewSurvey = () => {
   const { user } = authContext;
   const { id } = useParams();
 
-  console.log(questions);
   useEffect(async () => {
     if (location.pathname.endsWith("edit")) {
       const docRef = doc(db, "surveys", id);
