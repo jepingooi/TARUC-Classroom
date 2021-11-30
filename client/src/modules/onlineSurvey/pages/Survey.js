@@ -172,8 +172,6 @@ const Survey = () => {
       return survey.id != surveyId;
     });
 
-    console.log(newSurveys);
-
     await updateDoc(studentRef, {
       surveys: newSurveys,
     });

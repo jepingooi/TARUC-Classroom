@@ -17,7 +17,7 @@ th {
 }
 
 .scroll {
-  max-height: 350px;
+  max-height: 285px;
   overflow-y: auto; /* Trigger vertical scroll    */
 }
 

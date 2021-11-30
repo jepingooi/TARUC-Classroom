@@ -17,6 +17,8 @@ import { firebaseConfig } from "./firebaseConfig.json";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
 import Breadcrumbs from "./modules/onlineSurvey/components/Breadcrumbs";
+import Heading from "./components/Heading";
+import AccessDenied from "./components/AccessDenied";
 
 const Survey = React.lazy(() => import("./modules/onlineSurvey/pages/Survey"));
 const NewSurvey = React.lazy(() =>
@@ -147,38 +149,51 @@ const App = (props) => {
       </Route>
 
       <Route path={"/surveys/new"}>
-        <NewSurvey />
+        {user && !user.isStudent && <NewSurvey />}
+        {user && user.isStudent && <AccessDenied />}
       </Route>
-      <Route path={"/surveys/:id/answer"}>
-        <AnswerSurvey />
+
+      <Route path={"/surveys/:id/edit"}>
+        {user && !user.isStudent && (
+          <>
+            <Breadcrumbs
+              id={surveyId}
+              active="edit"
+              isPublished={
+                authContext.surveyStatus !== "Drafted" ? true : false
+              }
+            />
+            <NewSurvey />
+          </>
+        )}
+        {user && user.isStudent && <AccessDenied />}
       </Route>
-      {user && !user.isStudent && (
-        <Route path={"/surveys/:id/edit"}>
-          <Breadcrumbs id={surveyId} active="edit" />
-          {authContext.surveyStatus !== "Drafted" && <NewSurvey />}
-        </Route>
-      )}
-      {user && !user.isStudent && (
-        <Route path={"/surveys/:id/publish"}>
-          <PublishSurvey />
-        </Route>
-      )}
-      {user && !user.isStudent && (
-        <Route path={"/surveys/:id/response"}>
-          <Breadcrumbs
-            id={surveyId}
-            active="response"
-            isDisabled={authContext.surveyStatus !== "Drafted" ? true : false}
-          />
-          <SurveyResponse />
-        </Route>
-      )}
+
+      <Route path={"/surveys/:id/publish"}>
+        {user && !user.isStudent && <PublishSurvey />}
+        {user && user.isStudent && <AccessDenied />}
+      </Route>
+      <Route path={"/surveys/:id/response"}>
+        {user && !user.isStudent && (
+          <>
+            <Breadcrumbs
+              id={surveyId}
+              active="response"
+              isPublished={
+                authContext.surveyStatus !== "Drafted" ? true : false
+              }
+            />
+            <SurveyResponse />
+          </>
+        )}
+        {user && user.isStudent && <AccessDenied />}
+      </Route>
       <Route path={"/surveys/:id"}>
         {user && !user.isStudent && (
           <Breadcrumbs
             id={surveyId}
             active="preview"
-            isDisabled={authContext.surveyStatus !== "Drafted" ? true : false}
+            isPublished={authContext.surveyStatus !== "Drafted" ? true : false}
           />
         )}
         <AnswerSurvey />

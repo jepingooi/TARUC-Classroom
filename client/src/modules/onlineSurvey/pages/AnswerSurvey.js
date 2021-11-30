@@ -10,6 +10,7 @@ import {
   collection,
   increment,
   setDoc,
+  arrayRemove,
 } from "firebase/firestore";
 import { firebaseConfig } from "../../../firebaseConfig.json";
 import { initializeApp } from "firebase/app";
@@ -42,7 +43,7 @@ const AnswerSurvey = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasError, setHasError] = useState(true);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  console.log(questions);
+
   const handleClose = () => {
     setShowSuccess(false);
     setShowConfirmation(false);
@@ -89,9 +90,22 @@ const AnswerSurvey = () => {
     history.goBack();
   };
 
-  const handleCloseSurvey = () => {
+  const updateStudent = async (studentId, surveyId) => {
+    const ref = doc(db, "students", studentId);
+    await updateDoc(ref, {
+      surveys: arrayRemove({ id: surveyId, status: "Pending" }),
+    });
+  };
+
+  const handleEndSurvey = async () => {
     const surveyRef = doc(db, "surveys", id);
     setDoc(surveyRef, { status: "Closed" }, { merge: true });
+
+    const studentRef = collection(db, "students");
+    const querySnapshot = await getDocs(studentRef);
+    querySnapshot.forEach((doc) => {
+      updateStudent(doc.id, id);
+    });
     history.go(0);
   };
 
@@ -213,10 +227,10 @@ const AnswerSurvey = () => {
           show={showConfirmation}
           onHide={handleClose}
           onCancel={handleClose}
-          onConfirm={handleCloseSurvey}
+          onConfirm={handleEndSurvey}
           title="Confirmation"
         >
-          Are you sure you want to close this survey?
+          Are you sure you want to end this survey?
         </ConfirmationModal>
         <CustomModal
           show={showError}
@@ -236,13 +250,24 @@ const AnswerSurvey = () => {
         </CustomModal>
 
         <Fragment>
-          <Row className="justify-content-center align-items-center position-sticky mb-4">
+          <Row className="justify-content-center align-items-center position-sticky my-2">
             <Col md={6}>
               <Heading>Replacement Class Time</Heading>
             </Col>
             <Col md={3} className={` text-end align-items-end mt-4`}>
+              <Button
+                size="lg"
+                variant="secondary"
+                onClick={() => history.replace("/surveys")}
+              >
+                Back
+              </Button>
+            </Col>
+          </Row>
+          <Row className="justify-content-center align-items-center position-sticky mb-4">
+            <Col md={9}>
               {!user.isStudent && (
-                <div className="d-flex align-items-center justify-content-end">
+                <div className="d-flex align-items-center ">
                   {survey.status === "Published" && (
                     <PublishedSVG className="mx-1" />
                   )}
@@ -268,7 +293,10 @@ const AnswerSurvey = () => {
                 <Row
                   key={index}
                   className={`${
-                    index === survey.questions.length - 1 ? "" : "my-4"
+                    index === survey.questions.length - 1 &&
+                    survey.status !== "Drafted"
+                      ? ""
+                      : "my-4"
                   } justify-content-center`}
                 >
                   <Col md={9}>
@@ -319,7 +347,7 @@ const AnswerSurvey = () => {
                     variant="outline-danger"
                     onClick={() => setShowConfirmation(true)}
                   >
-                    Close Survey
+                    End Survey
                   </Button>
                 </Col>
               </Row>

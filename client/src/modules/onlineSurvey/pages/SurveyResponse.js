@@ -69,33 +69,40 @@ const SurveyDetails = () => {
   return (
     <Fragment>
       <Container className="mt-3">
-        {!print && (
-          <Row className="align-items-center justify-content-center">
-            <Col md={5}>
-              <Heading>{survey.title}</Heading>
-            </Col>
-            <Col md={2} className="text-end pt-2 pe-0">
-              <Buttons
-                isDefault={true}
-                primary="Print"
-                secondary="Back"
-                onCancel={handleBack}
-                onSave={handlePrint}
-              />
-            </Col>
-          </Row>
+        {survey.responses === 0 && (
+          <Heading>This survey has no response.</Heading>
         )}
+        {survey.responses > 0 && (
+          <>
+            {!print && (
+              <Row className="align-items-center justify-content-center">
+                <Col md={5}>
+                  <Heading>{survey.title}</Heading>
+                </Col>
+                <Col md={2} className="text-end pt-2 pe-0">
+                  <Buttons
+                    isDefault={true}
+                    primary="Print"
+                    secondary="Back"
+                    onCancel={handleBack}
+                    onSave={handlePrint}
+                  />
+                </Col>
+              </Row>
+            )}
 
-        <Row>
-          <Col ref={componentRef}>
-            <SurveyResponses
-              showTitle={true}
-              survey={survey}
-              onChange={handleScroll}
-              print={print}
-            />
-          </Col>
-        </Row>
+            <Row>
+              <Col ref={componentRef}>
+                <SurveyResponses
+                  showTitle={true}
+                  survey={survey}
+                  onChange={handleScroll}
+                  print={print}
+                />
+              </Col>
+            </Row>
+          </>
+        )}
       </Container>
     </Fragment>
   );

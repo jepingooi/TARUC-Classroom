@@ -17,20 +17,20 @@ const SurveyRow = (props) => {
   const { user, setSurvey, setSurveyStatus } = authContext;
 
   const handleEdit = (id, status) => {
-    history.push(`/surveys/${id}/edit`);
     setSurvey(id);
     setSurveyStatus(status);
+    history.push(`/surveys/${id}/edit`);
   };
 
   const handleView = (id, status) => {
-    history.push(`/surveys/${id}`);
     setSurvey(id);
     setSurveyStatus(status);
+    history.push(`/surveys/${id}`);
   };
 
   const handleAnswer = (id) => {
-    history.push(`/surveys/${id}/answer`);
     setSurvey(id);
+    history.push(`/surveys/${id}`);
   };
 
   const handleDelete = async (survey) => {
@@ -43,7 +43,6 @@ const SurveyRow = (props) => {
         props.surveys.map((survey) => {
           const { title, status, responseNumber, createdDate, endDate, id } =
             survey;
-
           if (
             (props.filter && status == props.filter) ||
             (props.search &&
@@ -77,7 +76,7 @@ const SurveyRow = (props) => {
                 <td>
                   {!user.isStudent && (
                     <TableActions
-                      onView={handleView.bind(null, id)}
+                      onView={handleView.bind(null, id, status)}
                       isDisabled={status === "Closed" || status === "Published"}
                       onEdit={handleEdit.bind(null, id, status)}
                       onDelete={handleDelete.bind(null, { id, title })}

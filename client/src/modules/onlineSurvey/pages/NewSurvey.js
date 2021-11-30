@@ -139,6 +139,9 @@ const NewSurvey = () => {
     const newQuestions = JSON.parse(JSON.stringify(questions));
     const { newOptions } = newQuestions;
 
+    for (const q of newQuestions) {
+      if (q.type === "Paragraph") q.answers = [];
+    }
     if (location.pathname.endsWith("edit")) {
       const surveyRef = doc(db, "surveys", id);
       await setDoc(
