@@ -54,7 +54,14 @@ const SurveyRow = (props) => {
               <tr key={id}>
                 <td className={classes.title}>
                   {!user.isStudent && (
-                    <Link className={classes.link} to={`/surveys/${id}`}>
+                    <Link
+                      className={classes.link}
+                      to={`/surveys/${id}`}
+                      onClick={() => {
+                        setSurvey(id);
+                        setSurveyStatus(status);
+                      }}
+                    >
                       {title}
                     </Link>
                   )}
@@ -63,6 +70,10 @@ const SurveyRow = (props) => {
                       className={`${classes.link} ${
                         status == "Answered" ? classes.disabled : {}
                       }`}
+                      onClick={() => {
+                        setSurvey(id);
+                        setSurveyStatus(status);
+                      }}
                       to={`/surveys/${id}/answer`}
                     >
                       {title}
