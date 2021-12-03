@@ -37,7 +37,7 @@ const filterList = ["All", "Published", "Closed", "Drafted"];
 
 const studentFilter = ["All", "Answered", "Pending"];
 
-const headerList = ["Title", "Status", "Responses", "Start Date", "Actions"];
+const headerList = ["Title", "Status", "Responses", "Created Date", "Actions"];
 
 const studentHeaderList = ["Title", "Status", "Deadline", "Action"];
 
