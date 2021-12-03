@@ -69,8 +69,16 @@ const AnswerSurvey = () => {
   useEffect(async () => {
     if (!hasError) {
       const surveyRef = doc(db, "surveys", id);
+      const newQuestions = [...questions];
+      for (const q of newQuestions) {
+        if (q.type === "Paragraph") {
+          q.answers = q.answers.filter((answer) => {
+            return answer !== undefined;
+          });
+        }
+      }
       await updateDoc(surveyRef, {
-        questions,
+        questions: newQuestions,
       });
     }
   }, [questions]);
