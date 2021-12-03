@@ -252,7 +252,7 @@ const AnswerSurvey = () => {
         <Fragment>
           <Row className="justify-content-center align-items-center position-sticky my-2">
             <Col md={6}>
-              <Heading>Replacement Class Time</Heading>
+              <Heading>{survey.title}</Heading>
             </Col>
             <Col md={3} className={` text-end align-items-end mt-4`}>
               <Button
