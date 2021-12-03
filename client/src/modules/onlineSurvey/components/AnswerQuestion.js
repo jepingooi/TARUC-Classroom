@@ -47,7 +47,7 @@ const AnswerQuestion = (props) => {
       }  p-4 border border-1 rounded shadow-sm`}
     >
       <Row className="align-items-center mb-2">
-        <Col md={6}>
+        <Col md={9}>
           <h3 className={`${classes.question} py-2`}>{question.question}</h3>
         </Col>
       </Row>

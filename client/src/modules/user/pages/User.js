@@ -144,7 +144,7 @@ const User = () => {
               );
 
               //Eight seconds expire-time
-              //const expirationTime = new Date(new Date().getTime() + 8000);
+              // const expirationTime = new Date(new Date().getTime() + 8000);
 
               authContext.login(
                 userCredential._tokenResponse.idToken,
@@ -220,6 +220,11 @@ const User = () => {
                 TUTORIAL_GROUPS[
                   Math.floor(Math.random() * TUTORIAL_GROUPS.length)
                 ],
+              // faculty: "FOCS",
+              // programme: "RSD",
+              // year: 2,
+              // semester: 1,
+              // tutorialGroup: 1,
               surveys: [],
             };
           } else {

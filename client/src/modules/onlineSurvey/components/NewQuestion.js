@@ -51,6 +51,7 @@ const NewQuestion = (props) => {
   const handleAddOption = () => {
     props.onAddOption(question, optionRef.current.value);
     optionRef.current.value = "";
+    optionRef.current.focus();
   };
 
   const renderOptions = (optionType) => {
