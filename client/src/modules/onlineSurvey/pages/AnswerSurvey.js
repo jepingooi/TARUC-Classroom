@@ -172,7 +172,6 @@ const AnswerSurvey = () => {
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
-      console.log(doc.id, " => ", doc.data());
       const surveys = doc.data().surveys;
       for (const s of surveys) {
         if (s.id == id) {

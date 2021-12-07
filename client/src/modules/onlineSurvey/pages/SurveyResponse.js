@@ -44,7 +44,6 @@ const SurveyDetails = () => {
         yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     } else {
-      console.log(bottom);
       setBottom((prevState) => {
         return !prevState;
       });

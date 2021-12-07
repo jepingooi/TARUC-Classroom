@@ -119,7 +119,6 @@ const PublishSurvey = () => {
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
-      console.log(doc.id, " => ", doc.data());
       setStudents((prevState) => {
         return [...prevState, doc.id];
       });
@@ -227,7 +226,6 @@ const PublishSurvey = () => {
                                 if (programme.faculty === faculty) {
                                   return programme.programmes.map(
                                     (p, programmeIndex) => {
-                                      console.log(p);
                                       return (
                                         <option key={programmeIndex} value={p}>
                                           {p}

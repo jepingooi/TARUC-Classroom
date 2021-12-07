@@ -114,7 +114,6 @@ const Survey = () => {
     querySnapshot.forEach((doc) => {
       studentSurveys = doc.data().surveys;
       const surveyId = studentSurveys.map((survey) => survey.id);
-      console.log(surveyId);
       const surveyQuery = query(
         collection(db, "surveys"),
         where("status", "!=", "Drafted")
@@ -179,12 +178,10 @@ const Survey = () => {
 
   const handleDelete = async () => {
     const { id } = confirmationState.survey;
-    console.log(id);
     await deleteDoc(doc(db, "surveys", id));
     const q = query(collection(db, "students"));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
-      console.log(doc.id, " => ", doc.data());
       const surveys = doc.data().surveys;
       updateStudent(doc.id, id, surveys);
     });

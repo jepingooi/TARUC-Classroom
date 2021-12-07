@@ -130,7 +130,6 @@ const NewSurvey = () => {
   };
 
   const handleDeleteQuestion = (deleteQuestion) => {
-    console.log(deleteQuestion);
     setQuestions((prevState) => {
       return prevState.filter((question) => {
         return question.id !== deleteQuestion.id;

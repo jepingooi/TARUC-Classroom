@@ -4,7 +4,6 @@ import classes from "./Breadcrumbs.module.css";
 
 const Breadcrumbs = (props) => {
   const { active } = props;
-  console.log(props.isPublished);
   return (
     <Container
       fluid
