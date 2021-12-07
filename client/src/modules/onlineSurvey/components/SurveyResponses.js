@@ -4,9 +4,6 @@ import { Container } from "react-bootstrap";
 import classes from "./SurveyResponses.module.css";
 import { Fragment } from "react";
 const SurveyResponses = (props) => {
-  const getPageMargins = () => {
-    return `@page { margin: ${10} ${0} ${0} ${0} !important; }`;
-  };
   return (
     <Fragment>
       {props.survey.questions &&

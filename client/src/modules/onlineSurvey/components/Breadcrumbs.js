@@ -3,7 +3,6 @@ import { NavLink, useHistory } from "react-router-dom";
 import classes from "./Breadcrumbs.module.css";
 
 const Breadcrumbs = (props) => {
-  const history = useHistory();
   const { active } = props;
   console.log(props.isPublished);
   return (

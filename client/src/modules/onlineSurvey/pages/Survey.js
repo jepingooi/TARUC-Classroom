@@ -250,13 +250,13 @@ const Survey = () => {
         {confirmationState.message}
       </ConfirmationModal>
 
-      {surveys && surveys.length == 0 && (
+      {surveys && surveys.length === 0 && (
         <Heading>Nothing to show here.</Heading>
       )}
 
       {renderSurvey}
 
-      {surveys && surveys.length == 0 && !user.isStudent && (
+      {surveys && surveys.length === 0 && !user.isStudent && (
         <div className="py-3">
           <AddSurveyButton
             buttonText={"Add Survey"}

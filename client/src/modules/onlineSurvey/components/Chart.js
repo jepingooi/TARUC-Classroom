@@ -82,15 +82,15 @@ const Chart = (props) => {
         )}
       </Row>
       <Row className="d-flex justify-content-center">
-        {type != "Pie" && (
+        {type !== "Pie" && (
           <Col className="mb-4 text-center">
-            {type == "Bar" && <Bar data={data} options={option} />}
-            {type == "Horizontal Bar" && (
+            {type === "Bar" && <Bar data={data} options={option} />}
+            {type === "Horizontal Bar" && (
               <Bar data={data} options={{ ...option, indexAxis: "y" }} />
             )}
           </Col>
         )}
-        {type == "Pie" && (
+        {type === "Pie" && (
           <Col className="mb-4" md={8}>
             <Pie data={data} />
           </Col>

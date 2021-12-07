@@ -154,8 +154,6 @@ const User = () => {
           history.replace("/videoConferencing");
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
           setError("Please enter a valid email/password!");
           setShowError(true);
         });
@@ -241,7 +239,7 @@ const User = () => {
             });
         })
         .catch((error) => {
-          if (error.code == "auth/email-already-in-use") {
+          if (error.code === "auth/email-already-in-use") {
             setError("Account already exists!");
           } else {
             setError(error);
@@ -253,7 +251,7 @@ const User = () => {
 
   let type;
   if (location.state) {
-    type = location.state.register == false ? "Login" : "Register";
+    type = location.state.register === false ? "Login" : "Register";
   } else {
     type = "Login";
   }
@@ -280,7 +278,7 @@ const User = () => {
         onEmailChange={(e) => setField("email", e.target.value)}
         onPasswordChange={(e) => setField("password", e.target.value)}
         onNameChange={(e) => setField("name", e.target.value)}
-        onSubmit={type == "Login" ? handleLogin : handleRegister}
+        onSubmit={type === "Login" ? handleLogin : handleRegister}
         onReset={handleResetPassword}
         errors={errors}
       >

@@ -13,7 +13,7 @@ const AuthenticationForm = (props) => {
             <Card.Header>{props.children}</Card.Header>
             <Card.Body>
               <Form noValidate onSubmit={props.onSubmit}>
-                {props.children == "Register" && (
+                {props.children === "Register" && (
                   <Form.Group className="mb-3" controlId="name">
                     <Form.Label>Name</Form.Label>
                     <Form.Control
@@ -54,7 +54,7 @@ const AuthenticationForm = (props) => {
                 </div>
               </Form>
             </Card.Body>
-            {props.children == "Login" && (
+            {props.children === "Login" && (
               <Card.Footer className={`${classes.footer} text-center`}>
                 <Card.Link onClick={props.onReset}>Forgot Password</Card.Link>
               </Card.Footer>

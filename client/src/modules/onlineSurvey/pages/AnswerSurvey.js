@@ -129,7 +129,7 @@ const AnswerSurvey = () => {
     }
     setHasError(false);
     for (const q of questions) {
-      if (q.type == "Paragraph") {
+      if (q.type === "Paragraph") {
         const { isAnswered, error, tempAnswer, ...newQuestion } = q;
         newQuestion.answers.push(tempAnswer);
         setQuestions((prevState) => {
@@ -197,7 +197,7 @@ const AnswerSurvey = () => {
       }
     } else if (question.type === "Multiple Choice") {
       for (const index of question.options.keys()) {
-        if (question.options[index].option == answer) {
+        if (question.options[index].option === answer) {
           question.options[index].isChosen = true;
         } else {
           question.options[index].isChosen = false;

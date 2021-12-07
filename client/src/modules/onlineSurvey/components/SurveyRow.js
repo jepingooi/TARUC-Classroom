@@ -43,11 +43,11 @@ const SurveyRow = (props) => {
           const { title, status, responseNumber, createdDate, endDate, id } =
             survey;
           if (
-            (props.filter && status == props.filter) ||
+            (props.filter && status === props.filter) ||
             (props.search &&
               title.toLowerCase().startsWith(props.search.toLowerCase())) ||
-            props.search == "" ||
-            props.filter == "All"
+            props.search === "" ||
+            props.filter === "All"
           ) {
             return (
               <tr key={id}>
@@ -80,7 +80,7 @@ const SurveyRow = (props) => {
                   )}
                 </td>
                 <td>{status}</td>
-                {responseNumber != undefined && <td>{responseNumber}</td>}
+                {responseNumber !== undefined && <td>{responseNumber}</td>}
                 {createdDate && <td>{createdDate}</td>}
                 {endDate && <td>{endDate}</td>}
                 <td>
