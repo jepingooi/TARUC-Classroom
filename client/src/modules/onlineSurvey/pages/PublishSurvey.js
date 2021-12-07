@@ -108,12 +108,6 @@ const PublishSurvey = () => {
       return;
     }
 
-    console.log(facultyRef.current.value);
-    console.log(programmeRef.current.value);
-    console.log(year);
-    console.log(semester);
-    console.log(Number(tutorialRef.current.value));
-
     const q = query(
       collection(db, "students"),
       where("faculty", "==", facultyRef.current.value),

@@ -1,5 +1,5 @@
 import classes from "./ParagraphResponse.module.css";
-import { Container, Form, Row, Col } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import { Fragment } from "react";
 const ParagraphResponse = (props) => {
   const { question } = props;

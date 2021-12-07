@@ -108,12 +108,11 @@ const User = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          //TODO - UNCOMMENT THIS LINE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          // if (user.emailVerified == false) {
-          //   setError("Your account is not verified!");
-          //   setShowError(true);
-          //   return;
-          // }
+          if (user.emailVerified == false) {
+            setError("Your account is not verified!");
+            setShowError(true);
+            return;
+          }
 
           const fetchUser = async () => {
             const emailDomain = user.email.split("@")[1];
@@ -142,9 +141,6 @@ const User = () => {
                 new Date().getTime() +
                   +userCredential._tokenResponse.expiresIn * 1000
               );
-
-              //Eight seconds expire-time
-              // const expirationTime = new Date(new Date().getTime() + 8000);
 
               authContext.login(
                 userCredential._tokenResponse.idToken,
@@ -220,11 +216,6 @@ const User = () => {
                 TUTORIAL_GROUPS[
                   Math.floor(Math.random() * TUTORIAL_GROUPS.length)
                 ],
-              // faculty: "FOCS",
-              // programme: "RSD",
-              // year: 2,
-              // semester: 1,
-              // tutorialGroup: 1,
               surveys: [],
             };
           } else {
@@ -234,7 +225,6 @@ const User = () => {
               email,
             };
           }
-          console.log(userCollection);
           await addDoc(collection(db, userCollection), userDocument);
 
           sendEmailVerification(auth.currentUser)
@@ -244,7 +234,6 @@ const User = () => {
               );
               setShowSuccess(true);
               history.push({ pathname: "/user", state: { register: false } });
-              console.log("New user created: " + auth.currentUser);
             })
             .catch((error) => {
               setError(error);
